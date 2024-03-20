@@ -1,0 +1,20 @@
+# Visual Studio Code
+.vscode/
+.vscode/*
+
+# Visual Studio
+.vs/
+/bin/
+/obj/
+/*.user
+/*.suo
+/*.cache
+/.vscode
+*.dll
+*.pdb
+*.exe
+*.bak
+*.cache
+*.log
+*.sqlite
+*.sdf

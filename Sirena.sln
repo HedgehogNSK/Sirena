@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sirena", "Sirena.csproj", "{E718FF08-A27F-4CD4-B972-ABF8BD967584}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E718FF08-A27F-4CD4-B972-ABF8BD967584}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E718FF08-A27F-4CD4-B972-ABF8BD967584}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E718FF08-A27F-4CD4-B972-ABF8BD967584}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E718FF08-A27F-4CD4-B972-ABF8BD967584}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {503E7633-6D41-4100-923B-3FF35C000B42}
+	EndGlobalSection
+EndGlobal
