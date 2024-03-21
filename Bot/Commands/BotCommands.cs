@@ -24,7 +24,7 @@ public static class BotCommands
   public static bool Contains(string text, out BotCustomCommmand? command)
   {
     text = text.TrimStart();
-    if (text[0] != '/')
+    if (string.IsNullOrEmpty(text) || text[0] != '/')
     {
       command = null;
       return false;

@@ -12,9 +12,9 @@ public class CallSirenaCommand : BotCustomCommmand
   const string errorWrongSirenaID = "{0} parameter is incorrect. First parameter has to be serial number or ID of your sirena";
   const string errorNoSirena = "You don't have a sirena with id: {0}";
   const string errorNoSubscribers = "The sirena: {0} doesn't have any recievers";
-  const string errorRecentlyCall = "This sirena has been called recently.You have wait at least 1 minute before call sirena again.\n {0} time: {1}";
+  const string errorRecentlyCall = "This sirena has been called recently. You have to wait at least 1 minute before call sirena again.\n {0} time: {1}";
   const string successMessage = "Calling {0} subscribers.";
-  const string notificationBase =  "*{0}*\n _called at {3} by user {1} with id: {2}._";
+  const string notificationBase = "*{0}*\n _Called at {3} by {1}|{2}._";
   private const int MESSAGE_MAX_SYMBOLS = 150;
   private static TimeSpan delay = TimeSpan.FromMinutes(1);
   private readonly FacadeMongoDBRequests requests;
@@ -66,13 +66,13 @@ public class CallSirenaCommand : BotCustomCommmand
     const string dateFormat = "HH:mm:ss yyyy-MM-dd";
     var dateString = now.ToString(dateFormat);
 
-    if (sirena.LastCall!=null && sirena.LastCall.Date + delay > now )
+    if (sirena.LastCall != null && sirena.LastCall.Date + delay > now)
     {
       responseText = string.Format(errorRecentlyCall, sirena, sirena.LastCall.Date.ToString(dateFormat));
       Program.messageSender.Send(message.Chat.Id, responseText);
       return;
     }
-    var recievers = await requests.ValidateListeners(sirena,uid);
+    var recievers = await requests.ValidateListeners(sirena, uid);
     if (recievers.Count == 0)
     {
       responseText = string.Format(errorNoSubscribers, sirena);
@@ -84,7 +84,7 @@ public class CallSirenaCommand : BotCustomCommmand
     string notification = string.Format(notificationBase, sirena.Title, username, uid, dateString);
     var userAdditiveText = message.Text.SkipFirstNWords(2).Take(MESSAGE_MAX_SYMBOLS).ConvertToString();
     if (!string.IsNullOrEmpty(userAdditiveText))
-      notification = userAdditiveText+'\n' + notification;
+      notification = '*'+ userAdditiveText + '*'+ '\n' + notification;
     responseText = string.Format(successMessage, recievers.Count);
 
     Program.messageSender.Send(message.Chat.Id, responseText);

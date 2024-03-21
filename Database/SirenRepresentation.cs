@@ -26,7 +26,7 @@ public class SirenRepresentation
 
   public override string ToString()
   {
-    const string message= "{{ {0} : {1} }}";
+    const string message= "{{{0}|{1}}}";
     return string.Format(message, Id, Title);
   }
 

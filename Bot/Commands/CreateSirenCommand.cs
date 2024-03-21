@@ -29,7 +29,7 @@ public class CreateSirenaCommand : BotCustomCommmand
   {
     long uid = message.From.Id;
     long chatId = message.Chat.Id;
-    string sirenName = message.Text.SkipFirstNWords(2);
+    string sirenName = message.Text.SkipFirstNWords(1);
     if (string.IsNullOrEmpty(sirenName) || sirenName.Length < TITLE_MIN_LENGHT)
     {
       Program.messageSender.Send(message.Chat.Id, string.Format(emptyTitleWarning, TITLE_MIN_LENGHT, TITLE_MAX_LENGHT));
