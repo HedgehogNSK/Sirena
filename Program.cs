@@ -4,60 +4,62 @@ using Hedgey.Structure.Factory;
 using MongoDB.Driver;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
-using System.Collections.Concurrent;
 using System.Reactive.Linq;
-using Telegram.Bot;
 
 namespace Hedgey.Sirena;
 static internal class Program
 {
   static TelegramBot bot;
-  static TelegramBotClient botClient;
   static MongoClient dbClient;
   static FacadeMongoDBRequests request;
-  static IMongoDatabase sirenDb;
   public static readonly IMessageSender messageSender;
   static Program()
   {
     var factory = new MongoClientFactory();
     dbClient = factory.Create();
     request = new FacadeMongoDBRequests(dbClient);
-    const string dbName = "siren";
-    sirenDb = dbClient.GetDatabase(dbName);
-
     var telegramFactory = new TelegramHelpFactory();
     bot = ((IFactory<TelegramBot>)telegramFactory).Create();
-    botClient = ((IFactory<TelegramBotClient>)telegramFactory).Create();
+    //TelegramBotClient botClient = ((IFactory<TelegramBotClient>)telegramFactory).Create();
     messageSender = new BotMesssageSender(bot);
     messageSender = new BotMessageSenderTimerProxy(messageSender);
   }
   private static async Task Main(string[] args)
   {
 
-    BotCustomCommmand command = new CreateSirenaCommand("create", "Creates a sirena with certain title", sirenDb, request);
+    BotCustomCommmand command = new CreateSirenaCommand("create", "Creates a sirena with certain title", request.db, request);
     BotCommands.Add(command);
     command = new CallSirenaCommand("call", "Call sirena by number or by id", request);
     BotCommands.Add(command);
-    command = new ListUserSignalsCommand("list", "Shows a list of sirenas that are being tracked.", sirenDb);
+    command = new ListUserSignalsCommand("list", "Shows a list of sirenas that are being tracked.", request.db);
     BotCommands.Add(command);
-    command = new RemoveSirenCommnad("remove", "Remove your sirena by number, or by id.", sirenDb, request);
+    command = new RemoveSirenCommnad("remove", "Remove your sirena by number, or by id.", request.db, request);
     BotCommands.Add(command);
-    command = new SubscribeCommand("subscribe", "Subscribes to *sirena* by id.", sirenDb);
+    command = new SubscribeCommand("subscribe", "Subscribes to *sirena* by id.", request.db);
     BotCommands.Add(command);
-    command = new GetSubscriptionsListCommand("subscriptions", "Displays you current subscriptions.", sirenDb);
+    command = new GetSubscriptionsListCommand("subscriptions", "Displays you current subscriptions.", request.db);
     BotCommands.Add(command);
-    command = new UnsubscribeCommand("unsubscribe", "Unsubscribes from certain sirena.", sirenDb);
+    command = new UnsubscribeCommand("unsubscribe", "Unsubscribes from certain sirena.", request.db);
     BotCommands.Add(command);
-    command = new GetResponsiblesListCommand("responsible", "Display of people responsible for sirena", sirenDb,request,bot);
+    command = new MuteUserSignalCommand("mute", "Mute calls from certain user for certain *sirena*. Calls of the *sirena* from other users will be active anyway",request,bot);
     BotCommands.Add(command);
-    command = new DelegateRightsCommand("delegate", "Delegate right to call sirena with another user.", sirenDb,request,bot);
+    command = new UnmuteUserSignalCommand("unmute", "Unmute previously muted user for certain siren",request,bot);
     BotCommands.Add(command);
-    command = new RevokeRightsCommand("revoke", "Revoke rights to call sirena from user.", sirenDb,request,bot);
+    command = new GetResponsiblesListCommand("responsible", "Display of people responsible for sirena", request.db,request,bot);
     BotCommands.Add(command);
-    command = new GetDelegateRequestListCommand("requests", "Display a list of requests for permission to launch a sirena.", sirenDb,request,bot);
+    command = new DelegateRightsCommand("delegate", "Delegate right to call sirena with another user.", request.db,request,bot);
+    BotCommands.Add(command);
+    command = new RevokeRightsCommand("revoke", "Revoke rights to call sirena from user.",request,bot);
+    BotCommands.Add(command);
+    command = new RequestRightsCommand("request", "Allows to request rights to call certain sirena of another user.", request);
+    BotCommands.Add(command);
+    command = new GetRequestsListCommand("requests", "Display a list of requests for permission to launch a sirena.", request.db,request,bot);
     BotCommands.Add(command);
 
     command = new HelpCommand("help", "Displays list of all commands", bot, BotCommands.Commands);
+    BotCommands.Add(command);
+
+    command = new StartCommand("start", "Initialization of user", request);
     BotCommands.Add(command);
 
     var me = await bot.GetMe();
