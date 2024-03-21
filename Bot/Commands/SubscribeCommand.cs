@@ -20,8 +20,7 @@ public class SubscribeCommand : BotCustomCommmand
   public async override void Execute(Message message)
   {
     long uid = message.From.Id;
-    string param = message.Text.SkipWhile(_char => _char != ' ').Skip(1)
-      .TakeWhile(_char => _char != ' ').ConvertToString();
+    string param = message.Text.GetParameterByNumber(1);
     string notificationText;
     if (string.IsNullOrEmpty(param))
     {

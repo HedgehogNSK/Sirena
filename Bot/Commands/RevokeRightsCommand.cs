@@ -9,19 +9,15 @@ namespace Hedgey.Sirena.Bot;
 public class RevokeRightsCommand : BotCustomCommmand
 {
   private readonly FacadeMongoDBRequests requests;
-  private IMongoCollection<UserRepresentation> usersCollection;
-  private IMongoCollection<SirenRepresentation> sirenCollection;
   private readonly TelegramBot bot;
   const string errorWrongParamters = "Please input: /revoke {sirena number or id} {user id}";
   const string errorWrongSirenaID = "{0} parameter is incorrect. First parameter has to be serial number or ID of your sirena";
   const string errorWrongUID = "{0} parameter is incorrect. Second parameter has to be *UID* of user that is already responsible for sirena. And you won't to revoke they rights.";
   const string errorNoSirena = "You couldn't revoke rights of this user. Possible reasons: user doesn't have rights or you don't own this sirena ";
   const string successMessage = "The user: {0} has been deprived of his rights to call the sirena:\n {1}";
-  public RevokeRightsCommand(string name, string description, IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
+  public RevokeRightsCommand(string name, string description, FacadeMongoDBRequests requests, TelegramBot bot)
   : base(name, description)
   {
-    usersCollection = db.GetCollection<UserRepresentation>("users");
-    sirenCollection = db.GetCollection<SirenRepresentation>("sirens");
     this.bot = bot;
     this.requests = requests;
   }
@@ -37,21 +33,23 @@ public class RevokeRightsCommand : BotCustomCommmand
       return;
     }
     ObjectId sirenaId = default;
-    if (!int.TryParse(parameters[1], out int number)
-        && !ObjectId.TryParse(parameters[1], out sirenaId))
+    string sirenaIdString = parameters[1];
+    if (!int.TryParse(sirenaIdString, out int number)
+        && !ObjectId.TryParse(sirenaIdString, out sirenaId))
     {
-      responseText = parameters[1] + errorWrongSirenaID;
+      responseText =string.Format(errorWrongSirenaID, sirenaIdString);
       Program.messageSender.Send(message.Chat.Id, responseText);
       return;
     }
     Chat? chat = null;
-    if (long.TryParse(parameters[2], out long ruid))
+    string userIdString = parameters[2];
+    if (long.TryParse(userIdString, out long ruid))
     {
       chat = await Extensions.Telegram.BotTools.GetChatByUID(bot, ruid);
     }
     if (chat == null)
     {
-      responseText = string.Format(errorWrongUID, parameters[2]);
+      responseText = string.Format(errorWrongUID, userIdString);
       Program.messageSender.Send(message.Chat.Id, responseText);
       return;
     }

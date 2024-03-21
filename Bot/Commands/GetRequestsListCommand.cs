@@ -1,3 +1,4 @@
+using Hedgey.Extensions.Telegram;
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -8,18 +9,18 @@ using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-public class GetDelegateRequestListCommand : BotCustomCommmand
+public class GetRequestsListCommand : BotCustomCommmand
 {
-  private readonly IMongoCollection<UserRepresentation> users;
+  private const string noRequestsMessage = "There are no requests for delegation of rights";
+  private const string noSirenaMessage = "You don't have any sirenas yet.";
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly TelegramBot bot;
   private readonly FacadeMongoDBRequests requests;
 
-  public GetDelegateRequestListCommand(string name, string description
+  public GetRequestsListCommand(string name, string description
   , IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
   : base(name, description)
   {
-    users = db.GetCollection<UserRepresentation>("users");
     sirens = db.GetCollection<SirenRepresentation>("sirens");
     this.bot = bot;
     this.requests = requests;
@@ -36,32 +37,47 @@ public class GetDelegateRequestListCommand : BotCustomCommmand
         .Include(x => x.Title)
         .Include(x => x.Requests);
     var userSirensWithRequests = await sirens.Find(filter).Project<SirenRepresentation>(projection).ToListAsync();
-    var requestsList = from siren in userSirensWithRequests
-                       from request in siren.Requests
-                       select new RequestInfo
-                       {
-                         SirenId = siren.Id,
-                         Title = siren.Title,
-                         UserId = request.UID,
-                         Message = request.Message,
-                       };
+    string messageText;
+    if (userSirensWithRequests.Count == 0)
+    {
+      messageText = noSirenaMessage;
+    }
+    else
+    {
+      var requestsList = from siren in userSirensWithRequests
+                         from request in siren.Requests
+                         select new RequestInfo
+                         {
+                           SirenId = siren.Id,
+                           Title = siren.Title,
+                           UserId = request.UID,
+                           Message = request.Message,
+                         };
 
-    var messageText = CreateMessageText(requestsList);
+      messageText = await CreateMessageText(requestsList);
+    }
     Program.messageSender.Send(message.Chat.Id, messageText);
   }
 
-  private string CreateMessageText(IEnumerable<RequestInfo> requestsList)
+  private async Task<string> CreateMessageText(IEnumerable<RequestInfo> requestsList)
   {
+    if (!requestsList.Any())
+    {
+      return noRequestsMessage;
+    }
     StringBuilder builder = new StringBuilder("Reuqests list\n");
     int number = 1;
     foreach (var request in requestsList)
     {
+      var chat = await bot.GetChatByUID(request.UserId);
+      var username = chat?.GetUsername()?? "Ghost";
       builder.AppendLine().Append(number).Append(". User *")
+        .Append(username)
+        .Append('|')
         .Append(request.UserId)
-        .Append("* is asking for access to:\n *\"")
-        .Append(request.Title)
-        .Append("\"* with id: ")
-        .Append(request.SirenId)
+        .Append("* is asking for access to \n ")
+        .Append("sirena ")
+        .Append(request)
         .AppendLine();
       if (!string.IsNullOrEmpty(request.Message))
       {
@@ -81,5 +97,10 @@ public class GetDelegateRequestListCommand : BotCustomCommmand
     public long UserId { get; set; }
     public string Message { get; set; } = string.Empty;
     public string Title { get; internal set; } = string.Empty;
+
+    public override string ToString()
+    {
+      return "*\""+Title+"\"* : _"+ SirenId+'_';
+    }
   }
 }
