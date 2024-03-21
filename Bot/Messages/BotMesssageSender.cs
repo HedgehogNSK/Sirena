@@ -28,7 +28,6 @@ namespace Hedgey.Sirena.Bot
       {
         RxTelegram.Bot.Interface.BaseTypes.Message message = await bot.SendMessage(sendMessage);
         var result = message;
-        Console.WriteLine("Sent message: " + result);
         //return new IMessageSender.Result(true,result);
       }
       catch (Exception ex)

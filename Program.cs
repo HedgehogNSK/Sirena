@@ -61,19 +61,15 @@ static internal class Program
     BotCommands.Add(command);
 
     var me = await bot.GetMe();
-    // ConcurrentQueue<int?> queue = new ConcurrentQueue<int?>([1, null , 2, 3, 4, 5]);
-    // _ = Observable.Timer(TimeSpan.FromSeconds(1))
-    //     .Select(_ => queue.TryDequeue(out var result)?result: null)
-    //     .Catch((Exception x)=> {
-    //       Console.WriteLine(x);
-    //       int? f = -1;
-    //        return Observable.Return(f);
-    //        })
-    // .Subscribe(x => Console.WriteLine(x), () => Console.WriteLine(queue.IsEmpty));
     Console.WriteLine($"Bot name: @{me.Username}");
 
     var subscription = bot.Updates.Message.Subscribe(HandleReceivedMessage, OnError);
-    Console.ReadLine();
+
+    string? input;
+    do
+    {
+      input = Console.ReadLine();
+    } while (input != "exit");
     subscription.Dispose();
   }
 
