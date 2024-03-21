@@ -21,20 +21,36 @@ public class SirenRepresentation
   public long[] Responsible { get; internal set; } = [];
   [BsonElement("requests")]
   public Request[] Requests { get; internal set; } = [];
-  [BsonElement("last_call"),BsonRepresentation(BsonType.DateTime)]
-  public DateTimeOffset LastCall { get; internal set; }
+  [BsonElement("last_call"), BsonIgnoreIfNull(true)]
+  public CallInfo? LastCall { get; internal set; }
 
-  public class Request
-  {
-    [BsonElement("user_id")]
-    public long UID { get; set; }
-    [BsonElement("message")]
-    public string Message { get; set; } = string.Empty;
- 
-  }
   public override string ToString()
   {
     const string message= "{{ {0} : {1} }}";
     return string.Format(message, Id, Title);
+  }
+
+  public class Request
+  {
+    public Request(long uid, string message)
+    {
+      UID = uid;
+      Message = message;
+    }
+    [BsonElement("user_id")]
+    public long UID { get; set; }
+    [BsonElement("message")]
+    public string Message { get; set; } = string.Empty;
+  }
+  public class CallInfo{
+    public CallInfo(long uid, DateTimeOffset now)
+    {
+      Caller =uid;
+      Date =now;
+    }
+    [BsonElement("caller"),BsonRepresentation(BsonType.Int64)]
+  public long Caller  { get; internal set; }
+    [BsonElement("date"),BsonRepresentation(BsonType.DateTime)]
+  public DateTimeOffset Date { get; internal set; }
   }
 }

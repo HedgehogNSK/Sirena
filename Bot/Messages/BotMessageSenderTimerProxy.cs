@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -24,15 +25,30 @@ public class BotMessageSenderTimerProxy : IMessageSender, IDisposable
     stream = timerStarter.SelectMany(Observable.Timer(second))
         .Do(_ => count = 0)
         .SelectMany(observableMessages)
-        .Subscribe(SendImmidiate);
+        .Subscribe(SendImmidiate,OnException);
     this.sender = sender;
   }
+
+  private void OnException(Exception exception)
+  {
+     Console.WriteLine(exception);
+  }
+
   public void SendImmidiate(ResponseMessage param)
   {
     if (Interlocked.Increment(ref count) == 1)
       timerStarter.OnNext(Unit.Default);
+    try
+    {
+      sender.Send(param.chatId, param.text, param.silent);
+    }
+    catch (Exception innerException)
+    {
 
-    sender.Send(param.chatId, param.text, param.silent);
+      const string exMessage = "Exception on sending to chat {0} message:\n {1}";
+      var ex = new Exception(string.Format(exMessage, param.chatId, param.text), innerException);
+      Console.WriteLine(ex);
+    }
   }
   public virtual void Send(long chatId, string text, bool silent = true)
   {

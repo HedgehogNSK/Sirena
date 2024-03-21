@@ -1,3 +1,4 @@
+using Hedgey.Extensions;
 using Hedgey.Sirena.Bot;
 using System.Text;
 
@@ -22,25 +23,15 @@ public static class BotCommands
 
   public static bool Contains(string text, out BotCustomCommmand? command)
   {
+    text = text.TrimStart();
     if (text[0] != '/')
     {
       command = null;
       return false;
     }
-    string commandName = GetCommandName(text);
+    string commandName = text.Substring(1).GetParameterByNumber(0);
     command = commands.FirstOrDefault(_command => string.CompareOrdinal(_command.Command, commandName) == 0);
 
     return command != default;
-  }
-
-  private static string GetCommandName(string text)
-  {
-    StringBuilder builder = new StringBuilder();
-    foreach (var character in text.Skip(1).TakeWhile(x => x != ' '))
-    {
-      builder.Append(character);
-    }
-    string commandName = builder.ToString();
-    return commandName;
   }
 }

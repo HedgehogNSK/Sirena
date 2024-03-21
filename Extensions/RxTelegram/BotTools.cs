@@ -7,7 +7,7 @@ namespace Hedgey.Extensions.Telegram;
 public static class BotTools
 {
 
-  static public async Task<Chat> GetChatByUID(TelegramBot bot, long uid)
+  static public async Task<Chat?> GetChatByUID(this TelegramBot bot, long uid)
   {
     var getChat = new GetChat { ChatId = uid };
     try{
@@ -17,7 +17,7 @@ public static class BotTools
     catch(Exception ex)
     {
       Console.WriteLine(ex);
-       return null;
+       return default;
     }
   }
   public static string GetUsername(this Chat chat)

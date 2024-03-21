@@ -18,3 +18,6 @@
 *.log
 *.sqlite
 *.sdf
+
+# Project
+Build/*

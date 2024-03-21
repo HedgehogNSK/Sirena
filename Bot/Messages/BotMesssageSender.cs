@@ -1,4 +1,5 @@
 using RxTelegram.Bot;
+using RxTelegram.Bot.Exceptions;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 
 namespace Hedgey.Sirena.Bot
@@ -28,14 +29,11 @@ namespace Hedgey.Sirena.Bot
       {
         RxTelegram.Bot.Interface.BaseTypes.Message message = await bot.SendMessage(sendMessage);
         var result = message;
-        //return new IMessageSender.Result(true,result);
       }
-      catch (Exception ex)
+      catch (ApiException ex)
       {
-
-        var sendException = new Exception($"Exception on sending text to chat: {chatId}", ex);
+        var sendException = new Exception($"Exception on sending text to chat: {chatId} reason: "+ex.StatusCode, ex);
         Console.WriteLine(sendException);
-        //return new IMessageSender.Result(false, isError: true, errorMessage: sendException.Message );
       }
     }
   }

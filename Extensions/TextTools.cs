@@ -21,22 +21,22 @@ static public class TextTools
       builder.Append(c);
     return builder.ToString();
   }
-  
+
   public static string SkipFirstNWords(this string input, int n)
+  {
+    if(n==0) return input;
+    input = input.TrimStart();
+    int index=0;
+    for ( int current =0; current< n; ++current)
     {
-        input = input.TrimStart();
-        int index = 0;
-        for (int i = 0; i < n; i++)
-        {
-            index = input.IndexOf(' ', index);
-            if (index == -1) return string.Empty;
-            ++index;
-        }
-        return input.Substring(index);
+      index = input.IndexOf(' ', index);
+      if (index == -1) return string.Empty;
+      while (++index !=input.Length && input[index]==' ');
     }
-  public static string GetParameterByNumber(string text, int number)
-  => text.SkipWhile(_char => _char != ' ')
-          .Skip(number)
-          .TakeWhile(_char => _char != ' ')
+    return input.Substring(index);
+  }
+  public static string GetParameterByNumber(this string commandString, int number)
+  => commandString.SkipFirstNWords(number)
+          .TakeWhile(_char =>!char.IsWhiteSpace(_char) )
           .ConvertToString();
 }
