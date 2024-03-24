@@ -7,6 +7,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class RemoveSirenCommnad : BotCustomCommmand
 {
+  private const string wrongParameter = "Command syntax: `/remove {sirena number| sirena number}`\n You can find sirena id and number using /list";
   private IMongoCollection<UserRepresentation> usersCollection;
   private IMongoCollection<SirenRepresentation> sirenCollection;
   private FacadeMongoDBRequests request;
@@ -21,10 +22,15 @@ public class RemoveSirenCommnad : BotCustomCommmand
   public record IdProjection(ObjectId? Id);
   async public override void Execute(Message message)
   {
+     string messageText ;
     long uid = message.From.Id;
-    string param = Extensions.TextTools.GetParameterByNumber(message.Text,1);
+    string param = Extensions.TextTools.GetParameterByNumber(message.Text, 1);
     ObjectId id = await request.GetSirenaId(message.From.Id, param);
-    if (id == ObjectId.Empty) return;
+    if (id == ObjectId.Empty)
+    {
+      Program.messageSender.Send(message.Chat.Id, wrongParameter);
+      return;
+    }
     //Remove srien Id from the owner document
     var filter = Builders<UserRepresentation>.Filter.Eq(x => x.UID, uid);
     var userUpdate = Builders<UserRepresentation>.Update.Pull<ObjectId>(x => x.Owner, id);
@@ -33,7 +39,7 @@ public class RemoveSirenCommnad : BotCustomCommmand
     //Remove siren from collection by ID
     var sirenFilter = Builders<SirenRepresentation>.Filter.Eq(x => x.Id, id);
     var result2 = await sirenCollection.FindOneAndDeleteAsync(sirenFilter);
-    string messageText = result2 != null ? '*' + result2.Title + "* has been removed" :
+    messageText = result2 != null ? '*' + result2.Title + "* has been removed" :
     "You don't have *sirena* with id: *" + id + '*';
     Program.messageSender.Send(message.Chat.Id, messageText);
   }

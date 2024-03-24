@@ -14,8 +14,7 @@ public class CreateSirenaCommand : BotCustomCommmand
   private const int SIGNAL_LIMIT = 5;
   private const int TITLE_MAX_LENGHT = 256;
   private const int TITLE_MIN_LENGHT = 3;
-  private const string emptyTitleWarning = "Signal title must have at least" +
-  " {0} symbols and must not be more than {1} symbols long";
+  private const string emptyTitleWarning = "Command syntax: `/create {{title}}`\nSirena title must be between {0} and {1} symbols long.";
 
   public CreateSirenaCommand(string name, string description, IMongoDatabase db, FacadeMongoDBRequests requests)
   : base(name, description)
@@ -32,7 +31,8 @@ public class CreateSirenaCommand : BotCustomCommmand
     string sirenName = message.Text.SkipFirstNWords(1);
     if (string.IsNullOrEmpty(sirenName) || sirenName.Length < TITLE_MIN_LENGHT)
     {
-      Program.messageSender.Send(message.Chat.Id, string.Format(emptyTitleWarning, TITLE_MIN_LENGHT, TITLE_MAX_LENGHT));
+      var text =string.Format(emptyTitleWarning, TITLE_MIN_LENGHT, TITLE_MAX_LENGHT);
+      Program.messageSender.Send(message.Chat.Id, text);
       return;
     }
     var filter = Builders<UserRepresentation>.Filter.Eq("_id", uid);

@@ -27,7 +27,7 @@ static internal class Program
   private static async Task Main(string[] args)
   {
 
-    BotCustomCommmand command = new CreateSirenaCommand("create", "Creates a sirena with certain title", request.db, request);
+    BotCustomCommmand command = new CreateSirenaCommand("create", "Creates a sirena with certain title. Example: `/create Sirena`", request.db, request);
     BotCommands.Add(command);
     command = new CallSirenaCommand("call", "Call sirena by number or by id", request);
     BotCommands.Add(command);

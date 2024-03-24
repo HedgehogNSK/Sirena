@@ -8,6 +8,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class SubscribeCommand : BotCustomCommmand
 {
+  const string noSirenaError = "There is no *sirena* with this id: *{0}*";
   private IMongoCollection<UserRepresentation> usersCollection;
   private IMongoCollection<SirenRepresentation> sirenCollection;
   public SubscribeCommand(string name, string description, IMongoDatabase db)
@@ -31,7 +32,7 @@ public class SubscribeCommand : BotCustomCommmand
 
     if (!ObjectId.TryParse(param, out ObjectId id))
     {
-      notificationText = $"There is now *sirena* with this id: *{param}*";
+      notificationText = string.Format(noSirenaError, param);
       Program.messageSender.Send(message.Chat.Id, notificationText);
       return;
     }
@@ -41,7 +42,7 @@ public class SubscribeCommand : BotCustomCommmand
     var siren = await sirenCollection.FindOneAndUpdateAsync(filterSiren, addSubsription);
     if (siren == null)
     {
-      notificationText = $"There is now *sirena* with this id: *{param}*";
+      notificationText = string.Format(noSirenaError, param);
       Program.messageSender.Send(message.Chat.Id, notificationText);
       return;
     }
