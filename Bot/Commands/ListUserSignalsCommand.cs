@@ -18,7 +18,7 @@ public class ListUserSignalsCommand : BotCustomCommmand, IBotCommand
   {
     long uid = message.From.Id;
 
-    var filter = Builders<SirenRepresentation>.Filter.Eq("ownerid", uid);
+    var filter = Builders<SirenRepresentation>.Filter.Eq(x=> x.OwnerId, uid);
     var userSirens = await sirens.Find<SirenRepresentation>(filter).ToListAsync();
     string messageText = CreateMessageText(userSirens);
     Program.messageSender.Send(message.From.Id, messageText);
@@ -44,7 +44,8 @@ public class ListUserSignalsCommand : BotCustomCommmand, IBotCommand
     }
     else
     {
-      builder.Append("You haven't created any signals yet.");
+      const string noCreatedSirens = "You haven't created any siren yet.";
+      builder.Append(noCreatedSirens);
     }
     var messageText = builder.ToString();
     return messageText;
