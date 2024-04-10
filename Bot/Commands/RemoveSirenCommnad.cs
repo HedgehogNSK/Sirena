@@ -1,3 +1,4 @@
+using Hedgey.Extensions;
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -5,30 +6,34 @@ using RxTelegram.Bot.Interface.BaseTypes;
 
 namespace Hedgey.Sirena.Bot;
 
-public class RemoveSirenCommnad : BotCustomCommmand
+public class RemoveSirenCommand : AbstractBotCommmand
 {
+  const string NAME ="remove" ;
+  const string DESCRIPTION = "Remove your sirena by number, or by id.";
   private const string wrongParameter = "Command syntax: `/remove {sirena number| sirena number}`\n You can find sirena id and number using /list";
   private IMongoCollection<UserRepresentation> usersCollection;
   private IMongoCollection<SirenRepresentation> sirenCollection;
   private FacadeMongoDBRequests request;
 
-  public RemoveSirenCommnad(string name, string description, IMongoDatabase db, FacadeMongoDBRequests request)
-  : base(name, description)
+  public RemoveSirenCommand( IMongoDatabase db, FacadeMongoDBRequests request)
+  : base(NAME, DESCRIPTION)
   {
     usersCollection = db.GetCollection<UserRepresentation>("users");
     sirenCollection = db.GetCollection<SirenRepresentation>("sirens");
     this.request = request;
   }
   public record IdProjection(ObjectId? Id);
-  async public override void Execute(Message message)
+  async public override void Execute(ICommandContext context)
   {
      string messageText ;
-    long uid = message.From.Id;
-    string param = Extensions.TextTools.GetParameterByNumber(message.Text, 1);
-    ObjectId id = await request.GetSirenaId(message.From.Id, param);
+    User botUser = context.GetUser();
+    long uid = botUser.Id;
+    long chatId = context.GetChat().Id;
+    string param = context.GetArgsString().GetParameterByNumber(0);
+    ObjectId id = await request.GetSirenaId(uid, param);
     if (id == ObjectId.Empty)
     {
-      Program.messageSender.Send(message.Chat.Id, wrongParameter);
+      Program.messageSender.Send(chatId, wrongParameter);
       return;
     }
     //Remove srien Id from the owner document
@@ -41,6 +46,6 @@ public class RemoveSirenCommnad : BotCustomCommmand
     var result2 = await sirenCollection.FindOneAndDeleteAsync(sirenFilter);
     messageText = result2 != null ? '*' + result2.Title + "* has been removed" :
     "You don't have *sirena* with id: *" + id + '*';
-    Program.messageSender.Send(message.Chat.Id, messageText);
+    Program.messageSender.Send(chatId, messageText);
   }
 }

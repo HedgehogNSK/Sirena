@@ -1,8 +1,10 @@
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using RxTelegram.Bot.Interface.BaseTypes;
+using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
+using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 
 namespace Hedgey.Sirena.Bot;
 
@@ -20,7 +22,7 @@ public class BotMessageSenderTimerProxy : IMessageSender, IDisposable
     IObservable<ResponseMessage> observableMessages = Enumerable.Range(0, MAX_SENDS_PER_SECOND)
         .ToObservable()
         .TakeWhile(_ => count < MAX_SENDS_PER_SECOND && !waitingMessage.IsEmpty)
-        .Select(_ => waitingMessage.TryDequeue(out var message) ? message : new ResponseMessage(0, string.Empty, false));
+        .Select(_ => waitingMessage.TryDequeue(out var message) ? message : new ResponseMessage(0, string.Empty));
 
     stream = timerStarter.SelectMany(Observable.Timer(second))
         .Do(_ => count = 0)
@@ -40,7 +42,7 @@ public class BotMessageSenderTimerProxy : IMessageSender, IDisposable
       timerStarter.OnNext(Unit.Default);
     try
     {
-      sender.Send(param.chatId, param.text, param.silent);
+      sender.Send(param.chatId, param.text,param.inlineMarkup, param.silent);
     }
     catch (Exception innerException)
     {
@@ -50,9 +52,22 @@ public class BotMessageSenderTimerProxy : IMessageSender, IDisposable
       Console.WriteLine(ex);
     }
   }
-  public virtual void Send(long chatId, string text, bool silent = true)
+  public virtual void Send(ChatId chatId, string text, IReplyMarkup? inlineMarkup = default, bool silent = true)
   {
-    ResponseMessage response = new(chatId, text, silent);
+    ResponseMessage response = new(chatId, text, inlineMarkup, silent);
+    if (count < MAX_SENDS_PER_SECOND && waitingMessage.IsEmpty)
+    {
+      SendImmidiate(response);
+    }
+    else
+    {
+      waitingMessage.Enqueue(response);
+    }
+  }
+
+  public void Send(SendMessage message)
+  {
+    ResponseMessage response = new(message.ChatId, message.Text, message.ReplyMarkup, message.DisableNotification??true);
     if (count < MAX_SENDS_PER_SECOND && waitingMessage.IsEmpty)
     {
       SendImmidiate(response);
@@ -69,5 +84,5 @@ public class BotMessageSenderTimerProxy : IMessageSender, IDisposable
     stream?.Dispose();
   }
 
-  public record ResponseMessage(long chatId, string text, bool silent);
+  public record ResponseMessage(ChatId chatId, string text,IReplyMarkup? inlineMarkup = default, bool silent=true);
 }

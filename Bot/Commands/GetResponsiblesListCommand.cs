@@ -9,8 +9,10 @@ using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-public class GetResponsiblesListCommand : BotCustomCommmand
+public class GetResponsiblesListCommand : AbstractBotCommmand
 {
+  const string NAME = "responsible";
+  const string DESCRIPTION = "Delegate right to call sirena with another user.";
   const string wrongParamMessage = "Please use next syntax to get list of responsible users:\n/responsible {sirena id or number}";
   const string noSirenaMessage = "There is no sirena with id *{0}*";
   const string noSirenaWithNumber = "You don't have sirena with number *{0}*";
@@ -19,9 +21,8 @@ public class GetResponsiblesListCommand : BotCustomCommmand
   private readonly TelegramBot bot;
   private readonly FacadeMongoDBRequests requests;
 
-  public GetResponsiblesListCommand(string name, string description
-  , IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
-  : base(name, description)
+  public GetResponsiblesListCommand( IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
+  : base(NAME, DESCRIPTION)
   {
     users = db.GetCollection<UserRepresentation>("users");
     sirens = db.GetCollection<SirenRepresentation>("sirens");
@@ -29,10 +30,12 @@ public class GetResponsiblesListCommand : BotCustomCommmand
     this.requests = requests;
   }
 
-  public override async void Execute(Message message)
+  public override async void Execute(ICommandContext context)
   {
-    long uid = message.From.Id;
-    string param = message.Text.GetParameterByNumber(1);
+    User botUser = context.GetUser();
+    long uid = botUser.Id;
+    long chatId = context.GetChat().Id;
+    string param = context.GetArgsString().GetParameterByNumber(0);
     SirenRepresentation sirena;
 
     if (int.TryParse(param, out int number))
@@ -44,7 +47,7 @@ public class GetResponsiblesListCommand : BotCustomCommmand
       }
       else
       {
-        Program.messageSender.Send(message.Chat.Id, string.Format(noSirenaWithNumber, number));
+        Program.messageSender.Send(chatId, string.Format(noSirenaWithNumber, number));
         return;
       }
     }
@@ -54,18 +57,18 @@ public class GetResponsiblesListCommand : BotCustomCommmand
       if (sirena == null)
       {
 
-        Program.messageSender.Send(message.Chat.Id, noSirenaMessage);
+        Program.messageSender.Send(chatId, noSirenaMessage);
         return;
       }
     }
     else
     {
-      Program.messageSender.Send(message.Chat.Id, wrongParamMessage);
+      Program.messageSender.Send(chatId, wrongParamMessage);
       return;
     }
 
     var messageText = await CreateMessageText(sirena);
-    Program.messageSender.Send(message.Chat.Id, messageText);
+    Program.messageSender.Send(chatId, messageText);
   }
 
   private async Task<string[]> GetResponsibleNames(SirenRepresentation sirena)
@@ -91,7 +94,7 @@ public class GetResponsiblesListCommand : BotCustomCommmand
 
     var chat = await bot.GetChatByUID(sirena.OwnerId);
     string owner = chat?.GetUsername() ?? "Ghost";
-    owner+="|" + sirena.OwnerId;
+    owner += "|" + sirena.OwnerId;
 
     var builder = new StringBuilder("Sirena *\"")
           .Append(sirena.Title)

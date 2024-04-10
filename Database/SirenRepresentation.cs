@@ -15,14 +15,14 @@ public class SirenRepresentation
   public int UseCount { get; set; }
   [BsonRepresentation(BsonType.Int64)]
   [BsonElement("listener")]
-  public long[] Listener { get; internal set; } = [];
+  public long[] Listener { get;  set; } = [];
   [BsonRepresentation(BsonType.Int64)]
   [BsonElement("responsible")]
-  public long[] Responsible { get; internal set; } = [];
+  public long[] Responsible { get;  set; } = [];
   [BsonElement("requests")]
-  public Request[] Requests { get; internal set; } = [];
+  public Request[] Requests { get;  set; } = [];
   [BsonElement("last_call"), BsonIgnoreIfNull(true)]
-  public CallInfo? LastCall { get; internal set; }
+  public CallInfo? LastCall { get;  set; }
 
   public override string ToString()
   {

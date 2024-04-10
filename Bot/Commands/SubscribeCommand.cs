@@ -6,34 +6,38 @@ using RxTelegram.Bot.Interface.BaseTypes;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SubscribeCommand : BotCustomCommmand
+public class SubscribeCommand : AbstractBotCommmand
 {
+  const string NAME ="subscribe" ;
+  const string DESCRIPTION = "Subscribes to *sirena* by id.";
   const string noSirenaError = "There is no *sirena* with this id: *{0}*";
   private IMongoCollection<UserRepresentation> usersCollection;
   private IMongoCollection<SirenRepresentation> sirenCollection;
-  public SubscribeCommand(string name, string description, IMongoDatabase db)
-  : base(name, description)
+  public SubscribeCommand( IMongoDatabase db)
+  : base(NAME, DESCRIPTION)
   {
     usersCollection = db.GetCollection<UserRepresentation>("users");
     sirenCollection = db.GetCollection<SirenRepresentation>("sirens");
   }
 
-  public async override void Execute(Message message)
+  public async override void Execute(ICommandContext context)
   {
-    long uid = message.From.Id;
-    string param = message.Text.GetParameterByNumber(1);
+    User botUser = context.GetUser();
+    long uid = botUser.Id;
+    long chatId = context.GetChat().Id;
+    string param = context.GetArgsString().GetParameterByNumber(0);
     string notificationText;
     if (string.IsNullOrEmpty(param))
     {
       notificationText = $"You have to input *Id* of a siren to subsribe";
-      Program.messageSender.Send(message.Chat.Id, notificationText);
+      Program.messageSender.Send(chatId, notificationText);
       return;
     }
 
     if (!ObjectId.TryParse(param, out ObjectId id))
     {
       notificationText = string.Format(noSirenaError, param);
-      Program.messageSender.Send(message.Chat.Id, notificationText);
+      Program.messageSender.Send(chatId, notificationText);
       return;
     }
 
@@ -43,10 +47,10 @@ public class SubscribeCommand : BotCustomCommmand
     if (siren == null)
     {
       notificationText = string.Format(noSirenaError, param);
-      Program.messageSender.Send(message.Chat.Id, notificationText);
+      Program.messageSender.Send(chatId, notificationText);
       return;
     }
     notificationText = $"You successfully subsribed to *siren*: _{siren.Title}_";
-    Program.messageSender.Send(message.Chat.Id, notificationText);
+    Program.messageSender.Send(chatId, notificationText);
   }
 }

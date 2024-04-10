@@ -14,7 +14,7 @@ static public class TextTools
   /// </summary>
   /// <param name="chars"></param>
   /// <returns></returns>
-  public static string ConvertToString(this IEnumerable<char> chars)
+  public static string BuildString(this IEnumerable<char> chars)
   {
     var builder = new StringBuilder();
     foreach (var c in chars)
@@ -22,21 +22,38 @@ static public class TextTools
     return builder.ToString();
   }
 
-  public static string SkipFirstNWords(this string input, int n)
+  public static string AssembleString(this IEnumerable<char> chars)
+  => new string(chars.ToArray());
+
+  public static IEnumerable<char> SkipFirstNWords(this IEnumerable<char> input, int n)
   {
-    if(n==0) return input;
-    input = input.TrimStart();
-    int index=0;
-    for ( int current =0; current< n; ++current)
+    if (n < 0)
+      throw new ArgumentException("N has to be greater or equal to 0", "n");
+    if (n == 0) return input;
+    input = input.SkipWhile(char.IsWhiteSpace);
+    for (int id = 0; id != n; ++id)
     {
-      index = input.IndexOf(' ', index);
-      if (index == -1) return string.Empty;
-      while (++index !=input.Length && input[index]==' ');
+      input = input.SkipWhile(_c => !char.IsWhiteSpace(_c))
+          .SkipWhile(char.IsWhiteSpace);
     }
-    return input.Substring(index);
+    return input;
   }
-  public static string GetParameterByNumber(this string commandString, int number)
-  => commandString.SkipFirstNWords(number)
-          .TakeWhile(_char =>!char.IsWhiteSpace(_char) )
-          .ConvertToString();
+  public static string GetParameterByNumber(this IEnumerable<char> commandString, int number)
+    => commandString.SkipFirstNWords(number)
+        .TakeWhile(_char => !char.IsWhiteSpace(_char))
+        .AssembleString();
+
+  public static bool ExtractCommandAndArgs(string source, out string command, out string argString)
+  {
+    argString = string.Empty;
+    command = string.Empty;
+    if (string.IsNullOrEmpty(source)) return false;
+
+    source = source.TrimStart();
+    if (source[0] != '/') return false;
+
+    command = source.Skip(1).GetParameterByNumber(0);
+    argString = source.SkipFirstNWords(1).AssembleString();
+    return true;
+  }
 }

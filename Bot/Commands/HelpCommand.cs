@@ -1,22 +1,24 @@
 using RxTelegram.Bot;
-using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using System.Text;
 
 namespace Hedgey.Sirena.Bot
 {
-  class HelpCommand : BotCustomCommmand, IBotCommand
+  class HelpCommand : AbstractBotCommmand, IBotCommand
   {
-    List<BotCustomCommmand> commands;
+    const string NAME = "help";
+    const string DESCRIPTION = "";
+    List<AbstractBotCommmand> commands;
     TelegramBot bot;
-    public HelpCommand(string name, string description, TelegramBot bot, IEnumerable<BotCustomCommmand> commands) : base(name, description)
+    public HelpCommand(TelegramBot bot, IEnumerable<AbstractBotCommmand> commands)
+    : base(NAME, DESCRIPTION)
     {
 
       this.commands = commands != null ? new(commands) : new();
       this.bot = bot;
     }
 
-    public override void Execute(Message message)
+    public async override void Execute(ICommandContext context)
     {
       StringBuilder builder = new StringBuilder("List of commands:\n");
       foreach (var command in commands)
@@ -27,12 +29,13 @@ namespace Hedgey.Sirena.Bot
         builder.Append(command.Description);
         builder.AppendLine();
       }
+      long uid = context.GetUser().Id;
       var response = new SendMessage()
       {
-        ChatId = message.Chat.Id,
+        ChatId = uid,
         Text = builder.ToString()
       };
-      bot.SendMessage(response);
+      Program.messageSender.Send(response);
     }
   }
 }

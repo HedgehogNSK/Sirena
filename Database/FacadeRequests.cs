@@ -1,7 +1,6 @@
-using System.Security.Cryptography.X509Certificates;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using RxTelegram.Bot.Interface.Setup;
+using System.Text.RegularExpressions;
 
 namespace Hedgey.Sirena.Database;
 
@@ -174,6 +173,16 @@ public class FacadeMongoDBRequests
               .AddToSet(x=>x.Requests,request)
               .AddToSet(x=>x.Listener, requesterId);
     UpdateResult result =await  sirens.UpdateOneAsync(filter,update);
+    return result;
+  }
+
+  internal async Task<IEnumerable<SirenRepresentation>> GetSirenaByName(string searchKey)
+  {
+    var formatedKey = Regex.Escape(searchKey);
+    var pattern = new Regex(formatedKey, RegexOptions.IgnoreCase|RegexOptions.Compiled|RegexOptions.Multiline);
+    var bsonRegex = new BsonRegularExpression(pattern);
+    var filter = Builders<SirenRepresentation>.Filter.Regex(x=>x.Title, bsonRegex );
+    var result = await sirens.Find(filter).ToListAsync();
     return result;
   }
 }

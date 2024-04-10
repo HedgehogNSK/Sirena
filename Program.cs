@@ -1,18 +1,25 @@
-﻿using Hedgey.Sirena.Bot;
+﻿using Hedgey.Extensions;
+using Hedgey.Sirena.Bot;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using MongoDB.Driver;
 using RxTelegram.Bot;
+using RxTelegram.Bot.Exceptions;
 using RxTelegram.Bot.Interface.BaseTypes;
+using RxTelegram.Bot.Interface.BaseTypes.Requests.Callbacks;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena;
 static internal class Program
 {
+  private const string errorWrongFormat = "You have to send command. Commands starts from '/'. Use /help to find out options.";
+  private const string errorNoCommand = $"No command were found. Use /help to find out what I can do!";
   static TelegramBot bot;
   static MongoClient dbClient;
   static FacadeMongoDBRequests request;
   public static readonly IMessageSender messageSender;
+  public static readonly BotCommands botCommands;
+
   static Program()
   {
     var factory = new MongoClientFactory();
@@ -23,49 +30,16 @@ static internal class Program
     //TelegramBotClient botClient = ((IFactory<TelegramBotClient>)telegramFactory).Create();
     messageSender = new BotMesssageSender(bot);
     messageSender = new BotMessageSenderTimerProxy(messageSender);
+    var commandsCollectionFactory = new CommandsCollectionFactory(request, bot);
+    botCommands = commandsCollectionFactory.Create();
   }
   private static async Task Main(string[] args)
   {
-
-    BotCustomCommmand command = new CreateSirenaCommand("create", "Creates a sirena with certain title. Example: `/create Sirena`", request.db, request);
-    BotCommands.Add(command);
-    command = new CallSirenaCommand("call", "Call sirena by number or by id", request);
-    BotCommands.Add(command);
-    command = new ListUserSignalsCommand("list", "Shows a list of sirenas that are being tracked.", request.db);
-    BotCommands.Add(command);
-    command = new RemoveSirenCommnad("remove", "Remove your sirena by number, or by id.", request.db, request);
-    BotCommands.Add(command);
-    command = new SubscribeCommand("subscribe", "Subscribes to *sirena* by id.", request.db);
-    BotCommands.Add(command);
-    command = new GetSubscriptionsListCommand("subscriptions", "Displays you current subscriptions.", request.db);
-    BotCommands.Add(command);
-    command = new UnsubscribeCommand("unsubscribe", "Unsubscribes from certain sirena.", request.db);
-    BotCommands.Add(command);
-    command = new MuteUserSignalCommand("mute", "Mute calls from certain user for certain *sirena*. Calls of the *sirena* from other users will be active anyway",request,bot);
-    BotCommands.Add(command);
-    command = new UnmuteUserSignalCommand("unmute", "Unmute previously muted user for certain siren",request,bot);
-    BotCommands.Add(command);
-    command = new GetResponsiblesListCommand("responsible", "Display of people responsible for sirena", request.db,request,bot);
-    BotCommands.Add(command);
-    command = new DelegateRightsCommand("delegate", "Delegate right to call sirena with another user.", request.db,request,bot);
-    BotCommands.Add(command);
-    command = new RevokeRightsCommand("revoke", "Revoke rights to call sirena from user.",request,bot);
-    BotCommands.Add(command);
-    command = new RequestRightsCommand("request", "Allows to request rights to call certain sirena of another user.", request);
-    BotCommands.Add(command);
-    command = new GetRequestsListCommand("requests", "Display a list of requests for permission to launch a sirena.", request.db,request,bot);
-    BotCommands.Add(command);
-
-    command = new HelpCommand("help", "Displays list of all commands", bot, BotCommands.Commands);
-    BotCommands.Add(command);
-
-    command = new StartCommand("start", "Initialization of user", request);
-    BotCommands.Add(command);
-
     var me = await bot.GetMe();
     Console.WriteLine($"Bot name: @{me.Username}");
 
     var subscription = bot.Updates.Message.Subscribe(HandleReceivedMessage, OnError);
+    bot.Updates.CallbackQuery.Subscribe(OnInlineCallback, OnError);
 
     string? input;
     do
@@ -80,17 +54,56 @@ static internal class Program
     Console.WriteLine(exception);
   }
 
+  private static async void OnInlineCallback(CallbackQuery query)
+  {
+    var callbackAnswer = new AnswerCallbackQuery(){
+       CallbackQueryId = query.Id,
+        Text = "ALLO",
+         
+    };
+    try{
+    bool result = await bot.AnswerCallbackQuery(callbackAnswer);
+    }
+    catch (ApiException ex)
+    {
+      var wrappedEx = new Exception($"Exception in {query.From.Id} on command: {query.Data}\nreason: {ex.StatusCode}\n{ex.Description}", ex);
+      Console.WriteLine(wrappedEx);
+
+      return;
+    }
+    string argString;
+    AbstractBotCommmand? command;
+    if (!GetCommand(query.Data, query.From.Id, out argString, out command) || command==null)
+      return;
+    var context = new CommandContext(query.From, query.Message.Chat, command.Command, argString);
+    command?.Execute(context);
+  }
+
   private static void HandleReceivedMessage(Message message)
   {
-    if (BotCommands.Contains(message.Text, out BotCustomCommmand? command))
+    string argString;
+    AbstractBotCommmand? command;
+    if (!GetCommand(message.Text, message.From.Id, out argString, out command) || command==null)
+      return;
+    var context = new CommandContext(message.From, message.Chat, command.Command, argString);
+    Console.WriteLine($"user {context.GetUser().Id} calls {context.GetCommandName()}");
+    command?.Execute(context);
+  }
+
+  private static bool GetCommand(string source, long senderId, out string argString, out AbstractBotCommmand? command)
+  {
+    command = null;
+    if (!TextTools.ExtractCommandAndArgs(source, out string commandName, out argString))
     {
-      command?.Execute(message);
+      messageSender.Send(senderId, errorWrongFormat);
+      return false;
     }
-    else
+    command = botCommands.GetCommmandOrNull(commandName);
+    if (command == null)
     {
-      Console.WriteLine($"{message.From.Username}: {message.Text}");
-      string text = $"No command were found. Use /help to find out what I can do!";
-      messageSender.Send(message.Chat.Id, text);
+      messageSender.Send(senderId, errorNoCommand);
+      return false;
     }
+    return true;
   }
 }

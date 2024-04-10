@@ -6,19 +6,21 @@ using RxTelegram.Bot.Interface.BaseTypes;
 
 namespace Hedgey.Sirena.Bot;
 
-public class DelegateRightsCommand : BotCustomCommmand
+public class DelegateRightsCommand : AbstractBotCommmand
 {
+  const string NAME = "delegate";
+  const string DESCRIPTION = "Delegate right to call sirena with another user.";
   private readonly FacadeMongoDBRequests requests;
   private IMongoCollection<UserRepresentation> usersCollection;
   private IMongoCollection<SirenRepresentation> sirenCollection;
   private readonly TelegramBot bot;
-  const string errorWrongParamters= "Please input: /delegate {siren number or id} {user id}";
-  const string errorWrongSirenaID= "{0} parameter is incorrect. First parameter has to be serial number or ID of your sirena";
-  const string errorWrongUID= "{0} parameter is incorrect.Second parameter has to be *UID* of user that will have right to call the sirena.";
-  const string errorNoSirena= "You don't have a sirena1 with id: {0}" ;
-  const string successMessage ="User {0} has been set as a responsible for sirena: {1}";
-  public DelegateRightsCommand(string name, string description, IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
-  : base(name, description)
+  const string errorWrongParamters = "Please input: /delegate {siren number or id} {user id}";
+  const string errorWrongSirenaID = "{0} parameter is incorrect. First parameter has to be serial number or ID of your sirena";
+  const string errorWrongUID = "{0} parameter is incorrect.Second parameter has to be *UID* of user that will have right to call the sirena.";
+  const string errorNoSirena = "You don't have a sirena1 with id: {0}";
+  const string successMessage = "User {0} has been set as a responsible for sirena: {1}";
+  public DelegateRightsCommand( IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
+  : base(NAME, DESCRIPTION)
   {
     usersCollection = db.GetCollection<UserRepresentation>("users");
     sirenCollection = db.GetCollection<SirenRepresentation>("sirens");
@@ -26,28 +28,31 @@ public class DelegateRightsCommand : BotCustomCommmand
     this.requests = requests;
   }
 
-  public async override void Execute(Message message)
+  public async override void Execute(ICommandContext context)
   {
     string responseText;
-    long uid = message.From.Id;
-    string[] parameters = message.Text.Split(' ',3, StringSplitOptions.RemoveEmptyEntries);
+    
+    User botUser = context.GetUser();
+    long uid = botUser.Id;
+    long chatId = context.GetChat().Id;
+    string[] parameters = context.GetArgsString().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
     if (parameters.Length < 3)
     {
-      Program.messageSender.Send(message.Chat.Id, errorWrongParamters);
+      Program.messageSender.Send(chatId, errorWrongParamters);
       return;
     }
     ObjectId sirenaId = default;
     if (!int.TryParse(parameters[1], out int number)
         && !ObjectId.TryParse(parameters[1], out sirenaId))
     {
-       responseText = string.Format(errorWrongSirenaID,parameters[1]);
-      Program.messageSender.Send(message.Chat.Id, responseText);
+      responseText = string.Format(errorWrongSirenaID, parameters[1]);
+      Program.messageSender.Send(chatId, responseText);
       return;
     }
     if (!long.TryParse(parameters[2], out long duid))
     {
-      responseText = string.Format(errorWrongUID,parameters[2]);
-      Program.messageSender.Send(message.Chat.Id, responseText);
+      responseText = string.Format(errorWrongUID, parameters[2]);
+      Program.messageSender.Send(chatId, responseText);
       return;
     }
     if (sirenaId == default)
@@ -65,11 +70,11 @@ public class DelegateRightsCommand : BotCustomCommmand
 
     if (updatedSiren == null)
     {
-      responseText = string.Format(errorNoSirena,sirenaId);
-      Program.messageSender.Send(message.Chat.Id, responseText);
+      responseText = string.Format(errorNoSirena, sirenaId);
+      Program.messageSender.Send(chatId, responseText);
       return;
     }
     responseText = string.Format(successMessage, duid, updatedSiren);
-    Program.messageSender.Send(message.Chat.Id, responseText);
+    Program.messageSender.Send(chatId, responseText);
   }
 }

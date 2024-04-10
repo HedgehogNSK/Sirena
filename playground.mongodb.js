@@ -1,119 +1,298 @@
 
 use('playground');
-db.users.drop();
+// db.users.drop();
+// db.users.insertMany([{
+//   "_id": ObjectId( "65f0dad2db766d26da3b088d"
+//   ),
+//   "ownerid": NumberLong( "402690255"),
+//   "title": "Test2",
+//   "count": NumberLong( "0"),
+//   "requests": [
+//     {
+//       "user_id": NumberLong( "402690236"),
+//       "message": "Дай права"
+//     }
+//   ],
+//   "listener": [
+//     NumberLong( "402690236"),
+//   ]
+// },
+// {
+//   "_id": ObjectId( "65fc0f83c34e3b20edac4642"),
+//   "ownerid": NumberLong( "402690236"),
+//   "title": "Check",
+//   "count": NumberLong( "0"),
+//   "listener": [
+//     NumberLong( "6443061333"),
+//   ],
+//   "responsible": [
+//     NumberLong( "402690236"),
+//   ],
+//   "requests": [],
+//   "last_call": {
+//     "caller": NumberLong( "402690236"),
+//     "date": {
+//       "$date": NumberLong( "1711749420803"),
+//     }
+//   }
+// },
+// {
+//   "_id": ObjectId( "65fc94153273fc2ab6ff895f"),
+//   "ownerid": NumberLong( "402690236"),
+//   "title": "Ждём ТоИ 3",
+//   "count": NumberLong( "0"),
+//   "listener": [
+//     NumberLong( "697730978"),
+//   ],
+//   "responsible": [],
+//   "requests": [],
+//   "last_call": {
+//     "caller": NumberLong( "402690236"),
+//     "date": {
+//       "$date": NumberLong( "1711749390536"),
+//     }
+//   }
+// },
+// {
+//   "_id": ObjectId( "65fc94593273fc2ab6ff8960"),
+//   "ownerid": NumberLong( "6443061333"),
+//   "title": "Ждём ТоИ 3",
+//   "count": NumberLong( "0"),
+//   "listener": [
+//     NumberLong( "402690236"),
+//   ],
+//   "responsible": [],
+//   "requests": [],
+//   "last_call": {
+//     "caller": NumberLong( "6443061333"),
+//     "date": {
+//       "$date": NumberLong( "1711052809476"),
+//     }
+//   }
+// },
+// {
+//   "_id": ObjectId( "65ffce29484f23ec57f116a0"),
+//   "ownerid": NumberLong( "697730978"),
+//   "title": "Satonyx",
+//   "count": NumberLong( "0"),
+//   "listener": [],
+//   "responsible": [],
+//   "requests": []
+// }]);
+
 db.sirens.drop();
-
-db.users.insertMany([{
-    "_id": NumberLong("402690236"),
-    "chatid": NumberLong("402690236"),
-    "owner": [
-        ObjectId('65f0daccdb766d26da3b088c') ,
-        ObjectId( "65f0dad2db766d26da3b088d"),
-        ObjectId( "65f0dad6db766d26da3b088e")
-    ],
-    "listener": [],
-    "requests": [
-        {
-            "sirena_id": ObjectId( "65f0daccdb766d26da3b088c"),
-            "user_id": NumberLong("402690255"),
-            "message": "Йоу это я"
-        },
-        {
-            "sirena_id": ObjectId( "65f0dad2db766d26da3b088d"),
-            "user_id": NumberLong("402690236"),
-            "message": "Дай права"
-        },
-        {
-            "sirena_id": ObjectId( "65f0dad6db766d26da3b088e"),
-            "user_id": NumberLong("402690222")
-        }
-    ]
-},
-{
-    "_id": NumberLong("402690255"),
-    "chatid": NumberLong("402690236"),
-    "owner": [],
-    "listener": []
-},
-{
-    "_id": NumberLong("402690111"),
-    "chatid": NumberLong("402690236"),
-    "owner": [],
-    "listener": [
-        "65f0c11195090f27b2ae0ede"
-    ]
-},
-{
-    "_id": NumberLong("402690222"),
-    "chatid": NumberLong("402690236"),
-    "owner": [],
-    "listener": [
-        ObjectId( "65f0c11195090f27b2ae0ed2")
-    ]
-}]);
-
 db.sirens.insertMany([{
-    "_id": ObjectId( "65f0daccdb766d26da3b088c"),
-    "ownerid": NumberLong("402690236"),
-    "title": "Test",
-    "count": 0
+  "_id": ObjectId( "65f0dad2db766d26da3b088d"),
+  "ownerid": NumberLong( "402690255"),
+  "title": "Test2",
+  "count": NumberLong( "0"),
+  "requests": [
+    {
+      "user_id": NumberLong( "402690236"),
+      "message": "Дай права"
+    }
+  ],
+  "listener": [
+    NumberLong( "402690236"),
+  ]
 },
 {
-    "_id": ObjectId( "65f0dad2db766d26da3b088d"),
-    "ownerid": NumberLong("402690236"),
-    "title": "Test2",
-    "count": 0
+  "_id": ObjectId( "65fc0f83c34e3b20edac4642"),
+  "ownerid": NumberLong( "402690236"),
+  "title": "Check",
+  "count": NumberLong( "0"),
+  "listener": [
+    NumberLong( "6443061333"),
+  ],
+  "responsible": [
+    NumberLong( "6443061333"),
+  ],
+  "requests": [],
+  "last_call": {
+    "caller": NumberLong( "402690236"),
+    "date": {
+      "$date": NumberLong( "1711749420803"),
+    }
+  }
 },
 {
-    "_id": ObjectId( "65f0dad6db766d26da3b088e"),
-    "ownerid": NumberLong("402690236"),
-    "title": "Test3",
-    "count": 0
+  "_id": ObjectId( "65fc94153273fc2ab6ff895f"),
+  "ownerid": NumberLong( "402690236"),
+  "title": "Ждём ТоИ 3",
+  "count": NumberLong( "0"),
+  "listener": [
+    NumberLong( "697730978"),
+  ],
+  "responsible": [],
+  "requests": [],
+  "last_call": {
+    "caller": NumberLong( "402690236"),
+    "date": {
+      "$date": NumberLong( "1711749390536"),
+    }
+  }
 },
 {
-    "_id": ObjectId( "65f0c11195090f27b2ae0ede"),
-    "ownerid": NumberLong("402690236"),
-    "title": "Test3",
-    "count": 0
+  "_id": ObjectId( "65fc94593273fc2ab6ff8960"),
+  "ownerid": NumberLong( "6443061333"),
+  "title": "Ждём ТоИ 3",
+  "count": NumberLong( "0"),
+  "listener": [
+    NumberLong( "402690236"),
+    NumberLong( "00000000")
+  ],
+  "responsible": [
+    NumberLong( "402690236")
+    ],
+  "requests": [],
+  "last_call": {
+    "caller": NumberLong( "6443061333"),
+    "date": {
+      "$date": NumberLong( "1711052809476"),
+    }
+  }
+},
+{
+  "_id": ObjectId( "65ffce29484f23ec57f116a0"),
+  "ownerid": NumberLong( "697730978"),
+  "title": "Satonyx",
+  "count": NumberLong( "0"),
+  "listener": [],
+  "responsible": [],
+  "requests": []
 }]);
 
-db.users.find().forEach(function(user) {
-    let array = user.listener.map(function(id) { return ObjectId(id); } );
-    //console.log(user.listener);
-    if(array.length==0) return;
+var userId = 402690236; // Ваш ID пользователя
+db.sirens.aggregate([{
+        "$match": {
+            "$or": [
+                {"ownerid": userId}, 
+                {"listener": userId},
+                {"responsible": userId}
+            ]
+        }
+    }
+    , {"$group": {
+            "_id": true,
+            "_elements": {
+                "$push": {
+                    "SirenasCount": {
+                        "$cond": {
+                            "if": {
+                                "$eq": ["$ownerid", userId]
+                            },
+                            "then": 1,
+                            "else": 0
+                        }
+                    },
+                    "Subscriptions": {
+                        "$cond": {
+                            "if": {
+                                "$and": [
+                                    {"$ne": ["$listener", null]}, 
+                                    {"$or": [
+                                        {"$eq": ["$listener._t", "Array"]},
+                                        {"$and": [{"$isArray": "$listener"}]}
+                                        ]
+                                    }, 
+                                    {"$in": [userId, "$listener"]}
+                                ]
+                            },
+                            "then": 1,
+                            "else": 0
+                        }
+                    },
+                    "Responsible": {
+                        "$cond": {
+                            "if": {
+                                "$and": [
+                                    {"$or": [
+                                        {"$isArray": "$responsible"}, 
+                                        {"$and": [
+                                            {"$isArray": "$responsible._t"},
+                                            {"$in": ["Array", "$responsible._t"]}
+                                        ]}
+                                        ]}, 
+                                    {"$ne": ["$responsible", null]},
+                                    {"$in": [userId, "$responsible"]}
+                                ]
+                            },
+                            "then": 1,
+                            "else": 0
+                        }
+                    }
+                }
+            }
+        }
+    }
+]);
+
+//Working solution for get user statistics
+// db.sirens.aggregate([
+//   {
+//     "$match": {
+//       "$or": [
+//         { "ownerid": userId },
+//         { "listener": userId },
+//         { "responsible": userId }
+//       ]
+//     }
+//   },
+//   {
+//     "$group": {
+//       "_id": null,
+//       "owner": { "$sum": { "$cond": [{ "$eq": ["$ownerid", userId ] }, 1, 0] }},
+//       "responsible": { "$sum": { "$cond": [{ "$and": [
+//                  { "$ne": ["$responsible", null] },
+//                 { "$isArray": "$responsible" }, 
+//                 { "$in": [userId, "$responsible"] }
+//               ] }, 1,0 ] }}
+//       ,"listener": { "$sum": { "$cond": [{ "$and": [
+//                  { "$ne": ["$listener", null] },
+//                 { "$isArray": "$listener" }, 
+//                 { "$in": [userId, "$listener"] }
+//               ] }, 1,0 ] }}   
+//     }
+//   }
+// ]);
+// db.users.find().forEach(function(user) {
+//     let array = user.listener.map(function(id) { return ObjectId(id); } );
+//     //console.log(user.listener);
+//     if(array.length==0) return;
     
-    let x =db.sirens.updateMany(
-        { "_id": { $in: array } },
-        { $addToSet: { "listener": user._id } }
-    );
-    //console.log(x);
+//     let x =db.sirens.updateMany(
+//         { "_id": { $in: array } },
+//         { $addToSet: { "listener": user._id } }
+//     );
+//     //console.log(x);
     
-});
+// });
 
-db.sirens.find().forEach(function(siren) {
-    let sirena_id = siren._id;
-    db.users.find({ "requests.sirena_id": sirena_id }).forEach(function(user) {
-        let matchingRequests = user.requests.filter(function(request) {
-            console.log(sirena_id +  "  " + request.sirena_id +" "+request.sirena_id.equals(sirena_id));
-            return request.sirena_id.equals(sirena_id);
-        }).map(function(request) {
-            delete request.sirena_id;
-            return request;
-        });
-        if(matchingRequests.length ==0)return;
-        console.log(matchingRequests);
-        let x = db.sirens.updateOne(
-            { "_id": sirena_id },
-            { $addToSet: { "requests": { $each: matchingRequests } } }
-        );
-    console.log(x);
+// db.sirens.find().forEach(function(siren) {
+//     let sirena_id = siren._id;
+//     db.users.find({ "requests.sirena_id": sirena_id }).forEach(function(user) {
+//         let matchingRequests = user.requests.filter(function(request) {
+//             console.log(sirena_id +  "  " + request.sirena_id +" "+request.sirena_id.equals(sirena_id));
+//             return request.sirena_id.equals(sirena_id);
+//         }).map(function(request) {
+//             delete request.sirena_id;
+//             return request;
+//         });
+//         if(matchingRequests.length ==0)return;
+//         console.log(matchingRequests);
+//         let x = db.sirens.updateOne(
+//             { "_id": sirena_id },
+//             { $addToSet: { "requests": { $each: matchingRequests } } }
+//         );
+//     console.log(x);
 
-    });
-});
+//     });
+// });
 
 
-db.users.updateMany({}, { $unset: { "listener": "" } });
-db.users.updateMany({}, { $unset: { "requests": "" } });
+//Unset array
+//db.users.updateMany({}, { $unset: { "listener": "" } });
+//db.users.updateMany({}, { $unset: { "requests": "" } });
 // let userId = 402690236;
 // let IndexToRemove = 1;
 

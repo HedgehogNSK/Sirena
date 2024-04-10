@@ -4,24 +4,33 @@ using RxTelegram.Bot.Interface.BaseTypes;
 using System.Text;
 
 namespace Hedgey.Sirena.Bot;
-public class ListUserSignalsCommand : BotCustomCommmand, IBotCommand
+public class ListUserSignalsCommand : AbstractBotCommmand, IBotCommand
 {
+  const string NAME ="list" ;
+  const string DESCRIPTION = "Shows a list of sirenas that are being tracked.";
   private IMongoCollection<SirenRepresentation> sirens;
 
-  public ListUserSignalsCommand(string name, string description, IMongoDatabase db)
-  : base(name, description)
+  public ListUserSignalsCommand( IMongoDatabase db)
+  : base(NAME, DESCRIPTION)
   {
     sirens = db.GetCollection<SirenRepresentation>("sirens");
   }
 
-  public async override void Execute(Message message)
+  public async override void Execute(ICommandContext context)
   {
-    long uid = message.From.Id;
+    User botUser = context.GetUser();
+    long uid = botUser.Id;
+    long chatId = context.GetChat().Id;
 
     var filter = Builders<SirenRepresentation>.Filter.Eq(x=> x.OwnerId, uid);
-    var userSirens = await sirens.Find<SirenRepresentation>(filter).ToListAsync();
+    try{    var userSirens = await sirens.Find<SirenRepresentation>(filter).ToListAsync();
     string messageText = CreateMessageText(userSirens);
-    Program.messageSender.Send(message.From.Id, messageText);
+    Program.messageSender.Send(uid, messageText);
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine(ex);
+    }
   }
 
   private static string CreateMessageText(List<SirenRepresentation> userSirens)

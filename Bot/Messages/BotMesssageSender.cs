@@ -1,5 +1,7 @@
 using RxTelegram.Bot;
 using RxTelegram.Bot.Exceptions;
+using RxTelegram.Bot.Interface.BaseTypes;
+using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 
 namespace Hedgey.Sirena.Bot
@@ -14,16 +16,22 @@ namespace Hedgey.Sirena.Bot
       this.bot = bot;
     }
 
-    public async void Send(long chatId, string text, bool silent)
+    public async void Send(ChatId chatId, string text,IReplyMarkup? markup, bool silent)
     {
 
       var sendMessage = new SendMessage
       {
         ChatId = chatId,
         Text = text,
+        ReplyMarkup =  markup,
         ProtectContent = false,
         DisableNotification = silent
       };
+       Send(sendMessage);
+    }
+
+    public async void Send(SendMessage sendMessage)
+    {
 
       try
       {
@@ -32,7 +40,7 @@ namespace Hedgey.Sirena.Bot
       }
       catch (ApiException ex)
       {
-        var sendException = new Exception($"Exception on sending text to chat: {chatId} reason: "+ex.StatusCode, ex);
+        var sendException = new Exception($"Exception on sending text to chat: {sendMessage.ChatId} reason: {ex.StatusCode}\n{ex.Description}", ex);
         Console.WriteLine(sendException);
       }
     }

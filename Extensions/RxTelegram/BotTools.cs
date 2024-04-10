@@ -10,20 +10,27 @@ public static class BotTools
   static public async Task<Chat?> GetChatByUID(this TelegramBot bot, long uid)
   {
     var getChat = new GetChat { ChatId = uid };
-    try{
-          var chat = await bot.GetChat(getChat);
-    return chat;
+    try
+    {
+      var chat = await bot.GetChat(getChat);
+      return chat;
     }
-    catch(Exception ex)
+    catch (Exception ex)
     {
       Console.WriteLine(ex);
-       return default;
+      return default;
     }
   }
   public static string GetUsername(this Chat chat)
-    =>  !string.IsNullOrEmpty(chat.Username) ? '@' + chat.Username :
+    => !string.IsNullOrEmpty(chat.Username) ? '@' + chat.Username :
         (chat.FirstName + chat.LastName);
   public static string GetUsername(this User user)
-    =>  !string.IsNullOrEmpty(user.Username) ? '@' + user.Username :
+    => !string.IsNullOrEmpty(user.Username) ? '@' + user.Username :
         (user.FirstName + user.LastName);
+
+  public static async Task<string> GetUsername(TelegramBot bot, long uid)
+  {
+    var chat = await bot.GetChatByUID(uid);
+    return chat?.GetUsername() ?? "Ghost";
+  }
 }

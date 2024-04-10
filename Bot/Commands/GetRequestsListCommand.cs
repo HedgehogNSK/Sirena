@@ -9,26 +9,29 @@ using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-public class GetRequestsListCommand : BotCustomCommmand
+public class GetRequestsListCommand : AbstractBotCommmand
 {
+  const string NAME = "requests";
+  const string DESCRIPTION = "Display a list of requests for permission to launch a sirena.";
   private const string noRequestsMessage = "There are no requests for delegation of rights";
   private const string noSirenaMessage = "You don't have any sirenas yet.";
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly TelegramBot bot;
   private readonly FacadeMongoDBRequests requests;
 
-  public GetRequestsListCommand(string name, string description
-  , IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
-  : base(name, description)
+  public GetRequestsListCommand(IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
+  : base(NAME, DESCRIPTION)
   {
     sirens = db.GetCollection<SirenRepresentation>("sirens");
     this.bot = bot;
     this.requests = requests;
   }
 
-  public override async void Execute(Message message)
+  public override async void Execute(ICommandContext context)
   {
-    long uid = message.From.Id;
+    User botUser = context.GetUser();
+    long uid = botUser.Id;
+    long chatId = context.GetChat().Id;
     var filterBuilder = Builders<SirenRepresentation>.Filter;
     var filter = filterBuilder.Eq(x => x.OwnerId, uid)
                & filterBuilder.SizeGt(s => s.Requests, 0);
@@ -56,7 +59,7 @@ public class GetRequestsListCommand : BotCustomCommmand
 
       messageText = await CreateMessageText(requestsList);
     }
-    Program.messageSender.Send(message.Chat.Id, messageText);
+    Program.messageSender.Send(chatId, messageText);
   }
 
   private async Task<string> CreateMessageText(IEnumerable<RequestInfo> requestsList)
