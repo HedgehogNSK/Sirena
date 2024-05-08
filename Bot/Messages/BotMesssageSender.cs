@@ -16,7 +16,7 @@ namespace Hedgey.Sirena.Bot
       this.bot = bot;
     }
 
-    public async void Send(ChatId chatId, string text,IReplyMarkup? markup, bool silent)
+    public void Send(ChatId chatId, string text,IReplyMarkup? markup, bool silent)
     {
 
       var sendMessage = new SendMessage

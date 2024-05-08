@@ -1,21 +1,22 @@
 using Hedgey.Sirena.Bot.Operations;
 using RxTelegram.Bot.Interface.BaseTypes;
+using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
+using RxTelegram.Bot.Utils.Keyboard;
 
 namespace Hedgey.Sirena.Bot;
 
-public class MenuMessageBuilder
+public class MenuMessageBuilder : MessageBuilder
 {
   const string message = "Please select one of the options";
-  private long chatId;
   private bool userHasSirenas = false;
   private bool userSubscribed = false;
   private UserStatistics? result = null;
 
-  public MenuMessageBuilder(long chatId)
+  public MenuMessageBuilder(long chatId) : base(chatId)
   {
-    this.chatId = chatId;
   }
+
   public MenuMessageBuilder UserHasSirenas(bool userHasSirenas)
   {
     this.userHasSirenas = userHasSirenas;
@@ -33,7 +34,7 @@ public class MenuMessageBuilder
     UserHasSubcriptions(result.Subscriptions != 0);
     return this;
   }
-  public SendMessage Build()
+  public override SendMessage Build()
   {
     const string searchTitle = "🔎 Find";
     const string searchCallback = "/search";
@@ -46,45 +47,33 @@ public class MenuMessageBuilder
     const string subscriptionsTitle = "👀 Subscriptions";
     const string subscriptionsCallback = "/subscriptions";
 
-    var searchButton = new InlineKeyboardButton()
-    {
-      Text = searchTitle,
-      CallbackData = searchCallback
-    };
-    var userSirenasManageButtons = new List<InlineKeyboardButton>(){
-        new InlineKeyboardButton()
-    {
-      Text = createTitle,
-       CallbackData =createCallback
-    }};
-    if (userHasSirenas)
-      userSirenasManageButtons.Add(new InlineKeyboardButton()
-      {
-        Text = listTitle + ((result != null && result.SirenasCount != 0) ? $" [{result.SirenasCount}]" : string.Empty),
-        CallbackData = listCallback
-      });
-    var subscriptionManageButtons = new List<InlineKeyboardButton>(){
-      searchButton,
-    new InlineKeyboardButton()
-    {
-      Text = subscribeTitle,
-      CallbackData = subscribeCallback
-    }};
+    var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
+    .AddCallbackData(searchTitle, searchCallback)
+    .AddCallbackData(subscribeTitle, subscribeCallback);
+
     if (userSubscribed)
-      subscriptionManageButtons.Add(new InlineKeyboardButton()
-      {
-        Text = subscriptionsTitle + ((result != null && result.Subscriptions != 0) ? $" [{result.Subscriptions}]" : string.Empty),
-        CallbackData = subscriptionsCallback
-      });
-
-    InlineKeyboardMarkup markup = new InlineKeyboardMarkup()
     {
-      InlineKeyboard = [
-        subscriptionManageButtons,
-         userSirenasManageButtons,
-         ]
-    };
+      var title = subscriptionsTitle + ((result != null && result.Subscriptions != 0) ?
+            $" [{result.Subscriptions}]" : string.Empty);
+      keyboardBuilder.AddCallbackData(title, subscriptionsCallback);
+    }
 
+    keyboardBuilder.EndRow()
+    .BeginRow()
+    .AddCallbackData(createTitle, createCallback);
+
+    if (userHasSirenas)
+    {
+      var title = listTitle + ((result != null && result.SirenasCount != 0) ?
+            $" [{result.SirenasCount}]" : string.Empty);
+      keyboardBuilder.AddCallbackData(title, listCallback);
+    }
+
+    IReplyMarkup markup = new InlineKeyboardMarkup()
+    {
+      InlineKeyboard = keyboardBuilder.EndRow().Build()
+    };
+    
     return new SendMessage
     {
       ChatId = chatId,
