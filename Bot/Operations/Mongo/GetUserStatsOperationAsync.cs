@@ -3,11 +3,11 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
 namespace Hedgey.Sirena.Bot.Operations;
-public class MongoGetUserOverview : IGetUserOverviewAsync
+public class GetUserStatsOperationAsync : IGetUserOverviewAsync
 {
   private readonly IMongoCollection<SirenRepresentation> sirens;
 
-  public MongoGetUserOverview(IMongoCollection<SirenRepresentation> sirens)
+  public GetUserStatsOperationAsync(IMongoCollection<SirenRepresentation> sirens)
   {
     this.sirens = sirens;
   }
@@ -23,7 +23,7 @@ public class MongoGetUserOverview : IGetUserOverviewAsync
         {
           SirenasCount = _sirens.Sum(x => x.OwnerId == userId ? 1 : 0),
           Subscriptions = _sirens.Sum(_sirena => (_sirena.Listener ?? new long[] { }).Contains(userId) ? 1 : 0),
-          Responsible = _sirens.Sum(_sirena =>(_sirena.Responsible is Array) && (_sirena.Responsible ?? new long[] { }).Contains(userId) ? 1 : 0)
+          Responsible = _sirens.Sum(_sirena =>(Mql.Exists(_sirena.Responsible) && _sirena.Responsible.Contains(userId)) ? 1 : 0)
         });
 
     return await query.FirstOrDefaultAsync();
