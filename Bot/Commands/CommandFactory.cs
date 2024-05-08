@@ -1,4 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
+using Hedgey.Sirena.Bot.Operations.Mongo;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using MongoDB.Driver;
@@ -12,24 +13,37 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
   private readonly FacadeMongoDBRequests requests;
   private readonly TelegramBot bot;
   private readonly BotCommands botCommands;
-  public CommandFactory(FacadeMongoDBRequests requests, TelegramBot bot, BotCommands botCommands)
+  private readonly PlanScheduler planScheduler;
+  private readonly IMongoCollection<SirenRepresentation> sirens;
+  private readonly IMongoCollection<UserRepresentation> users;
+
+  public CommandFactory(FacadeMongoDBRequests requests, TelegramBot bot, BotCommands botCommands, PlanScheduler planScheduler)
   {
     this.requests = requests;
     this.db = requests.db;
     this.bot = bot;
     this.botCommands = botCommands;
+    this.planScheduler = planScheduler;
+    sirens = db.GetCollection<SirenRepresentation>("sirens");
+    users = db.GetCollection<UserRepresentation>("users");
   }
   public AbstractBotCommmand Create(string commandName)
   {
     switch (commandName)
     {
-      case "menu": {
-        var sirens = db.GetCollection<SirenRepresentation>("sirens");
-        IGetUserOverviewAsync getUserOverview = new MongoGetUserOverview(sirens);
-        return new MenuBotCommand(getUserOverview);
-      }
+      case "menu":
+        {
+          IGetUserOverviewAsync getUserOverview = new GetUserStatsOperationAsync(sirens);
+          return new MenuBotCommand(getUserOverview);
+        }
       case "call": return new CallSirenaCommand(requests);
-      case "create": return new CreateSirenaCommand(requests.db, requests);
+      case "create":
+        {
+          var getUserStats = new GetUserOperationAsync(users, requests);
+          var createSiren = new CreateSirenaOperationAsync(sirens, users);
+          var factory = new CreateSirenaPlanFactory(getUserStats, createSiren);
+          return new CreateSirenaCommand(factory,planScheduler);
+        }
       case "delegate": return new DelegateRightsCommand(requests.db, requests, bot);
       case "help": return new HelpCommand(bot, botCommands.Commands);
       case "list": return new ListUserSignalsCommand(requests.db);
