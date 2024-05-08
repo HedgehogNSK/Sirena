@@ -50,8 +50,10 @@ static public class TextTools
     if (string.IsNullOrEmpty(source)) return false;
 
     source = source.TrimStart();
-    if (source[0] != '/') return false;
-
+    if (source[0] != '/'){
+      argString = source;
+      return false;
+    }
     command = source.Skip(1).GetParameterByNumber(0);
     argString = source.SkipFirstNWords(1).AssembleString();
     return true;
