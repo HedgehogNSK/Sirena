@@ -1,8 +1,10 @@
+using Hedgey.Sirena.Bot;
+using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes;
 
 namespace Hedgey.Sirena;
 
-public record class CommandContext : ICommandContext
+public record class CommandContext : IRequestContext
 {
   private User user;
   private Chat chat;
@@ -19,5 +21,12 @@ public record class CommandContext : ICommandContext
   public string GetArgsString() => argString;
   public Chat GetChat() => chat;
   public string GetCommandName() => commandName;
+
+  public long GetTargetChatId() => user.Id;
+
   public User GetUser() => user;
+  public bool IsValid(AbstractBotCommmand command)
+  {
+    return command.Command == commandName;
+  }
 }

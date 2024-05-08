@@ -16,7 +16,7 @@ public class ListUserSignalsCommand : AbstractBotCommmand, IBotCommand
     sirens = db.GetCollection<SirenRepresentation>("sirens");
   }
 
-  public async override void Execute(ICommandContext context)
+  public async override void Execute(IRequestContext context)
   {
     User botUser = context.GetUser();
     long uid = botUser.Id;

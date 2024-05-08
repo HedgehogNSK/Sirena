@@ -20,7 +20,7 @@ public class SubscribeCommand : AbstractBotCommmand
     sirenCollection = db.GetCollection<SirenRepresentation>("sirens");
   }
 
-  public async override void Execute(ICommandContext context)
+  public async override void Execute(IRequestContext context)
   {
     User botUser = context.GetUser();
     long uid = botUser.Id;

@@ -30,7 +30,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
     this.requests = requests;
   }
 
-  public override async void Execute(ICommandContext context)
+  public override async void Execute(IRequestContext context)
   {
     User botUser = context.GetUser();
     long uid = botUser.Id;

@@ -13,7 +13,7 @@ public class MenuBotCommand : AbstractBotCommmand
     this.getOverview = getOverview;
   }
 
-  public override async void Execute(ICommandContext context)
+  public override async void Execute(IRequestContext context)
   {
     var uid = context.GetUser().Id;
     var result = await getOverview.Get(uid);

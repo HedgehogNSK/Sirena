@@ -27,7 +27,7 @@ public class CallSirenaCommand : AbstractBotCommmand
     this.requests = requests;
   }
 
-  public async override void Execute(ICommandContext context)
+  public async override void Execute(IRequestContext context)
   {
     string responseText;
 

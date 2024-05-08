@@ -24,7 +24,7 @@ namespace Hedgey.Sirena.Bot
       this.requests = requests;
     }
 
-    public async override void Execute(ICommandContext context)
+    public async override void Execute(IRequestContext context)
     {
       string responseText;
     User botUser = context.GetUser();

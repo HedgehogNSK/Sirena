@@ -8,6 +8,6 @@ namespace Hedgey.Sirena.Bot
       Command = name;
       Description = description;
     }
-    public abstract void Execute(ICommandContext context);
+    public abstract void Execute(IRequestContext context);
   }
 }

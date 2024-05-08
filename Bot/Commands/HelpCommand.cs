@@ -18,7 +18,7 @@ namespace Hedgey.Sirena.Bot
       this.bot = bot;
     }
 
-    public async override void Execute(ICommandContext context)
+    public override void Execute(IRequestContext context)
     {
       StringBuilder builder = new StringBuilder("List of commands:\n");
       foreach (var command in commands)

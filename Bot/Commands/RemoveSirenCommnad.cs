@@ -23,7 +23,7 @@ public class RemoveSirenCommand : AbstractBotCommmand
     this.request = request;
   }
   public record IdProjection(ObjectId? Id);
-  async public override void Execute(ICommandContext context)
+  async public override void Execute(IRequestContext context)
   {
      string messageText ;
     User botUser = context.GetUser();

@@ -20,7 +20,7 @@ public class RequestRightsCommand : AbstractBotCommmand
     this.requests = requests;
   }
 
-  public override async void Execute(ICommandContext context)
+  public override async void Execute(IRequestContext context)
   {
     string responseText;
     User botUser = context.GetUser();

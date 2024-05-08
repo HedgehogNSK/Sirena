@@ -25,7 +25,7 @@ public class SearchSirenaCommand : AbstractBotCommmand
     this.bot = bot;
   }
 
-  public override async void Execute(ICommandContext context)
+  public override async void Execute(IRequestContext context)
   {
     string responseText;
     long chatId = context.GetChat().Id;
