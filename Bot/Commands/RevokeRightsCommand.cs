@@ -8,8 +8,8 @@ namespace Hedgey.Sirena.Bot;
 
 public class RevokeRightsCommand : AbstractBotCommmand
 {
-  const string NAME = "revoke";
-  const string DESCRIPTION = "Allows to request rights to call certain sirena of another user.";
+  public const string NAME = "revoke";
+  public const string DESCRIPTION = "Allows to request rights to call certain sirena of another user.";
   private readonly FacadeMongoDBRequests requests;
   private readonly TelegramBot bot;
   const string errorWrongParamters = "Please input: /revoke {sirena number or id} {user id}";

@@ -1,8 +1,23 @@
 namespace Hedgey.Sirena.Bot;
 public class CommandsCollectionInitializer{
-  private static List<string> commandNames = ["menu","create","call","list","search"
-  ,"remove","subscribe","subscriptions","unsubscribe","mute","unmute","responsible"
-  ,"delegate","revoke","request","requests","help","start"];
+  private static List<string> commandNames = [MenuBotCommand.NAME,
+  CreateSirenaCommand.NAME,
+  CallSirenaCommand.NAME,
+  ListUserSignalsCommand.NAME,
+  SearchSirenaCommand.NAME,
+  DeleteSirenaCommand.NAME,
+  SubscribeCommand.NAME,
+  GetSubscriptionsListCommand.NAME,
+  UnsubscribeCommand.NAME,
+  MuteUserSignalCommand.NAME,
+  UnmuteUserSignalCommand.NAME,
+  GetResponsiblesListCommand.NAME,
+  DelegateRightsCommand.NAME,
+  RevokeRightsCommand.NAME,
+  RequestRightsCommand.NAME,
+  GetRequestsListCommand.NAME,
+  HelpCommand.NAME,
+  StartCommand.NAME,];
   private readonly BotCommands botCommands;
   private readonly CommandFactory factory;
 

@@ -4,8 +4,8 @@ namespace Hedgey.Sirena.Bot;
 
 public class MenuBotCommand : AbstractBotCommmand
 {
-  const string NAME = "menu";
-  const string DESCRIPTION = "Displays primary bot functions";
+  public const string NAME = "menu";
+  public const string DESCRIPTION = "Displays primary bot functions";
   private readonly IGetUserOverviewAsync getOverview;
 
   public MenuBotCommand(IGetUserOverviewAsync getOverview) : base(NAME, DESCRIPTION)

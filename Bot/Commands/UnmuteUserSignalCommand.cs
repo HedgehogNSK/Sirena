@@ -7,8 +7,8 @@ namespace Hedgey.Sirena.Bot
 {
   public class UnmuteUserSignalCommand : AbstractBotCommmand
   {
-    const string NAME = "unmute";
-    const string DESCRIPTION = "Unmute previously muted user for certain siren";
+    public const string NAME = "unmute";
+    public const string DESCRIPTION = "Unmute previously muted user for certain siren";
     private TelegramBot bot;
     private FacadeMongoDBRequests requests;
     const string errorWrongParamters = "Please input: /unmute {user id to mute} {sirena id}";

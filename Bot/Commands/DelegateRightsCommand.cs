@@ -8,8 +8,8 @@ namespace Hedgey.Sirena.Bot;
 
 public class DelegateRightsCommand : AbstractBotCommmand
 {
-  const string NAME = "delegate";
-  const string DESCRIPTION = "Delegate right to call sirena with another user.";
+  public const string NAME = "delegate";
+  public const string DESCRIPTION = "Delegate right to call sirena with another user.";
   private readonly FacadeMongoDBRequests requests;
   private IMongoCollection<UserRepresentation> usersCollection;
   private IMongoCollection<SirenRepresentation> sirenCollection;

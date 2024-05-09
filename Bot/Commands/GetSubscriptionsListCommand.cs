@@ -6,8 +6,8 @@ using System.Text;
 namespace Hedgey.Sirena.Bot;
 public class GetSubscriptionsListCommand : AbstractBotCommmand, IBotCommand
 {
-  const string NAME = "subscriptions";
-  const string DESCRIPTION = "Displays you current subscriptions.";
+  public const string NAME = "subscriptions";
+  public const string DESCRIPTION = "Displays you current subscriptions.";
 
   private IMongoCollection<UserRepresentation> usersCollection;
   private IMongoCollection<SirenRepresentation> sirenCollection;

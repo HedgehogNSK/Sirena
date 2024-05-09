@@ -11,8 +11,8 @@ namespace Hedgey.Sirena.Bot;
 
 public class GetRequestsListCommand : AbstractBotCommmand
 {
-  const string NAME = "requests";
-  const string DESCRIPTION = "Display a list of requests for permission to launch a sirena.";
+  public const string NAME = "requests";
+  public const string DESCRIPTION = "Display a list of requests for permission to launch a sirena.";
   private const string noRequestsMessage = "There are no requests for delegation of rights";
   private const string noSirenaMessage = "You don't have any sirenas yet.";
   private readonly IMongoCollection<SirenRepresentation> sirens;

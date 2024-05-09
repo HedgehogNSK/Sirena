@@ -8,8 +8,8 @@ using RxTelegram.Bot.Interface.BaseTypes;
 namespace Hedgey.Sirena.Bot;
 public class CallSirenaCommand : AbstractBotCommmand
 {
-  const string NAME = "call";
-  const string DESCRIPTION = "Call sirena by number or by id";
+  public const string NAME = "call";
+  public const string DESCRIPTION = "Call sirena by number or by id";
   const string errorWrongParamters = "Please input: /call {siren number or id}";
   const string errorWrongSirenaID = "{0} parameter is incorrect. First parameter has to be serial number or ID of your sirena";
   const string errorNoSirena = "You don't have a sirena with id: {0}";

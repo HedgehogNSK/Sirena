@@ -7,8 +7,8 @@ namespace Hedgey.Sirena.Bot
 {
   public class MuteUserSignalCommand : AbstractBotCommmand
   {
-    const string NAME ="mute";
-    const string DESCRIPTION = "Mute calls from certain user for certain *sirena*. Calls of the *sirena* from other users will be active anyway";
+    public const string NAME ="mute";
+    public const string DESCRIPTION = "Mute calls from certain user for certain *sirena*. Calls of the *sirena* from other users will be active anyway";
     private TelegramBot bot;
     private FacadeMongoDBRequests requests;
     const string errorWrongParamters = "Please input: `/mute {user id to mute} {sirena id}`";

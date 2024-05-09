@@ -9,8 +9,8 @@ namespace Hedgey.Sirena.Bot;
 
 public class SearchSirenaCommand : AbstractBotCommmand
 {
-  const string NAME ="search" ;
-  const string DESCRIPTION= "Find sirena by key string";
+  public const string NAME ="search" ;
+  public const string DESCRIPTION= "Find sirena by key string";
   const string errorWrongParamters = "Command usage: `/search {title}`\n At least 3 symbols ";
   private const string noSirenaError = "There is no sirena with title that contains search phrase: \"{0}\"";
   private const int MIN_SIMBOLS = 3;

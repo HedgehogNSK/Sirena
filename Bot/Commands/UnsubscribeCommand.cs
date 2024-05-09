@@ -8,8 +8,8 @@ namespace Hedgey.Sirena.Bot;
 
 public class UnsubscribeCommand : AbstractBotCommmand
 {
-  const string NAME ="unsubscribe";
-  const string DESCRIPTION = "Unsubscribes from certain sirena.";
+  public const string NAME ="unsubscribe";
+  public const string DESCRIPTION = "Unsubscribes from certain sirena.";
 
   private IMongoCollection<UserRepresentation> usersCollection;
   private IMongoCollection<SirenRepresentation> sirenCollection;

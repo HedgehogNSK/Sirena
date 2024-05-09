@@ -7,8 +7,8 @@ namespace Hedgey.Sirena.Bot;
 
 public class RequestRightsCommand : AbstractBotCommmand
 {
-  const string NAME = "request";
-  const string DESCRIPTION = "Request owner of sirena to delegate right to call sirena";
+  public const string NAME = "request";
+  public const string DESCRIPTION = "Request owner of sirena to delegate right to call sirena";
   private const string noSirenaMessage = "Request failed. Possible reasons: \n1.There is no *sirena* with this id: *{0}*;\n2.You are *owner* of the sirena;\n3. You are already responsible for the sirena.";
   private const string noChangesMessage = "You have *already sent* a permission request for the sirena.";
   private const string successMessage = "You have successfuly sent a a permission request for the sirena: {0}";

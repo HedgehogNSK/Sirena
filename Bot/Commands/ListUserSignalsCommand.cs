@@ -6,8 +6,8 @@ using System.Text;
 namespace Hedgey.Sirena.Bot;
 public class ListUserSignalsCommand : AbstractBotCommmand, IBotCommand
 {
-  const string NAME ="list" ;
-  const string DESCRIPTION = "Shows a list of sirenas that are being tracked.";
+  public const string NAME ="list" ;
+  public const string DESCRIPTION = "Shows a list of sirenas that are being tracked.";
   private IMongoCollection<SirenRepresentation> sirens;
 
   public ListUserSignalsCommand( IMongoDatabase db)

@@ -5,8 +5,8 @@ namespace Hedgey.Sirena.Bot;
 
 public class StartCommand : AbstractBotCommmand
 {
-  const string NAME = "start";
-  const string DESCRIPTION = "Initialization of user";
+  public const string NAME = "start";
+  public const string DESCRIPTION = "Initialization of user";
   const string welcomeMessage = "Welcome to *Sirena* bot. This bot proivdes mechanism for notification people. \n Please start from /help command to familiarize yourself with the capabilities of this bot";
   private readonly FacadeMongoDBRequests requests;
 

@@ -6,8 +6,8 @@ namespace Hedgey.Sirena.Bot
 {
   class HelpCommand : AbstractBotCommmand, IBotCommand
   {
-    const string NAME = "help";
-    const string DESCRIPTION = "";
+    public const string NAME = "help";
+    public const string DESCRIPTION = "";
     List<AbstractBotCommmand> commands;
     TelegramBot bot;
     public HelpCommand(TelegramBot bot, IEnumerable<AbstractBotCommmand> commands)

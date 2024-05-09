@@ -8,8 +8,8 @@ namespace Hedgey.Sirena.Bot;
 
 public class SubscribeCommand : AbstractBotCommmand
 {
-  const string NAME ="subscribe" ;
-  const string DESCRIPTION = "Subscribes to *sirena* by id.";
+  public const string NAME ="subscribe" ;
+  public const string DESCRIPTION = "Subscribes to *sirena* by id.";
   const string noSirenaError = "There is no *sirena* with this id: *{0}*";
   private IMongoCollection<UserRepresentation> usersCollection;
   private IMongoCollection<SirenRepresentation> sirenCollection;
