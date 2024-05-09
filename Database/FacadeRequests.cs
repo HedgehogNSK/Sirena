@@ -162,27 +162,51 @@ public class FacadeMongoDBRequests
     return userUpdate;
   }
 
-  internal async Task<UpdateResult> RequestRightsForSirena(ObjectId sirenaId,long requesterId, string message)
+  internal async Task<UpdateResult> RequestRightsForSirena(ObjectId sirenaId, long requesterId, string message)
   {
-    var request = new SirenRepresentation.Request(requesterId,message);
+    var request = new SirenRepresentation.Request(requesterId, message);
     FilterDefinitionBuilder<SirenRepresentation> filterBuilder = Builders<SirenRepresentation>.Filter;
     var filter = filterBuilder.Eq(x => x.Id, sirenaId)
               & filterBuilder.Ne(x => x.OwnerId, requesterId)
               & !filterBuilder.AnyEq(x => x.Responsible, requesterId);
     var update = Builders<SirenRepresentation>.Update
-              .AddToSet(x=>x.Requests,request)
-              .AddToSet(x=>x.Listener, requesterId);
-    UpdateResult result =await  sirens.UpdateOneAsync(filter,update);
+              .AddToSet(x => x.Requests, request)
+              .AddToSet(x => x.Listener, requesterId);
+    UpdateResult result = await sirens.UpdateOneAsync(filter, update);
     return result;
   }
 
   internal async Task<IEnumerable<SirenRepresentation>> GetSirenaByName(string searchKey)
   {
     var formatedKey = Regex.Escape(searchKey);
-    var pattern = new Regex(formatedKey, RegexOptions.IgnoreCase|RegexOptions.Compiled|RegexOptions.Multiline);
+    var pattern = new Regex(formatedKey, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Multiline);
     var bsonRegex = new BsonRegularExpression(pattern);
-    var filter = Builders<SirenRepresentation>.Filter.Regex(x=>x.Title, bsonRegex );
+    var filter = Builders<SirenRepresentation>.Filter.Regex(x => x.Title, bsonRegex);
     var result = await sirens.Find(filter).ToListAsync();
     return result;
+  }
+
+  public async Task<List<SirenRepresentation>> GetOwnedSirenas(long uid, long chatId)
+  {
+    var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.OwnerId, uid);
+    return await sirens.Find(filter).ToListAsync();
+  }
+  public async Task<SirenRepresentation> DeleteUsersSirena(long uid, ObjectId id)
+  {
+    //await DeleteSirenaIdFromOwner(uid, id);
+    return await DeleteSirenaDocument(id);
+  }
+  public async Task<SirenRepresentation> DeleteSirenaDocument(ObjectId id)
+  {
+    var sirenFilter = Builders<SirenRepresentation>.Filter.Eq(x => x.Id, id);
+    //return await sirens.FindOneAndDeleteAsync(sirenFilter);
+    return await sirens.Find(sirenFilter).FirstOrDefaultAsync();
+  }
+
+  public async Task<UpdateResult> DeleteSirenaIdFromOwner(long uid, ObjectId id)
+  {
+    var filter = Builders<UserRepresentation>.Filter.Eq(x => x.UID, uid);
+    var userUpdate = Builders<UserRepresentation>.Update.Pull<ObjectId>(x => x.Owner, id);
+    return await users.UpdateOneAsync(filter, userUpdate);
   }
 }

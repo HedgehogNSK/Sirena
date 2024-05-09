@@ -18,7 +18,7 @@ static internal class Program
   static MongoClient dbClient;
   static FacadeMongoDBRequests request;
   public static readonly IMessageSender messageSender;
-  public static readonly BotCommands botCommands;
+  public static BotCommands botCommands;
   public static readonly PlanScheduler planScheduler;
   static Dictionary<long, CommandPlan> planDictionary;
   static Program()
@@ -32,11 +32,11 @@ static internal class Program
     messageSender = new BotMesssageSender(bot);
     messageSender = new BotMessageSenderTimerProxy(messageSender);
     planScheduler = new PlanScheduler();
-    var commandsCollectionFactory = new CommandsCollectionFactory(request, bot, planScheduler);
-    botCommands = commandsCollectionFactory.Create();
   }
   private static async Task Main(string[] args)
   {
+    var commandsCollectionFactory = new CommandsCollectionFactory(request, bot, planScheduler);
+    botCommands = commandsCollectionFactory.Create();
     //CommandPlanTest();
     var me = await bot.GetMe();
     Console.WriteLine($"Bot name: @{me.Username}");

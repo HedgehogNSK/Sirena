@@ -48,7 +48,9 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
       case "help": return new HelpCommand(bot, botCommands.Commands);
       case "list": return new ListUserSignalsCommand(requests.db);
       case "mute": return new MuteUserSignalCommand(requests, bot);
-      case "remove": return new RemoveSirenCommand(requests.db, requests);
+      case DeleteSirenaCommand.NAME: {
+        var factory = new DeleteSirenaPlanFactory(requests);
+        return new DeleteSirenaCommand(factory,planScheduler);}
       case "request": return new RequestRightsCommand(requests);
       case "requests": return new GetRequestsListCommand(requests.db, requests, bot);
       case "responsible": return new GetResponsiblesListCommand(requests.db, requests, bot);
