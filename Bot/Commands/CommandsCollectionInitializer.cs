@@ -4,7 +4,7 @@ public class CommandsCollectionInitializer{
   CreateSirenaCommand.NAME,
   CallSirenaCommand.NAME,
   ListUserSignalsCommand.NAME,
-  SearchSirenaCommand.NAME,
+  FindSirenaCommand.NAME,
   DeleteSirenaCommand.NAME,
   SubscribeCommand.NAME,
   GetSubscriptionsListCommand.NAME,
