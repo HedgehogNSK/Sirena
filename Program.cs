@@ -8,6 +8,7 @@ using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Callbacks;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 
 namespace Hedgey.Sirena;
 static internal class Program
@@ -36,7 +37,6 @@ static internal class Program
   {
     var commandsCollectionFactory = new CommandsCollectionFactory(request, bot, planScheduler);
     botCommands = commandsCollectionFactory.Create();
-    //CommandPlanTest();
     var me = await bot.GetMe();
     Console.WriteLine($"Bot name: @{me.Username}");
     var observableMessages = bot.Updates.Message
@@ -61,7 +61,7 @@ static internal class Program
 
     IDisposable subscription = new CompositeDisposable(callbackStream
     , constexStream, approveCallbackStream, planProcessingStream
-    , sendMessagesStream,schedulerTrackStream);
+    , sendMessagesStream, schedulerTrackStream);
     string? input;
     do
     {
@@ -106,7 +106,7 @@ static internal class Program
 
   private static void OnError(Exception exception)
   {
-    Console.WriteLine(exception);
+    Console.WriteLine("Callback Exception! " + exception);
   }
   private static IObservable<bool> SendCallbackApprove(CallbackQuery query)
   {
@@ -115,18 +115,11 @@ static internal class Program
       CallbackQueryId = query.Id,
     };
 
-    return Observable.FromAsync<bool>(() =>
+    return bot.AnswerCallbackQuery(callbackAnswer).ToObservable().Catch((ApiException ex) =>
     {
-      try
-      {
-        return bot.AnswerCallbackQuery(callbackAnswer);
-      }
-      catch (ApiException ex)
-      {
-        var wrappedEx = new Exception($"Exception in {query.From.Id} on command: {query.Data}\nreason: {ex.StatusCode}\n{ex.Description}", ex);
-        Console.WriteLine(wrappedEx);
-        throw wrappedEx;
-      }
+      var wrappedEx = new Exception($"Exception in {query.From.Id} on command: {query.Data}\nreason: {ex.StatusCode}\n{ex.Description}", ex);
+      Console.WriteLine(wrappedEx);
+      throw wrappedEx;
     });
   }
   private static void DetermineAndExecuteCommand(IRequestContext context)
@@ -144,7 +137,6 @@ static internal class Program
       }
       else
       {
-        
         messageSender.Send(uid, errorNoCommand);
         return;
       }
@@ -153,20 +145,6 @@ static internal class Program
     Console.WriteLine($"user {uid} calls {context.GetCommandName()}");
     command.Execute(context);
   }
-  private static void CheckManySelect()
-  {
-    var source = Observable.Interval(TimeSpan.FromSeconds(1))
-                        .Take(10); // Берем только первые 3 элемента
-
-    // Применяем ManySelect, чтобы каждый элемент источника был обработан функцией-селектором
-    var result = source.ManySelect(obs => obs.Average());
-
-    // Подписываемся на результат
-    result.Subscribe(avg => Console.WriteLine($"Average: {avg}"));
-
-    Console.ReadLine(); // Ожидаем нажатия клавиши для завершения программы
-  }
-
   private static AbstractBotCommmand? GetCommmand(IRequestContext context)
   {
     if (string.IsNullOrEmpty(context.GetCommandName()))
