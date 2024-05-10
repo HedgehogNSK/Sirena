@@ -11,8 +11,6 @@ public class DelegateRightsCommand : AbstractBotCommmand
   public const string NAME = "delegate";
   public const string DESCRIPTION = "Delegate right to call sirena with another user.";
   private readonly FacadeMongoDBRequests requests;
-  private IMongoCollection<UserRepresentation> usersCollection;
-  private IMongoCollection<SirenRepresentation> sirenCollection;
   private readonly TelegramBot bot;
   const string errorWrongParamters = "Please input: /delegate {siren number or id} {user id}";
   const string errorWrongSirenaID = "{0} parameter is incorrect. First parameter has to be serial number or ID of your sirena";
@@ -22,8 +20,6 @@ public class DelegateRightsCommand : AbstractBotCommmand
   public DelegateRightsCommand( IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
   : base(NAME, DESCRIPTION)
   {
-    usersCollection = db.GetCollection<UserRepresentation>("users");
-    sirenCollection = db.GetCollection<SirenRepresentation>("sirens");
     this.bot = bot;
     this.requests = requests;
   }

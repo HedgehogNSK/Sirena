@@ -36,44 +36,40 @@ public class MenuMessageBuilder : MessageBuilder
   }
   public override SendMessage Build()
   {
+    const char slash = '/';
     const string searchTitle = "🔎 Find";
-    const string searchCallback = "/search";
     const string createTitle = "🆕 Create";
-    const string createCallback = "/create";
     const string listTitle = "🖥 Your Sirenas";
-    const string listCallback = "/list";
     const string subscribeTitle = "🔔 Subscribe";
-    const string subscribeCallback = "/subscribe";
     const string subscriptionsTitle = "👀 Subscriptions";
-    const string subscriptionsCallback = "/subscriptions";
 
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-    .AddCallbackData(searchTitle, searchCallback)
-    .AddCallbackData(subscribeTitle, subscribeCallback);
+    .AddCallbackData(searchTitle, slash + FindSirenaCommand.NAME)
+    .AddCallbackData(subscribeTitle, slash + SubscribeCommand.NAME);
 
     if (userSubscribed)
     {
       var title = subscriptionsTitle + ((result != null && result.Subscriptions != 0) ?
             $" [{result.Subscriptions}]" : string.Empty);
-      keyboardBuilder.AddCallbackData(title, subscriptionsCallback);
+      keyboardBuilder.AddCallbackData(title, slash + GetSubscriptionsListCommand.NAME);
     }
 
     keyboardBuilder.EndRow()
     .BeginRow()
-    .AddCallbackData(createTitle, createCallback);
+    .AddCallbackData(createTitle, slash + CreateSirenaCommand.NAME);
 
     if (userHasSirenas)
     {
       var title = listTitle + ((result != null && result.SirenasCount != 0) ?
             $" [{result.SirenasCount}]" : string.Empty);
-      keyboardBuilder.AddCallbackData(title, listCallback);
+      keyboardBuilder.AddCallbackData(title, slash + ListUserSignalsCommand.NAME);
     }
 
     IReplyMarkup markup = new InlineKeyboardMarkup()
     {
       InlineKeyboard = keyboardBuilder.EndRow().Build()
     };
-    
+
     return new SendMessage
     {
       ChatId = chatId,

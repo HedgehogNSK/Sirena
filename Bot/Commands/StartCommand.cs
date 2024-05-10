@@ -7,7 +7,7 @@ public class StartCommand : AbstractBotCommmand
 {
   public const string NAME = "start";
   public const string DESCRIPTION = "Initialization of user";
-  const string welcomeMessage = "Welcome to *Sirena* bot. This bot proivdes mechanism for notification people. \n Please start from /help command to familiarize yourself with the capabilities of this bot";
+  const string welcomeMessage = "Welcome to *Sirena bot*. This bot proivdes mechanism for notification people.\nPlease start from /help command to discover available functions of the Sirena bot";
   private readonly FacadeMongoDBRequests requests;
 
   public StartCommand( FacadeMongoDBRequests requests)
@@ -21,6 +21,8 @@ public class StartCommand : AbstractBotCommmand
     long uid = botUser.Id;
     long chatId = context.GetChat().Id;
     var user = await requests.CreateUser(uid, chatId);
-    Program.messageSender.Send(uid, welcomeMessage);
+    var message = new MenuMessageBuilder(uid).Build();
+    message.Text = welcomeMessage;
+    Program.messageSender.Send(message);
   }
 }

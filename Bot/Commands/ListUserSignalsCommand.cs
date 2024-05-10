@@ -6,11 +6,11 @@ using System.Text;
 namespace Hedgey.Sirena.Bot;
 public class ListUserSignalsCommand : AbstractBotCommmand, IBotCommand
 {
-  public const string NAME ="list" ;
+  public const string NAME = "list";
   public const string DESCRIPTION = "Shows a list of sirenas that are being tracked.";
   private IMongoCollection<SirenRepresentation> sirens;
 
-  public ListUserSignalsCommand( IMongoDatabase db)
+  public ListUserSignalsCommand(IMongoDatabase db)
   : base(NAME, DESCRIPTION)
   {
     sirens = db.GetCollection<SirenRepresentation>("sirens");
@@ -22,10 +22,12 @@ public class ListUserSignalsCommand : AbstractBotCommmand, IBotCommand
     long uid = botUser.Id;
     long chatId = context.GetChat().Id;
 
-    var filter = Builders<SirenRepresentation>.Filter.Eq(x=> x.OwnerId, uid);
-    try{    var userSirens = await sirens.Find<SirenRepresentation>(filter).ToListAsync();
-    string messageText = CreateMessageText(userSirens);
-    Program.messageSender.Send(uid, messageText);
+    var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.OwnerId, uid);
+    try
+    {
+      var userSirens = await sirens.Find(filter).ToListAsync();
+      string messageText = CreateMessageText(userSirens);
+      Program.messageSender.Send(uid, messageText);
     }
     catch (Exception ex)
     {

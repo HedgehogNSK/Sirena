@@ -1,4 +1,3 @@
-using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using System.Text;
 
@@ -9,13 +8,10 @@ namespace Hedgey.Sirena.Bot
     public const string NAME = "help";
     public const string DESCRIPTION = "";
     List<AbstractBotCommmand> commands;
-    TelegramBot bot;
-    public HelpCommand(TelegramBot bot, IEnumerable<AbstractBotCommmand> commands)
+    public HelpCommand(IEnumerable<AbstractBotCommmand> commands)
     : base(NAME, DESCRIPTION)
     {
-
       this.commands = commands != null ? new(commands) : new();
-      this.bot = bot;
     }
 
     public override void Execute(IRequestContext context)

@@ -12,7 +12,7 @@ public abstract class MessageBuilder
   }
   public abstract SendMessage Build();
 
-  protected SendMessage CreateDefault(string message, IReplyMarkup replyMarkup = null)
+  protected SendMessage CreateDefault(string message, IReplyMarkup? replyMarkup = null)
   {
     return new SendMessage()
     {
