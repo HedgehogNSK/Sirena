@@ -6,14 +6,12 @@ namespace Hedgey.Sirena.Database;
 
 public class FacadeMongoDBRequests
 {
-  private readonly MongoClient client;
   public readonly IMongoDatabase db;
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly IMongoCollection<UserRepresentation> users;
 
   public FacadeMongoDBRequests(MongoClient client)
   {
-    this.client = client;
     db = client.GetDatabase("siren");
     sirens = db.GetCollection<SirenRepresentation>("sirens");
     users = db.GetCollection<UserRepresentation>("users");
@@ -55,7 +53,7 @@ public class FacadeMongoDBRequests
   }
   public async Task<UserRepresentation> CreateUser(long userID, long chatID)
   {
-    Database.UserRepresentation user = new Database.UserRepresentation
+    UserRepresentation user = new UserRepresentation
     {
       UID = userID,
       ChatID = chatID,

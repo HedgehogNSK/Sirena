@@ -1,12 +1,12 @@
 using System.Reactive.Linq;
 
 namespace Hedgey.Structure.Plan;
-public abstract class ObservablePlan<TStep, TReport, TSummary> where TStep : IObservableStep<TReport>
+public abstract class ObservablePlan<TReport, TSummary>
 {
-  public IEnumerable<TStep> Steps { get; }
-  protected IEnumerator<TStep>? enumerator = null;
-  public TStep? CurrentStep { get; protected set; } = default;
-  public ObservablePlan(IEnumerable<TStep> steps)
+  public IEnumerable<IObservableStep<TReport>> Steps { get; }
+  protected IEnumerator< IObservableStep<TReport>>? enumerator = null;
+  public  IObservableStep<TReport>? CurrentStep { get; protected set; } = default;
+  public ObservablePlan(IEnumerable< IObservableStep<TReport>> steps)
   {
     if (steps == null || !steps.Any())
       throw new ArgumentNullException("steps", "Steps couldn't be empty or equal `Null`");
@@ -33,7 +33,7 @@ public abstract class ObservablePlan<TStep, TReport, TSummary> where TStep : IOb
     return RecursiveCallMake(enumerator).Select(CreateSummary);
   }
 
-  public IObservable<TReport> RecursiveCallMake(IEnumerator<TStep> enumerator)
+  public IObservable<TReport> RecursiveCallMake(IEnumerator< IObservableStep<TReport>> enumerator)
   {
     CurrentStep = enumerator.Current;
     return CurrentStep.Make()

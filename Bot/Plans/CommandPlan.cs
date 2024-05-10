@@ -2,10 +2,10 @@ using Hedgey.Structure.Plan;
 
 namespace Hedgey.Sirena.Bot;
 
-public class CommandPlan : ObservablePlan<CommandStep, CommandStep.Report, CommandPlan.Report>
+public class CommandPlan : ObservablePlan<CommandStep.Report, CommandPlan.Report>
 {
   public readonly Container<IRequestContext> contextContainer;
-  public CommandPlan(IEnumerable<CommandStep> steps, Container<IRequestContext> context) : base(steps)
+  public CommandPlan(IEnumerable<IObservableStep< CommandStep.Report>> steps, Container<IRequestContext> context) : base(steps)
   {
     contextContainer = context;
   }
@@ -37,6 +37,6 @@ public class CommandPlan : ObservablePlan<CommandStep, CommandStep.Report, Comma
     /// </summary>
     Exception,
   }
-  public record class Report(CommandPlan Plan, CommandStep? LastStep, CommandStep.Report LastStepReport);
+  public record class Report(CommandPlan Plan,  IObservableStep< CommandStep.Report>? LastStep, CommandStep.Report LastStepReport);
 }
 

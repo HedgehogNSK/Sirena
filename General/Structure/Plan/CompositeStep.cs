@@ -18,6 +18,8 @@ public abstract class CompositeStep<T> : IObservableStep<T>
   public virtual IObservable<T> Make()
   {
     var enumerator = Steps.GetEnumerator();
+    if(!enumerator.MoveNext())
+      throw new ArgumentException("No more steps to do");
     return RecursiveMake(enumerator);
   }
 
@@ -27,11 +29,11 @@ public abstract class CompositeStep<T> : IObservableStep<T>
     return step.Make()
       .SelectMany(x =>
       {
-        if (ContinueCondition(x) || !enumerator.MoveNext())
+        if (!IsStepSuccesful(x) || !enumerator.MoveNext())
           return Observable.Return(x);
         return RecursiveMake(enumerator);
       });
   }
 
-  protected abstract bool ContinueCondition(T x);
+  protected abstract bool IsStepSuccesful(T x);
 }
