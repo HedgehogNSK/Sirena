@@ -12,8 +12,7 @@ using System.Reactive.Linq;
 namespace Hedgey.Sirena;
 static internal class Program
 {
-  private const string errorWrongFormat = "You have to send command. Commands starts from '/'. Use /help to find out options.";
-  private const string errorNoCommand = $"No command were found. Use /help to find out what I can do!";
+  private const string errorNoCommand = $"No known command were found! Use /help to find out what I can do.";
   static TelegramBot bot;
   static MongoClient dbClient;
   static FacadeMongoDBRequests request;
@@ -150,7 +149,7 @@ static internal class Program
         return;
       }
     }
-
+    planDictionary.Remove(uid);
     Console.WriteLine($"user {uid} calls {context.GetCommandName()}");
     command.Execute(context);
   }
