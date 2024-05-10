@@ -1,3 +1,4 @@
+using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Reactive.Linq;

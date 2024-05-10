@@ -42,15 +42,20 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
           var getUserStats = new GetUserOperationAsync(users, requests);
           var createSiren = new CreateSirenaOperationAsync(sirens, users);
           var factory = new CreateSirenaPlanFactory(getUserStats, createSiren);
-          return new CreateSirenaCommand(factory,planScheduler);
+          return new CreateSirenaCommand(factory, planScheduler);
         }
       case "delegate": return new DelegateRightsCommand(requests.db, requests, bot);
       case "help": return new HelpCommand(bot, botCommands.Commands);
       case "list": return new ListUserSignalsCommand(requests.db);
       case "mute": return new MuteUserSignalCommand(requests, bot);
-      case DeleteSirenaCommand.NAME: {
-        var factory = new DeleteSirenaPlanFactory(requests);
-        return new DeleteSirenaCommand(factory,planScheduler);}
+      case DeleteSirenaCommand.NAME:
+        {
+          var findSirenaOperation = new FindSirenaOperation(sirens);
+          var findUsersSirenaOperation = new FindUsersSirenasOperation(sirens);
+          var deleteSirenaOperation = new DeleteSirenaOperation(sirens, users);
+          var factory = new DeleteSirenaPlanFactory(findSirenaOperation, findUsersSirenaOperation, deleteSirenaOperation);
+          return new DeleteSirenaCommand(factory, planScheduler);
+        }
       case "request": return new RequestRightsCommand(requests);
       case "requests": return new GetRequestsListCommand(requests.db, requests, bot);
       case "responsible": return new GetResponsiblesListCommand(requests.db, requests, bot);

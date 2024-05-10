@@ -4,15 +4,10 @@ using Hedgey.Structure.Factory;
 
 namespace Hedgey.Sirena.Bot;
 
-public class CreateSirenaPlanFactory : IFactory<IRequestContext,CommandPlan>
+public class CreateSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
-  
   private readonly IGetUserOperationAsync getUserOperationAsync;
   private readonly ICreateSirenaOperationAsync createSirenAsync;
-
-  public CreateSirenaPlanFactory()
-  {
-  }
 
   public CreateSirenaPlanFactory(GetUserOperationAsync getUserOperationAsync, ICreateSirenaOperationAsync createSirenAsync)
   {
@@ -26,7 +21,7 @@ public class CreateSirenaPlanFactory : IFactory<IRequestContext,CommandPlan>
     CreateMessageBuilder messageBuilder = new(context.GetChat().Id);
     CreateSirenaStep.Buffer buffer = new(messageBuilder);
     CommandStep[] steps = [
-      new  GetUserCreateSirenaStep(contextContainer,buffer, getUserOperationAsync),
+      new GetUserCreateSirenaStep(contextContainer,buffer, getUserOperationAsync),
       new CheckAbilityToCreateSirenaStep(contextContainer, buffer),
       new ValidateTitleCreateSirenaStep(contextContainer,buffer),
       new RequestDBToCreateSirenaStep(contextContainer,buffer,createSirenAsync)

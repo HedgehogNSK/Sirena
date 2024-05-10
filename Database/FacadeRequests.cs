@@ -186,21 +186,21 @@ public class FacadeMongoDBRequests
     return result;
   }
 
-  public async Task<List<SirenRepresentation>> GetOwnedSirenas(long uid, long chatId)
+  public async Task<List<SirenRepresentation>> GetOwnedSirenas(long uid)
   {
     var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.OwnerId, uid);
     return await sirens.Find(filter).ToListAsync();
   }
   public async Task<SirenRepresentation> DeleteUsersSirena(long uid, ObjectId id)
   {
-    //await DeleteSirenaIdFromOwner(uid, id);
+    await DeleteSirenaIdFromOwner(uid, id);
     return await DeleteSirenaDocument(id);
   }
   public async Task<SirenRepresentation> DeleteSirenaDocument(ObjectId id)
   {
     var sirenFilter = Builders<SirenRepresentation>.Filter.Eq(x => x.Id, id);
-    //return await sirens.FindOneAndDeleteAsync(sirenFilter);
-    return await sirens.Find(sirenFilter).FirstOrDefaultAsync();
+    return await sirens.FindOneAndDeleteAsync(sirenFilter);
+    // return await sirens.Find(sirenFilter).FirstOrDefaultAsync();
   }
 
   public async Task<UpdateResult> DeleteSirenaIdFromOwner(long uid, ObjectId id)

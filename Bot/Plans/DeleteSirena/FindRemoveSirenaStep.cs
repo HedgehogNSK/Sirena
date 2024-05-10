@@ -1,22 +1,26 @@
-using System.Data;
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 using Hedgey.Extensions;
+using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes;
+using System.Data;
+using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
 public class FindRemoveSirenaStep : DeleteSirenaStep
 {
-  private readonly FacadeMongoDBRequests requests;
+  private readonly IFindSirenaOperation findSirenaOperation;
+  private readonly IFindUserSirenasOperation findUsersSirenaOperation;
 
   public FindRemoveSirenaStep(Container<IRequestContext> contextContainer
-  , Container<SirenRepresentation> sirenaContainer, FacadeMongoDBRequests requests)
+  , Container<SirenRepresentation> sirenaContainer
+  , IFindSirenaOperation findSirenaOperation
+  , IFindUserSirenasOperation findUsersSirenaOperation)
   : base(contextContainer, sirenaContainer)
   {
-    this.requests = requests;
+    this.findSirenaOperation = findSirenaOperation;
+    this.findUsersSirenaOperation = findUsersSirenaOperation;
   }
 
   public override IObservable<Report> Make()
@@ -30,17 +34,17 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     int number = 0;
     if (string.IsNullOrEmpty(param))
     {
-      return requests.GetOwnedSirenas(uid, chatId).ToObservable()
+      return findUsersSirenaOperation.Find(uid)
         .Select(_sireans => new RemoveSirenaMenuMessageBuilder(chatId,_sireans))
         .Select(_removeMenuBuilder => new Report(Result.CanBeFixed, _removeMenuBuilder));
     }
     else if (ObjectId.TryParse(param, out var id))
     {
-      observableSirena = requests.GetSirenaById(id).ToObservable();
+      observableSirena = findSirenaOperation.Find(id);
     }
     else if (int.TryParse(param, out number))
     {
-      observableSirena = requests.GetSirenaBySerialNumber(uid, number).ToObservable();
+      observableSirena = findUsersSirenaOperation.FindBySerialNumber(uid, number);
     }
     else
     {
@@ -64,25 +68,3 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     return new Report(Result.Success, null);
   }
 }
-// string messageText ;
-//   User botUser = context.GetUser();
-//   long uid = botUser.Id;
-//   long chatId = context.GetChat().Id;
-//   string param = context.GetArgsString().GetParameterByNumber(0);
-//   ObjectId id = await request.GetSirenaId(uid, param);
-//   if (id == ObjectId.Empty)
-//   {
-//     Program.messageSender.Send(chatId, wrongParameter);
-//     return;
-//   }
-//   //Remove srien Id from the owner document
-//   var filter = Builders<UserRepresentation>.Filter.Eq(x => x.UID, uid);
-//   var userUpdate = Builders<UserRepresentation>.Update.Pull<ObjectId>(x => x.Owner, id);
-//   var userUpdateResult = await usersCollection.UpdateOneAsync(filter, userUpdate);
-
-//   //Remove siren from collection by ID
-//   var sirenFilter = Builders<SirenRepresentation>.Filter.Eq(x => x.Id, id);
-//   var result2 = await sirenCollection.FindOneAndDeleteAsync(sirenFilter);
-//   messageText = result2 != null ? '*' + result2.Title + "* has been removed" :
-//   "You don't have *sirena* with id: *" + id + '*';
-//   Program.messageSender.Send(chatId, messageText);

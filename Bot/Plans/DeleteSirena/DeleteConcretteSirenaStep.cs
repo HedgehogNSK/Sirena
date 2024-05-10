@@ -1,41 +1,27 @@
+using Hedgey.Sirena.Bot.Operations;
+using Hedgey.Sirena.Database;
 using System.Data;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
-using Hedgey.Sirena.Database;
 
 namespace Hedgey.Sirena.Bot;
 
-/*public class FirstRemoveSirenaStep : CommandStep
-{
-  public FirstRemoveSirenaStep(Container<IRequestContext> contextContainer)
-  : base(contextContainer)
-  { }
-
-  public override IObservable<Report> Make()
-  {
-    var context = contextContainer.Object;
-    User botUser = context.GetUser();
-    long uid = botUser.Id;
-    long chatId = context.GetChat().Id;
-    string param = context.GetArgsString().GetParameterByNumber(0);
-  }
-}*/
 public class DeleteConcretteSirenaStep : DeleteSirenaStep
 {
-  private readonly FacadeMongoDBRequests requests;
+  private readonly IDeleteSirenaOperation sirenaDeleteOperation;
 
   public DeleteConcretteSirenaStep(Container<IRequestContext> contextContainer
-  , Container<SirenRepresentation> sirenaContainer, FacadeMongoDBRequests requests)
+  , Container<SirenRepresentation> sirenaContainer
+  , IDeleteSirenaOperation sirenaDeleteOperation)
    : base(contextContainer, sirenaContainer)
   {
-    this.requests = requests;
+    this.sirenaDeleteOperation = sirenaDeleteOperation;
   }
 
   public override IObservable<Report> Make()
   {
-    return requests.DeleteUsersSirena(contextContainer.Object.GetTargetChatId()
-    , sirenaContainer.Object.Id)
-    .ToObservable()
+    var uid = contextContainer.Object.GetUser().Id;
+    var sirenaId = sirenaContainer.Object.Id;
+    return sirenaDeleteOperation.Delete(uid, sirenaId)
     .Select(CreateReport);
   }
 
