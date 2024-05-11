@@ -17,6 +17,8 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly IMongoCollection<UserRepresentation> users;
 private readonly IFindSirenaOperation findSirenaOperation;
+  private readonly ISubscribeToSirenaOperation subscribeOperation;
+
   public CommandFactory(FacadeMongoDBRequests requests, TelegramBot bot, BotCommands botCommands, PlanScheduler planScheduler)
   {
     this.requests = requests;
@@ -27,28 +29,29 @@ private readonly IFindSirenaOperation findSirenaOperation;
     sirens = db.GetCollection<SirenRepresentation>("sirens");
     users = db.GetCollection<UserRepresentation>("users");
     findSirenaOperation = new FindSirenaOperation(sirens);
+    subscribeOperation = new SubscribeSirenaOperation(sirens);
   }
   public AbstractBotCommmand Create(string commandName)
   {
     switch (commandName)
     {
-      case "menu":
+      case MenuBotCommand.NAME:
         {
           IGetUserOverviewAsync getUserOverview = new GetUserStatsOperationAsync(sirens);
           return new MenuBotCommand(getUserOverview);
         }
-      case "call": return new CallSirenaCommand(requests);
-      case "create":
+      case CallSirenaCommand.NAME: return new CallSirenaCommand(requests);
+      case CreateSirenaCommand.NAME:
         {
           var getUserStats = new GetUserOperationAsync(users, requests);
           var createSiren = new CreateSirenaOperationAsync(sirens, users);
           var factory = new CreateSirenaPlanFactory(getUserStats, createSiren);
           return new CreateSirenaCommand(factory, planScheduler);
         }
-      case "delegate": return new DelegateRightsCommand(requests.db, requests, bot);
-      case "help": return new HelpCommand(botCommands.Commands);
-      case "list": return new ListUserSignalsCommand(requests.db);
-      case "mute": return new MuteUserSignalCommand(requests, bot);
+      case DelegateRightsCommand.NAME: return new DelegateRightsCommand(requests.db, requests, bot);
+      case HelpCommand.NAME: return new HelpCommand(botCommands.Commands);
+      case ListUserSignalsCommand.NAME: return new ListUserSignalsCommand(requests.db);
+      case MuteUserSignalCommand.NAME: return new MuteUserSignalCommand(requests, bot);
       case DeleteSirenaCommand.NAME:
         {
           var findUsersSirenaOperation = new FindUsersSirenasOperation(sirens);
@@ -56,18 +59,21 @@ private readonly IFindSirenaOperation findSirenaOperation;
           var factory = new DeleteSirenaPlanFactory(findSirenaOperation, findUsersSirenaOperation, deleteSirenaOperation);
           return new DeleteSirenaCommand(factory, planScheduler);
         }
-      case "request": return new RequestRightsCommand(requests);
-      case "requests": return new GetRequestsListCommand(requests.db, requests, bot);
-      case "responsible": return new GetResponsiblesListCommand(requests.db, requests, bot);
-      case "revoke": return new RevokeRightsCommand(requests, bot);
+      case RequestRightsCommand.NAME: return new RequestRightsCommand(requests);
+      case GetRequestsListCommand.NAME: return new GetRequestsListCommand(requests.db, requests, bot);
+      case GetResponsiblesListCommand.NAME: return new GetResponsiblesListCommand(requests.db, requests, bot);
+      case RevokeRightsCommand.NAME: return new RevokeRightsCommand(requests, bot);
       case FindSirenaCommand.NAME: {
         var factory = new FindSirenaPlanFactory(findSirenaOperation,bot);
         return new FindSirenaCommand(factory, planScheduler);}
-      case "start": return new StartCommand(requests);
-      case "subscribe": return new SubscribeCommand(requests.db);
-      case "subscriptions": return new GetSubscriptionsListCommand(requests.db);
-      case "unmute": return new UnmuteUserSignalCommand(requests, bot);
-      case "unsubscribe": return new UnsubscribeCommand(requests.db);
+      case StartCommand.NAME: return new StartCommand(requests);
+      case SubscribeCommand.NAME:{
+         var factory = new SubscribeSirenaPlanFactory(subscribeOperation);
+         return new SubscribeCommand(factory,planScheduler);
+         }
+      case GetSubscriptionsListCommand.NAME: return new GetSubscriptionsListCommand(requests.db);
+      case UnmuteUserSignalCommand.NAME: return new UnmuteUserSignalCommand(requests, bot);
+      case UnsubscribeCommand.NAME: return new UnsubscribeCommand(requests.db);
       default:
         {
           throw new ArgumentException("Wrong command name: " + commandName, "commandName");
