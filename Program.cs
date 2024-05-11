@@ -93,7 +93,7 @@ static internal class Program
           planDictionary.Remove(uid);
         }
         break;
-      case CommandStep.Result.CanBeFixed:
+      case CommandStep.Result.Wait:
         {
           planDictionary[uid] = report.Plan;
         }

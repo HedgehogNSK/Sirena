@@ -36,7 +36,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     {
       return findUsersSirenaOperation.Find(uid)
         .Select(_sireans => new RemoveSirenaMenuMessageBuilder(chatId,_sireans))
-        .Select(_removeMenuBuilder => new Report(Result.CanBeFixed, _removeMenuBuilder));
+        .Select(_removeMenuBuilder => new Report(Result.Wait, _removeMenuBuilder));
     }
     else if (ObjectId.TryParse(param, out var id))
     {
@@ -49,7 +49,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     else
     {
       var builder = new IncorrectParameterMessageBuilder(chatId);
-      var report = new Report(Result.CanBeFixed, builder);
+      var report = new Report(Result.Wait, builder);
       return Observable.Return(report);
     }
 
@@ -61,7 +61,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     if (sirena == null || sirena.OwnerId != context.GetUser().Id)
     {
       var builder = new IncorrectParameterMessageBuilder(context.GetTargetChatId());
-      var report = new Report(Result.CanBeFixed, builder);
+      var report = new Report(Result.Wait, builder);
       return report;
     }
     sirenaContainer.Set(sirena);

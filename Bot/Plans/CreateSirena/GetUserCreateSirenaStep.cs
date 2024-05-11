@@ -29,6 +29,6 @@ public class GetUserCreateSirenaStep : CreateSirenaStep
   {
     buffer.User = representation;
     buffer.MessageBuilder.SetUser(representation);
-    return new Report(representation != null ? Result.Success : Result.CanBeFixed, buffer.MessageBuilder);
+    return new Report(representation != null ? Result.Success : Result.Wait, buffer.MessageBuilder);
   }
 }

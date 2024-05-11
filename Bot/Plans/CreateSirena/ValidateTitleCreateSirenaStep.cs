@@ -15,7 +15,7 @@ public class ValidateTitleCreateSirenaStep(Container<IRequestContext> contextCon
      var result = Result.Success;
     if (string.IsNullOrEmpty(sirenaTitle) || sirenaTitle.Length < TITLE_MIN_LENGHT)
     {
-       result = Result.CanBeFixed;
+       result = Result.Wait;
     }
     buffer.SirenaTitle = sirenaTitle;
     buffer.MessageBuilder.IsTitleValid(result == Result.Success, TITLE_MIN_LENGHT, TITLE_MAX_LENGHT);

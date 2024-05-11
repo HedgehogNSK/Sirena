@@ -19,10 +19,9 @@ public class ValidateSearchParamFindSirenaStep : CommandStep
     MessageBuilder? messageBuilder = null;
     if (key.Length < MIN_SIMBOLS || key.Length > MAX_SIMBOLS)
     {
-      result = Result.CanBeFixed;
+      result = Result.Wait;
       messageBuilder = new WrongSearchKeyFindSirenaMessageBuilder(chatId);
     }
     return Observable.Return(new Report(result, messageBuilder));
   }
 }
-

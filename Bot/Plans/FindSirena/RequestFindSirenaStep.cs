@@ -46,7 +46,7 @@ public class RequestFindSirenaStep : CommandStep
     var chatId = contextContainer.Object.GetTargetChatId();
     string key = contextContainer.Object.GetArgsString();
     MessageBuilder builder = new NoSirenaMessageBuilder(chatId, key);
-    return new Report(Result.CanBeFixed, builder);
+    return new Report(Result.Wait, builder);
   }
 
   private Report CreateReport((SirenRepresentation, string)[] source)

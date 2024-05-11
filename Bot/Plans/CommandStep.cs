@@ -17,7 +17,7 @@ public abstract class CommandStep : IObservableStep<CommandStep.Report>
     /// Plan can't be executed with current params
     /// and it waits
     /// </summary>
-    CanBeFixed,
+    Wait,
     /// <summary>
     /// Command can't be executed with current params
     /// and it stops
