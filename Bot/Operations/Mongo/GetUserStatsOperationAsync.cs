@@ -22,7 +22,7 @@ public class GetUserStatsOperationAsync : IGetUserOverviewAsync
       resultSelector: (_, _sirens) => new UserStatistics
         {
           SirenasCount = _sirens.Sum(x => x.OwnerId == userId ? 1 : 0),
-          Subscriptions = _sirens.Sum(_sirena => (_sirena.Listener ?? new long[] { }).Contains(userId) ? 1 : 0),
+          Subscriptions = _sirens.Sum(_sirena => (Mql.Exists(_sirena.Listener) && _sirena.Listener.Contains(userId)) ? 1 : 0),
           Responsible = _sirens.Sum(_sirena =>(Mql.Exists(_sirena.Responsible) && _sirena.Responsible.Contains(userId)) ? 1 : 0)
         });
 
