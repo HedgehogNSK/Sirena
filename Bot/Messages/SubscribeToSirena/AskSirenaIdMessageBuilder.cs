@@ -14,7 +14,7 @@ public class AskSirenaIdMessageBuilder : MessageBuilder
     
     var markup = KeyboardBuilder.CreateInlineKeyboard()
         .BeginRow().AddFindButton().AddMenuButton().EndRow()
-        .ToMarkup();
+        .ToReplyMarkup();
 
     return CreateDefault(errorDescription, markup);
   }

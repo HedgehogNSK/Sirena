@@ -27,7 +27,7 @@ public static class MarkupShortcuts
        .AddMenuButton().EndRow().Build()
     };
   }
-  public static IReplyMarkup ToMarkup(this IInlineKeyboardBuilder builder){
+  public static IReplyMarkup ToReplyMarkup(this IInlineKeyboardBuilder builder){
     return new InlineKeyboardMarkup()
     {
       InlineKeyboard = builder.Build()

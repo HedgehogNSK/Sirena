@@ -40,17 +40,14 @@ public class ListUserSignalsCommand : AbstractBotCommmand, IBotCommand
     StringBuilder builder = new StringBuilder();
     if (userSirens.Count != 0)
     {
+      const string template = ". `{0}` *{1}*\n";
+
       int number = 0;
       builder.Append("The list of your sirens:\n");
       foreach (var siren in userSirens)
       {
         ++number;
-        builder.Append(number).Append(' ').Append(siren.Id)
-        .Append(' ')
-        .Append('*')
-        .Append(siren.Title)
-        .Append('*')
-        .Append('\n');
+        builder.Append(number).AppendFormat(template, siren.Id, siren.Title);
       }
     }
     else

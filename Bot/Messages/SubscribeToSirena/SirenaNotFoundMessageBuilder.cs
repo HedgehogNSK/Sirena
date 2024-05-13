@@ -15,12 +15,11 @@ public class SirenaNotFoundMessageBuilder : MessageBuilder
 
   public override SendMessage Build()
   {
-    var markup = KeyboardBuilder.CreateInlineKeyboard()
-        .BeginRow().AddFindButton().AddSubscribeButton().EndRow()
-        .BeginRow().AddMenuButton().EndRow()
-        .ToMarkup();
+    var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
+        .AddFindButton().AddSubscribeButton().AddMenuButton()
+        .EndRow().ToReplyMarkup();
 
-    const string noSirenaError = "*There is no Sirena with id:* `{0}`\nAttempt to subscribe is failed.";
+    const string noSirenaError = "*Attempt to subscribe is failed.*\nPossible reasons:\n1. There is no Sirena with such id;\n2. You are the owner of the Sirena.\n\n You can try to input another *Sirena ID*";
     var message = string.Format(noSirenaError, id);
     return CreateDefault(message, markup);
   }

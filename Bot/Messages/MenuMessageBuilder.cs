@@ -8,7 +8,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class MenuMessageBuilder : MessageBuilder
 {
-  const string message = "Please select one of the options";
+  const string message = "Bot menu";
   private bool userHasSirenas = false;
   private bool userSubscribed = false;
   private UserStatistics? result = null;
@@ -37,21 +37,19 @@ public class MenuMessageBuilder : MessageBuilder
   public override SendMessage Build()
   {
     const char slash = '/';
-    const string searchTitle = "🔎 Find";
     const string createTitle = "🆕 Create";
     const string listTitle = "🖥 Your Sirenas";
-    const string subscribeTitle = "🔔 Subscribe";
     const string subscriptionsTitle = "👀 Subscriptions";
 
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-    .AddCallbackData(searchTitle, slash + FindSirenaCommand.NAME)
-    .AddCallbackData(subscribeTitle, slash + SubscribeCommand.NAME);
+    .AddFindButton()
+    .AddSubscribeButton();
 
     if (userSubscribed)
     {
       var title = subscriptionsTitle + ((result != null && result.Subscriptions != 0) ?
             $" [{result.Subscriptions}]" : string.Empty);
-      keyboardBuilder.AddCallbackData(title, slash + GetSubscriptionsListCommand.NAME);
+      keyboardBuilder.EndRow().BeginRow().AddCallbackData(title, slash + GetSubscriptionsListCommand.NAME);
     }
 
     keyboardBuilder.EndRow()

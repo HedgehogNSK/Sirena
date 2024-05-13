@@ -20,7 +20,7 @@ public class SuccesfulSubscriptionMessageBuilder : MessageBuilder
   {
     IReplyMarkup markup = KeyboardBuilder.CreateInlineKeyboard()
       .BeginRow().AddMenuButton().EndRow()
-      .ToMarkup();
+      .ToReplyMarkup();
 
     const string notificationText = "You successfully subscribed to *Sirena*: _{0}_";
     var message = string.Format(notificationText, representation.Title);
