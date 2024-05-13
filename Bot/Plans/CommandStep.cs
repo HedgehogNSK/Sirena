@@ -4,7 +4,8 @@ namespace Hedgey.Sirena.Bot;
 
 public abstract class CommandStep : IObservableStep<CommandStep.Report>
 {
-  public readonly Container<IRequestContext> contextContainer;
+  protected readonly Container<IRequestContext> contextContainer;
+  public IRequestContext Context => contextContainer.Object;
   public CommandStep(Container<IRequestContext> contextContainer)
   {
     this.contextContainer = contextContainer;

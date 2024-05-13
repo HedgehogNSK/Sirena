@@ -7,24 +7,24 @@ namespace Hedgey.Sirena.Bot;
 public class DeleteSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
   private readonly IFindSirenaOperation findSirenaOperation;
-  private readonly IFindUserSirenasOperation findUsersSirenaOperation;
+  private readonly IGetUserRelatedSirenas getUserSirenasOperation;
   private readonly IDeleteSirenaOperation deleteSirenaOperation;
 
   public DeleteSirenaPlanFactory(IFindSirenaOperation findSirenaOperation
-  , IFindUserSirenasOperation findUsersSirenaOperation
+  , IGetUserRelatedSirenas getUserSirenasOperation
   , IDeleteSirenaOperation deleteSirenaOperation)
   {
     this.findSirenaOperation = findSirenaOperation;
-    this.findUsersSirenaOperation = findUsersSirenaOperation;
+    this.getUserSirenasOperation = getUserSirenasOperation;
     this.deleteSirenaOperation = deleteSirenaOperation;
   }
 
   public CommandPlan Create(IRequestContext context)
   {
     Container<IRequestContext> contextContainer = new(context);
-    Container<SirenRepresentation> container = new Container<SirenRepresentation>();
+    NullableContainer<SirenRepresentation> container = new ();
     CommandStep[] steps = [
-      new FindRemoveSirenaStep(contextContainer,container,findSirenaOperation, findUsersSirenaOperation),
+      new FindRemoveSirenaStep(contextContainer,container,findSirenaOperation, getUserSirenasOperation),
       new DeleteConcretteSirenaStep(contextContainer,container,deleteSirenaOperation),
     ];
     return new(steps, contextContainer);

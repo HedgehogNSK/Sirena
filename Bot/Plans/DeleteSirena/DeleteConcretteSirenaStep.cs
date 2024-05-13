@@ -10,7 +10,7 @@ public class DeleteConcretteSirenaStep : DeleteSirenaStep
   private readonly IDeleteSirenaOperation sirenaDeleteOperation;
 
   public DeleteConcretteSirenaStep(Container<IRequestContext> contextContainer
-  , Container<SirenRepresentation> sirenaContainer
+  , NullableContainer<SirenRepresentation> sirenaContainer
   , IDeleteSirenaOperation sirenaDeleteOperation)
    : base(contextContainer, sirenaContainer)
   {

@@ -11,16 +11,16 @@ namespace Hedgey.Sirena.Bot;
 public class FindRemoveSirenaStep : DeleteSirenaStep
 {
   private readonly IFindSirenaOperation findSirenaOperation;
-  private readonly IFindUserSirenasOperation findUsersSirenaOperation;
+  private readonly IGetUserRelatedSirenas getUserSirenasOperation;
 
   public FindRemoveSirenaStep(Container<IRequestContext> contextContainer
-  , Container<SirenRepresentation> sirenaContainer
+  , NullableContainer<SirenRepresentation> sirenaContainer
   , IFindSirenaOperation findSirenaOperation
-  , IFindUserSirenasOperation findUsersSirenaOperation)
+  , IGetUserRelatedSirenas getUserSirenasOperation)
   : base(contextContainer, sirenaContainer)
   {
     this.findSirenaOperation = findSirenaOperation;
-    this.findUsersSirenaOperation = findUsersSirenaOperation;
+    this.getUserSirenasOperation = getUserSirenasOperation;
   }
 
   public override IObservable<Report> Make()
@@ -34,7 +34,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     int number = 0;
     if (string.IsNullOrEmpty(param))
     {
-      return findUsersSirenaOperation.Find(uid)
+      return getUserSirenasOperation.GetUserSirenas(uid)
         .Select(_sireans => new RemoveSirenaMenuMessageBuilder(chatId,_sireans))
         .Select(_removeMenuBuilder => new Report(Result.Wait, _removeMenuBuilder));
     }
@@ -44,7 +44,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     }
     else if (int.TryParse(param, out number))
     {
-      observableSirena = findUsersSirenaOperation.FindBySerialNumber(uid, number);
+      observableSirena = getUserSirenasOperation.GetUserSirena(uid, number);
     }
     else
     {

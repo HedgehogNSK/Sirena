@@ -6,8 +6,7 @@ namespace Hedgey.Sirena.Bot;
 /// <typeparam name="T"></typeparam>
 public class Container<T>
 {
-  public T? Object { get; private set;}
-  public Container(){}
+  public T Object { get; private set;}
   public Container(T obj) { Object = obj; }
   public virtual void Set(T newObject)
   {

@@ -5,9 +5,9 @@ namespace Hedgey.Sirena.Bot;
 
 public class ValidateIdSubscribeStep : CommandStep
 {
-  private readonly Container<ObjectId> sirenaIdContainter;
+  private readonly NullableContainer<ObjectId> sirenaIdContainter;
 
-  public ValidateIdSubscribeStep(Container<IRequestContext> contextContainer, Container<ObjectId> sirenaIdContainter)
+  public ValidateIdSubscribeStep(Container<IRequestContext> contextContainer, NullableContainer<ObjectId> sirenaIdContainter)
    : base(contextContainer)
   {
     this.sirenaIdContainter = sirenaIdContainter;

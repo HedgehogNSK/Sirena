@@ -8,11 +8,11 @@ namespace Hedgey.Sirena.Bot;
 
 public class RequestSubscribeStep : CommandStep
 {
-  private readonly Container<ObjectId> sirenaIdContainter;
+  private readonly NullableContainer<ObjectId> sirenaIdContainter;
   private readonly ISubscribeToSirenaOperation subscribeOperation;
 
   public RequestSubscribeStep(Container<IRequestContext> contextContainer
-  , Container<ObjectId> sirenaIdContainter, ISubscribeToSirenaOperation subscribeOperation)
+  , NullableContainer<ObjectId> sirenaIdContainter, ISubscribeToSirenaOperation subscribeOperation)
   : base(contextContainer)
   {
     this.sirenaIdContainter = sirenaIdContainter;

@@ -17,7 +17,7 @@ public class SubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
   public CommandPlan Create(IRequestContext context)
   {
     Container<IRequestContext> contextContainer = new(context);
-    Container<ObjectId> idContainer = new();
+    NullableContainer<ObjectId> idContainer = new();
     IEnumerable<IObservableStep< CommandStep.Report>> steps = [
       new ValidateIdSubscribeStep(contextContainer,idContainer),
       new RequestSubscribeStep(contextContainer,idContainer, subscribeOperation),
