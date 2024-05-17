@@ -1,7 +1,6 @@
 using Hedgey.Sirena.Database;
 
 namespace Hedgey.Sirena.Bot;
-
 public abstract class CreateSirenaStep : CommandStep
 {
   protected Buffer buffer;
@@ -11,9 +10,9 @@ public abstract class CreateSirenaStep : CommandStep
 
   public class Buffer
   {
-    public UserRepresentation User { get; set; }
+    public UserRepresentation? User { get; set; }=null;
     public CreateMessageBuilder MessageBuilder { get; set; }
-    public string SirenaTitle { get; set; }
+    public string SirenaTitle { get; set; } = string.Empty;
 
     public Buffer(CreateMessageBuilder messageBuilder)
     {

@@ -22,10 +22,11 @@ public class DeleteSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
   public CommandPlan Create(IRequestContext context)
   {
     Container<IRequestContext> contextContainer = new(context);
-    NullableContainer<SirenRepresentation> container = new ();
+    NullableContainer<SirenRepresentation> sirenaContainer = new ();
     CommandStep[] steps = [
-      new FindRemoveSirenaStep(contextContainer,container,findSirenaOperation, getUserSirenasOperation),
-      new DeleteConcretteSirenaStep(contextContainer,container,deleteSirenaOperation),
+      new FindRemoveSirenaStep(contextContainer,sirenaContainer,findSirenaOperation, getUserSirenasOperation),
+      new ConfirmationRemoveSirenaStep(contextContainer,sirenaContainer),
+      new DeleteConcretteSirenaStep(contextContainer,sirenaContainer,deleteSirenaOperation),
     ];
     return new(steps, contextContainer);
   }

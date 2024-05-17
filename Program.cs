@@ -35,7 +35,7 @@ static internal class Program
   }
   private static async Task Main(string[] args)
   {
-    var commandsCollectionFactory = new CommandsCollectionFactory(request, bot, planScheduler);
+    var commandsCollectionFactory = new CommandsCollectionFactory(request, bot, planScheduler, messageSender);
     botCommands = commandsCollectionFactory.Create();
     var me = await bot.GetMe();
     Console.WriteLine($"Bot name: @{me.Username}");

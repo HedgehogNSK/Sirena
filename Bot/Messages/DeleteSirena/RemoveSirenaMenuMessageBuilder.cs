@@ -1,10 +1,10 @@
-using System.Reactive.Linq;
-using System.Text;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using System.Reactive.Linq;
+using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
@@ -23,23 +23,20 @@ public class RemoveSirenaMenuMessageBuilder : MessageBuilder
       if (userSirenas.Any())
       {
         const int optionsPerLine = 5;
-        int number = 0;
         const string list = "Select Sirena you want to *DELETE*:\n";
+        const string template =". *{0}* `{1}`\n";
+        int number = 0;
         builder.Append(list);
 
         var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
-        foreach (var siren in userSirenas)
+        foreach (var sirena in userSirenas)
         {
           ++number;
           if (number % optionsPerLine == 0)
             keyboardBuilder = keyboardBuilder.EndRow().BeginRow();
 
-          builder.Append(number).Append(' ')          
-          .Append('`').Append(siren.Id).Append("` ")
-          .Append(siren.Title)
-          .Append("\n");
-          string command = '/' + DeleteSirenaCommand.NAME+ ' ' + siren.Id;
-          keyboardBuilder = keyboardBuilder.AddCallbackData(number.ToString(),command );
+          builder.Append(number).AppendFormat(template,sirena.Title, sirena.Id);
+          keyboardBuilder = keyboardBuilder.AddDeleteButton(sirena.Id,number.ToString());
         }
         IReplyMarkup markup = new InlineKeyboardMarkup()
         {

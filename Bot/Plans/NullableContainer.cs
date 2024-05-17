@@ -9,4 +9,10 @@ public class NullableContainer<T>
   {
     Object = newObject;
   }
+
+  internal T Get()
+  {
+    return Object??
+       throw new ArgumentNullException("Value were not initialized yet",typeof(T?).Name);
+  }
 }

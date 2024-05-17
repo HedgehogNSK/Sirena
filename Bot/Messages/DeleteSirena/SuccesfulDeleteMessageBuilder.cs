@@ -15,7 +15,8 @@ public class SuccesfulDeleteMessageBuilder : MessageBuilder
 
   public override SendMessage Build()
   {
-    string message = $"Sirena *\"" + deletedSirena.Title + "\"* has been deleted" ;
-    return CreateDefault(message);
+    const string notification = "Sirena *\"{0}\"* has been deleted";
+    string message = string.Format(notification, deletedSirena.Title ) ;
+    return CreateDefault(message, MarkupShortcuts.CreateMenuButtonOnlyMarkup());
   }
 }

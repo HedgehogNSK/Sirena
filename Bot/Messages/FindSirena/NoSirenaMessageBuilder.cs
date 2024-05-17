@@ -1,31 +1,27 @@
-using RxTelegram.Bot.Interface.BaseTypes;
-using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
+using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
-using RxTelegram.Bot.Utils.Keyboard;
 
 namespace Hedgey.Sirena.Bot;
 
 public class NoSirenaMessageBuilder : MessageBuilder
 {
-  private const string noSirenaError = "There is no sirena with title that contains search phrase: \"{0}\". Please try again with another search phrase";
+  private readonly ObjectId id;
   string key;
   public NoSirenaMessageBuilder(long chatId, string key) : base(chatId)
   {
     this.key = key;
   }
+  public NoSirenaMessageBuilder(long chatId, ObjectId id) : base(chatId)
+  {
+    this.id = id;
+  }
 
   public override SendMessage Build()
   {
-    const string menuTitle = "🧾 Back to menu";
-
-    var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-       .AddCallbackData(menuTitle, '/' + MenuBotCommand.NAME).EndRow();
-
-    IReplyMarkup markup = new InlineKeyboardMarkup()
-    {
-      InlineKeyboard = keyboardBuilder.Build()
-    };
-    var message = string.Format(noSirenaError, key);
-    return CreateDefault(message, markup);
+    const string noSirenaByKeyError = "There is no Sirena with title that contains: \"{0}\".\nPlease try another key phrase";
+    const string noSirenaByIdError = "There is no Sirena with this ID: \"{0}\".\nPlease try another ID phrase";
+    string message = id != default ? string.Format(noSirenaByIdError, id)
+      : string.Format(noSirenaByKeyError, key);
+    return CreateDefault(message, MarkupShortcuts.CreateMenuButtonOnlyMarkup());
   }
 }

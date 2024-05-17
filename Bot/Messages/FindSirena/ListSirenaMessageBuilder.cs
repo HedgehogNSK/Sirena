@@ -1,5 +1,4 @@
 using Hedgey.Sirena.Database;
-using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
 using System.Text;
@@ -8,9 +7,9 @@ namespace Hedgey.Sirena.Bot;
 
 public class ListSirenaMessageBuilder : MessageBuilder
 {
-  private (SirenRepresentation sirena,string ownerName)[] collection;
+  private (SirenRepresentation sirena, string ownerName)[] collection;
 
-  public ListSirenaMessageBuilder(long chatId, (SirenRepresentation sirena,string ownerName)[] collection)
+  public ListSirenaMessageBuilder(long chatId, (SirenRepresentation sirena, string ownerName)[] collection)
   : base(chatId)
   {
     this.collection = collection;
@@ -18,33 +17,32 @@ public class ListSirenaMessageBuilder : MessageBuilder
 
   public override SendMessage Build()
   {
-    const string template = ". `{0}` {1}\n*{2}*\n\n";
-    const string notification = "To subscribe:\n1. Click on the ID to copy it.\n2. Press *Subscribe* button.\n3. Paste the Sirena ID and press send.\n _Alternatively you can subscribe to a Sirena using the command:_\n`/subscribe sirena_id`";
+    const int buttonsPerLine = 5;
+    const string template = ".*{0}* by {1}\n`{2}`\n\n";
     StringBuilder builder = new StringBuilder("Found sirenas:\n");
-    int number = 1;
+    var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
+    int number = 0;
     foreach (var tuple in collection)
     {
       var sirena = tuple.sirena;
       var owner = tuple.ownerName;
-      builder.Append(number)
-      .AppendFormat(template,sirena.Id, owner , sirena.Title);
 
       ++number;
+
+      if (number % buttonsPerLine == 0)
+      {
+        keyboardBuilder.EndRow().BeginRow();
+      }
+      keyboardBuilder.AddSirenaInfoButton(tuple.sirena.Id, number.ToString());
+
+      builder.Append(number)
+      .AppendFormat(template, sirena.Title, owner, sirena.Id);
     }
 
-    builder.Append(notification);
+    var markup = keyboardBuilder.EndRow().BeginRow()
+       .AddFindButton().AddMenuButton().EndRow()
+       .ToReplyMarkup();
 
-    var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-       .AddSubscribeButton()
-       .AddFindButton()
-       .AddMenuButton()
-       .EndRow();
-
-    var keyboard = new InlineKeyboardMarkup
-    {
-      InlineKeyboard = keyboardBuilder.Build()
-    };
-
-    return CreateDefault(builder.ToString(), keyboard);
+    return CreateDefault(builder.ToString(), markup);
   }
 }
