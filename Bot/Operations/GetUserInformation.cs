@@ -1,7 +1,6 @@
-
-using System.Reactive.Threading.Tasks;
 using Hedgey.Extensions.Telegram;
 using RxTelegram.Bot;
+using System.Reactive.Threading.Tasks;
 
 namespace Hedgey.Sirena.Bot.Operations;
 

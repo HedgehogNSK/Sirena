@@ -19,7 +19,6 @@ public class RequestFindSirenaStep : CommandStep
     this.findSirenaOperation = findSirenaOperation;
     this.bot = bot;
   }
-
   public override IObservable<Report> Make()
   {
     var searchKey = contextContainer.Object.GetArgsString();

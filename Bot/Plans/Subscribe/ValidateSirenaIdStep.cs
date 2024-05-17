@@ -3,11 +3,12 @@ using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class ValidateIdSubscribeStep : CommandStep
+public class ValidateSirenaIdStep : CommandStep
 {
   private readonly NullableContainer<ObjectId> sirenaIdContainter;
 
-  public ValidateIdSubscribeStep(Container<IRequestContext> contextContainer, NullableContainer<ObjectId> sirenaIdContainter)
+  public ValidateSirenaIdStep(Container<IRequestContext> contextContainer
+  , NullableContainer<ObjectId> sirenaIdContainter)
    : base(contextContainer)
   {
     this.sirenaIdContainter = sirenaIdContainter;

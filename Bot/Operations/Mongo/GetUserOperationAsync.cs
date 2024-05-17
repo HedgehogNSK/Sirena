@@ -21,7 +21,7 @@ public class GetUserOperationAsync : IGetUserOperationAsync
       user = await requests.CreateUser(uid, uid);
       if(user==null)
         Program.messageSender.Send(uid, "Database couldn't create user. Please try latter");
-        return null;
+        return default;
       }
       return user;
   }

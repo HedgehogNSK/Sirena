@@ -5,7 +5,6 @@ using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
 
 namespace Hedgey.Sirena.Bot;
-
 public class MenuMessageBuilder : MessageBuilder
 {
   const string message = "Bot menu";
@@ -37,7 +36,6 @@ public class MenuMessageBuilder : MessageBuilder
   public override SendMessage Build()
   {
     const char slash = '/';
-    const string createTitle = "🆕 Create";
     const string listTitle = "🖥 Your Sirenas";
     const string subscriptionsTitle = "👀 Subscriptions";
 
@@ -54,13 +52,13 @@ public class MenuMessageBuilder : MessageBuilder
 
     keyboardBuilder.EndRow()
     .BeginRow()
-    .AddCallbackData(createTitle, slash + CreateSirenaCommand.NAME);
+    .AddCreateButton();
 
     if (userHasSirenas)
     {
       var title = listTitle + ((result != null && result.SirenasCount != 0) ?
             $" [{result.SirenasCount}]" : string.Empty);
-      keyboardBuilder.AddCallbackData(title, slash + ListUserSignalsCommand.NAME);
+      keyboardBuilder.AddCallbackData(title, slash + DisplayUsersSirenasCommand.NAME);
     }
 
     IReplyMarkup markup = new InlineKeyboardMarkup()

@@ -1,5 +1,4 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Bot.Operations.Mongo;
 using Hedgey.Structure.Factory;
 
 namespace Hedgey.Sirena.Bot;
@@ -9,7 +8,7 @@ public class CreateSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
   private readonly IGetUserOperationAsync getUserOperationAsync;
   private readonly ICreateSirenaOperationAsync createSirenAsync;
 
-  public CreateSirenaPlanFactory(GetUserOperationAsync getUserOperationAsync, ICreateSirenaOperationAsync createSirenAsync)
+  public CreateSirenaPlanFactory(IGetUserOperationAsync getUserOperationAsync, ICreateSirenaOperationAsync createSirenAsync)
   {
     this.getUserOperationAsync = getUserOperationAsync;
     this.createSirenAsync = createSirenAsync;

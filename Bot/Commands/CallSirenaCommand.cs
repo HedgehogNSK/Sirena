@@ -68,7 +68,7 @@ public class CallSirenaCommand : AbstractBotCommmand
     }
 
     var now = DateTimeOffset.Now;
-    const string dateFormat = "HH:mm:ss yyyy-MM-dd";
+    const string dateFormat = "HH:mm:ss dd.MM.yyyy";
     var dateString = now.ToString(dateFormat);
 
     if (sirena.LastCall != null && sirena.LastCall.Date + delay > now)

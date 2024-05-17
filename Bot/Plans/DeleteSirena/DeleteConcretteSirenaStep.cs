@@ -12,7 +12,7 @@ public class DeleteConcretteSirenaStep : DeleteSirenaStep
   public DeleteConcretteSirenaStep(Container<IRequestContext> contextContainer
   , NullableContainer<SirenRepresentation> sirenaContainer
   , IDeleteSirenaOperation sirenaDeleteOperation)
-   : base(contextContainer, sirenaContainer)
+   : base(contextContainer, sirenaContainer )
   {
     this.sirenaDeleteOperation = sirenaDeleteOperation;
   }
@@ -20,7 +20,7 @@ public class DeleteConcretteSirenaStep : DeleteSirenaStep
   public override IObservable<Report> Make()
   {
     var uid = contextContainer.Object.GetUser().Id;
-    var sirenaId = sirenaContainer.Object.Id;
+    var sirenaId = sirenaContainer.Object?.Id?? default;
     return sirenaDeleteOperation.Delete(uid, sirenaId)
     .Select(CreateReport);
   }

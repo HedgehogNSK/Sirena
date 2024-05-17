@@ -32,5 +32,4 @@ public abstract class CommandStep : IObservableStep<CommandStep.Report>
   }
 
   public record class Report(Result Result, MessageBuilder? MessageBuilder =null);
-
 }

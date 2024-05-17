@@ -20,6 +20,5 @@ public class MenuBotCommand : AbstractBotCommmand
     var messageBuilder = new MenuMessageBuilder(uid).AddUserStatistics(result);
     var message = messageBuilder.Build();
     Program.messageSender.Send(message);
-    Console.WriteLine(result);
   }
 }

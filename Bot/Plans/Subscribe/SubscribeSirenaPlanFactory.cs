@@ -19,7 +19,7 @@ public class SubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
     Container<IRequestContext> contextContainer = new(context);
     NullableContainer<ObjectId> idContainer = new();
     IEnumerable<IObservableStep< CommandStep.Report>> steps = [
-      new ValidateIdSubscribeStep(contextContainer,idContainer),
+      new ValidateSirenaIdStep(contextContainer,idContainer),
       new RequestSubscribeStep(contextContainer,idContainer, subscribeOperation),
     ];
     var compositeStep = new CompositeCommandStep(steps);

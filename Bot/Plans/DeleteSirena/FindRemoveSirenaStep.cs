@@ -7,7 +7,6 @@ using System.Data;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
-
 public class FindRemoveSirenaStep : DeleteSirenaStep
 {
   private readonly IFindSirenaOperation findSirenaOperation;
@@ -35,7 +34,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     if (string.IsNullOrEmpty(param))
     {
       return getUserSirenasOperation.GetUserSirenas(uid)
-        .Select(_sireans => new RemoveSirenaMenuMessageBuilder(chatId,_sireans))
+        .Select(_sireans => new RemoveSirenaMenuMessageBuilder(chatId, _sireans))
         .Select(_removeMenuBuilder => new Report(Result.Wait, _removeMenuBuilder));
     }
     else if (ObjectId.TryParse(param, out var id))

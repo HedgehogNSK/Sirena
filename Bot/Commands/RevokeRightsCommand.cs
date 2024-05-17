@@ -1,6 +1,5 @@
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
-using MongoDB.Driver;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 

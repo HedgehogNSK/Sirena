@@ -1,9 +1,9 @@
-using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
-using System.Text.RegularExpressions;
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Hedgey.Sirena.Bot.Operations.Mongo;
 

@@ -9,13 +9,13 @@ namespace Hedgey.Sirena.Bot;
 public class DelegateRightsCommand : AbstractBotCommmand
 {
   public const string NAME = "delegate";
-  public const string DESCRIPTION = "Delegate right to call sirena with another user.";
+  public const string DESCRIPTION = "Delegate rights to call sirena to another user.";
   private readonly FacadeMongoDBRequests requests;
   private readonly TelegramBot bot;
   const string errorWrongParamters = "Please input: /delegate {siren number or id} {user id}";
   const string errorWrongSirenaID = "{0} parameter is incorrect. First parameter has to be serial number or ID of your sirena";
   const string errorWrongUID = "{0} parameter is incorrect.Second parameter has to be *UID* of user that will have right to call the sirena.";
-  const string errorNoSirena = "You don't have a sirena1 with id: {0}";
+  const string errorNoSirena = "You don't have a Sirena with id: {0}";
   const string successMessage = "User {0} has been set as a responsible for sirena: {1}";
   public DelegateRightsCommand( IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
   : base(NAME, DESCRIPTION)
