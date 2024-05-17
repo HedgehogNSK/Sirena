@@ -3,6 +3,8 @@ using RxTelegram.Bot.Exceptions;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
+using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 
 namespace Hedgey.Sirena.Bot
 {
@@ -14,6 +16,17 @@ namespace Hedgey.Sirena.Bot
     public BotMesssageSender(TelegramBot bot)
     {
       this.bot = bot;
+    }
+
+    public IObservable<Message> ObservableSend(SendMessage message)
+    {
+      return bot.SendMessage(message).ToObservable()
+      .Catch((Exception _exception) 
+        => throw new Exception($"Exception on sending message to chat: {message.ChatId}", _exception));
+    }
+    public IObservable<Message> ObservableSend(MessageBuilder messageBuilder)
+    {
+      return ObservableSend(messageBuilder.Build());
     }
 
     public void Send(ChatId chatId, string text,IReplyMarkup? markup, bool silent)
@@ -35,7 +48,7 @@ namespace Hedgey.Sirena.Bot
 
       try
       {
-        RxTelegram.Bot.Interface.BaseTypes.Message message = await bot.SendMessage(sendMessage);
+        Message message = await bot.SendMessage(sendMessage);
         var result = message;
       }
       catch (ApiException ex)
