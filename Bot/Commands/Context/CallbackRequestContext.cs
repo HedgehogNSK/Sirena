@@ -21,6 +21,8 @@ public class CallbackRequestContext : IRequestContext
   public string GetCommandName()
 => commandName;
 
+  public Message GetMessage() => query.Message;
+
   public long GetTargetChatId()
   => query.From.Id;
   public User GetUser() => query.From;

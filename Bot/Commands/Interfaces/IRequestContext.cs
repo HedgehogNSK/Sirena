@@ -9,5 +9,6 @@ public interface IRequestContext : IValidator<AbstractBotCommmand>
   string GetArgsString();
   User GetUser();
   Chat GetChat();
+  Message GetMessage();
   long GetTargetChatId();
 }

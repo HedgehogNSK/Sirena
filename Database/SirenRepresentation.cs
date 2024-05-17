@@ -26,9 +26,11 @@ public class SirenRepresentation
 
   public override string ToString()
   {
-    const string message= "{{{0}|{1}}}";
-    return string.Format(message, Id, Title);
+    return  $"{Title}(`{Id}`)";
   }
+
+  public bool CanBeCalledBy(long uid)
+  => OwnerId == uid || Responsible.Contains(uid);
 
   public class Request
   {
