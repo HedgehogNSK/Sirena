@@ -4,8 +4,6 @@ using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 namespace Hedgey.Sirena.Bot;
 
 public interface IMessageForwarder{
-  IObservable<ForwardingReport[]> Forward(ForwardMessage message, params long[] targetArray);
-  IObservable<bool> Forward(ForwardMessages message);
+  IObservable<Message> Forward(ForwardMessage message);
+  IObservable<MessageIdObject[]> Forward(ForwardMessages messages);
 }
-
-public record ForwardingReport(ChatId ChatId, bool Success, Exception Exception = null);

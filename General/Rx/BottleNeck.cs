@@ -5,10 +5,10 @@ using System.Reactive.Subjects;
 
 namespace Hedgey.Rx;
 
-public class BottleNeck<T> : IDisposable
+public class BottleNeck : IDisposable
 {
-  private IObservable<T> limitResetSampler;
-  public IObservable<T> LimitResetSampler
+  private IObservable<Unit> limitResetSampler;
+  public IObservable<Unit> LimitResetSampler
   {
     get => limitResetSampler;
     set
@@ -26,7 +26,7 @@ public class BottleNeck<T> : IDisposable
   CompositeDisposable compositeDisposable = new CompositeDisposable();
   private bool inited;
 
-  public BottleNeck(IObservable<T> resetLimitSampler, int limit, int count = 0)
+  public BottleNeck(IObservable<Unit> resetLimitSampler, int limit, int count = 0)
   {
     this.passedCount = count;
     this.limitResetSampler = resetLimitSampler;
@@ -74,7 +74,7 @@ public class BottleNeck<T> : IDisposable
     if (passedCount == 1)
       launchSampler.OnNext(unit);
   }
-  public virtual void Reset(T _)
+  public virtual void Reset(Unit _)
   {
     passedCount = 0;
   }

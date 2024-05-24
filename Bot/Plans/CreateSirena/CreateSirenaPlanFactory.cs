@@ -8,7 +8,8 @@ public class CreateSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
   private readonly IGetUserOperationAsync getUserOperationAsync;
   private readonly ICreateSirenaOperationAsync createSirenAsync;
 
-  public CreateSirenaPlanFactory(IGetUserOperationAsync getUserOperationAsync, ICreateSirenaOperationAsync createSirenAsync)
+  public CreateSirenaPlanFactory(IGetUserOperationAsync getUserOperationAsync
+  , ICreateSirenaOperationAsync createSirenAsync)
   {
     this.getUserOperationAsync = getUserOperationAsync;
     this.createSirenAsync = createSirenAsync;

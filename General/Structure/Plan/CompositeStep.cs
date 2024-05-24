@@ -8,7 +8,7 @@ namespace Hedgey.Structure.Plan;
 /// <typeparam name="T"></typeparam>
 public abstract class CompositeStep<T> : IObservableStep<T>
 {
-  public CompositeStep(IEnumerable<IObservableStep<T>> steps)
+  public CompositeStep(IObservableStep<T>[] steps)
   {
     Steps = steps;
   }

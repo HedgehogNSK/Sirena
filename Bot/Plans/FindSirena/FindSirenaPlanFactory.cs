@@ -20,7 +20,7 @@ public class FindSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
   public CommandPlan Create(IRequestContext context)
   {
     Container<IRequestContext> contextContainer = new(context);
-    IEnumerable<IObservableStep< CommandStep.Report>> steps = [
+    IObservableStep< CommandStep.Report>[] steps = [
       new ValidateSearchParamFindSirenaStep(contextContainer),
       new RequestFindSirenaStep(contextContainer,findSirenaOperation,bot),
     ];

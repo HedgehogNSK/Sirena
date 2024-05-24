@@ -22,7 +22,7 @@ public class UnsubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPla
   {
     Container<IRequestContext> contextContainer = new(context);
     NullableContainer<ObjectId> idContainer = new();
-    IEnumerable<IObservableStep< CommandStep.Report>> steps = [
+    IObservableStep< CommandStep.Report>[] steps = [
       new ProcessParameterUnsubscribeStep(contextContainer,idContainer,getSubscriptions,getUserInformation),
       new TryUnsubscribeStep(contextContainer,idContainer, unsubscribeSirenaOperation),
     ];

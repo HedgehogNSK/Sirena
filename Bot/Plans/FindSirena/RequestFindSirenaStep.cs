@@ -22,23 +22,25 @@ public class RequestFindSirenaStep : CommandStep
   public override IObservable<Report> Make()
   {
     var searchKey = contextContainer.Object.GetArgsString();
-    var findObservable = findSirenaOperation.Find(searchKey).Publish().RefCount();
+    var findObservable = findSirenaOperation.Find(searchKey)
+      .Publish()
+      .RefCount();
 
-    IObservable<Report> emptyList = findObservable.Where(_sirenas=> !_sirenas.Any())
-        .Select(_ => NoSirenaReport());
+    IObservable<Report> emptyList = findObservable.Where(_sirenas => !_sirenas.Any())
+      .Select(_ => NoSirenaReport());
 
     IObservable<Report> succesful = findObservable
-        .SelectMany(x => x)
-        .SelectMany(GetOwnerNickname)
-        .ToArray() //If no element was emitted, ToArray returns empty array
-        .Where(x=>x.Any())
-        .Select(CreateReport);
+      .SelectMany(x => x)
+      .SelectMany(GetOwnerNickname)
+      .ToArray() //If no element was emitted, ToArray returns empty array
+      .Where(x => x.Any())
+      .Select(CreateReport);
 
     return succesful.Merge(emptyList);
   }
 
-  private IObservable<(SirenRepresentation sirena,string ownerName)> GetOwnerNickname(SirenRepresentation sirena)
-    => BotTools.GetUsername(bot, sirena.OwnerId).ToObservable().Select(x=> (sirena, x));
+  private IObservable<(SirenRepresentation sirena, string ownerName)> GetOwnerNickname(SirenRepresentation sirena)
+    => BotTools.GetUsername(bot, sirena.OwnerId).ToObservable().Select(x => (sirena, x));
 
   private Report NoSirenaReport()
   {

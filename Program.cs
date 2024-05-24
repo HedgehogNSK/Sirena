@@ -16,27 +16,36 @@ static internal class Program
   private const string errorNoCommand = $"No known command were found! Use /help to find out what I can do.";
   static TelegramBot bot;
   static MongoClient dbClient;
-  static FacadeMongoDBRequests request;
-  public static readonly IMessageSender messageSender;
+  static FacadeMongoDBRequests requests;
+  public static readonly BotMessageSenderTimerProxy botProxyRequests;
   public static BotCommands botCommands;
   public static readonly PlanScheduler planScheduler;
-  static Dictionary<long, CommandPlan> planDictionary;
+  private static Dictionary<long, CommandPlan> planDictionary;
+
   static Program()
   {
     planDictionary = new();
+    botCommands = new();
     var factory = new MongoClientFactory();
     dbClient = factory.Create();
-    request = new FacadeMongoDBRequests(dbClient);
+    requests = new FacadeMongoDBRequests(dbClient);
     var telegramFactory = new TelegramHelpFactory();
     bot = ((IFactory<TelegramBot>)telegramFactory).Create();
-    messageSender = new BotMesssageSender(bot);
-    messageSender = new BotMessageSenderTimerProxy(messageSender);
+    var botMesssageSender = new BotMesssageSender(bot);
+    botProxyRequests = new BotMessageSenderTimerProxy(botMesssageSender,botMesssageSender,botMesssageSender);    
     planScheduler = new PlanScheduler();
+  }
+  private static void Initialization()
+  {
+    var commandFactory = new CommandFactory(requests, bot, botCommands
+    , planScheduler, botProxyRequests, botProxyRequests,botProxyRequests);
+    var botCommandsInitializer = new CommandsCollectionInitializer( commandFactory);
+    botCommandsInitializer.Initialize(botCommands);//Fill bot commands collection only with working commands
   }
   private static async Task Main(string[] args)
   {
-    var commandsCollectionFactory = new CommandsCollectionFactory(request, bot, planScheduler, messageSender);
-    botCommands = commandsCollectionFactory.Create();
+    Initialization();
+
     var me = await bot.GetMe();
     Console.WriteLine($"Bot name: @{me.Username}");
     var observableMessages = bot.Updates.Message
@@ -55,7 +64,7 @@ static internal class Program
 
     var callbackStream = observableCallbackPublisher.Connect();
     var schedulerTrackPublisher = planScheduler.Track().Publish();
-    var planProcessingStream = schedulerTrackPublisher.Subscribe(ProcessPlanSummary);
+    var planProcessingStream = schedulerTrackPublisher.Subscribe(ProcessPlanSummary, OnError);
     var sendMessagesStream = schedulerTrackPublisher.Subscribe(SendResult);
     var schedulerTrackStream = schedulerTrackPublisher.Connect();
 
@@ -77,7 +86,7 @@ static internal class Program
     var message = report.LastStepReport?.MessageBuilder?.Build() ?? null;
     if (message == null)
       return;
-    messageSender.Send(message);
+    botProxyRequests.Send(message);
   }
 
   private static void ProcessPlanSummary(CommandPlan.Report report)
@@ -106,7 +115,21 @@ static internal class Program
 
   private static void OnError(Exception exception)
   {
-    Console.WriteLine("Callback Exception! " + exception);
+    var ex = exception;
+    do
+    {
+      switch (ex)
+      {
+        case ApiException apiException:
+          {
+            Console.WriteLine(apiException.Message + '\n' + apiException.Description);
+          }
+          break;
+        default: Console.WriteLine(exception); break;
+      }
+      ex = ex.InnerException;
+    }
+    while (ex != null);
   }
   private static IObservable<bool> SendCallbackApprove(CallbackQuery query)
   {
@@ -129,7 +152,7 @@ static internal class Program
     if (command == null)
     {
 
-      if (planDictionary.TryGetValue(uid, out CommandPlan plan))
+      if (planDictionary.TryGetValue(uid, out CommandPlan? plan))
       {
         plan.contextContainer.Set(context);
         planScheduler.Push(plan);
@@ -137,7 +160,7 @@ static internal class Program
       }
       else
       {
-        messageSender.Send(uid, errorNoCommand);
+        botProxyRequests.Send(uid, errorNoCommand);
         return;
       }
     }

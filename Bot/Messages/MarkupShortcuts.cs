@@ -8,19 +8,19 @@ namespace Hedgey.Sirena.Bot;
 
 public static class MarkupShortcuts
 {
-  const string menuTitle = "🧾 Menu";
-  const string callTitle = "🔊 Launch Sirena";
-  const string createTitle = "🆕 Create";
-  const string getInfoTitle = "ℹ️ Info";
-  const string findTitle = "🔎 Find";
-  const string subscribeTitle = "🔔 Subscribe";
-  const string unsubscribeTitle = "🔕 UnSubscribe";
-  const string deleteTitle = "🗑 Delete";
-  const string displaySirenasTitle = "🖥 Your Sirenas";
-  const string getReuqestsTitle = "👽 Requests [{0}]";
-  const string getResponsiblesTitle = "🫡 Responsibles [{0}]";
-  const string requestRightTitle = "🙏 Ask rights";
-  const string subscriptionsTitle = "👀 Subscriptions";
+  public const string menuTitle = "🧾 Menu";
+  public const string callTitle = "🔊 Launch Sirena";
+  public const string createTitle = "🆕 Create";
+  public const string getInfoTitle = "ℹ️ Info";
+  public const string findTitle = "🔎 Find";
+  public const string subscribeTitle = "🔔 Subscribe";
+  public const string unsubscribeTitle = "🔕 UnSubscribe";
+  public const string deleteTitle = "🗑 Delete";
+  public const string displaySirenasTitle = "🖥 Your Sirenas";
+  public const string getReuqestsTitle = "👽 Requests [{0}]";
+  public const string getResponsiblesTitle = "🫡 Responsibles [{0}]";
+  public const string requestRightTitle = "🙏 Ask rights";
+  public const string subscriptionsTitle = "👀 Subscriptions";
 
   private static IInlineKeyboardRow AddButton(this IInlineKeyboardRow inlineKeyboardRow
     , string title, string commandName)
@@ -45,11 +45,21 @@ public static class MarkupShortcuts
     => inlineKeyboardRow.AddButton(createTitle, CreateSirenaCommand.NAME);
   public static IInlineKeyboardRow AddDeleteButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId sirenaId, string title = deleteTitle)
     => inlineKeyboardRow.AddButton(title, DeleteSirenaCommand.NAME, sirenaId.ToString());
-  public static IInlineKeyboardRow AddDisplaySubscriptionsButton(this IInlineKeyboardRow inlineKeyboardRow)
-   => inlineKeyboardRow.AddButton(subscriptionsTitle, GetSubscriptionsListCommand.NAME);
+  public static IInlineKeyboardRow AddDisplaySubscriptionsButton(this IInlineKeyboardRow inlineKeyboardRow, int count = 0, string title = subscriptionsTitle)
+  {
+    if (count != 0)
+      title += $" [{count}]";
+    return inlineKeyboardRow.AddButton(title, GetSubscriptionsListCommand.NAME);
+  }
+
   public static IInlineKeyboardRow AddDisplayUserSirenasButton(this IInlineKeyboardRow inlineKeyboardRow
-    , string title = displaySirenasTitle)
-    => inlineKeyboardRow.AddButton(title , DisplayUsersSirenasCommand.NAME);
+    , int count = 0, string title = displaySirenasTitle)
+  {
+    if (count != 0)
+      title += $" [{count}]";
+    return inlineKeyboardRow.AddButton(title, DisplayUsersSirenasCommand.NAME);
+  }
+
   public static IInlineKeyboardRow AddFindButton(this IInlineKeyboardRow inlineKeyboardRow)
     => inlineKeyboardRow.AddButton(findTitle, FindSirenaCommand.NAME);
   public static IInlineKeyboardRow AddRequestButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId sirenaId, string title = requestRightTitle) => inlineKeyboardRow.AddButton(title, RequestRightsCommand.NAME, sirenaId.ToString());

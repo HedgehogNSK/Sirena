@@ -26,7 +26,7 @@ public class SirenRepresentation
 
   public override string ToString()
   {
-    return  $"{Title}(`{Id}`)";
+    return  $"{Title} (`{Id}`)";
   }
 
   public bool CanBeCalledBy(long uid)
