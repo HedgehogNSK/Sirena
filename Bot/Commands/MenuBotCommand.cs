@@ -19,6 +19,6 @@ public class MenuBotCommand : AbstractBotCommmand
     var result = await getOverview.Get(uid);
     var messageBuilder = new MenuMessageBuilder(uid).AddUserStatistics(result);
     var message = messageBuilder.Build();
-    Program.messageSender.Send(message);
+    Program.botProxyRequests.Send(message);
   }
 }

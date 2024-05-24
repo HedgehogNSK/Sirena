@@ -1,5 +1,4 @@
 using Hedgey.Sirena.Bot.Operations;
-using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
@@ -35,44 +34,21 @@ public class MenuMessageBuilder : MessageBuilder
   }
   public override SendMessage Build()
   {
-    const char slash = '/';
-    const string listTitle = "🖥 Your Sirenas";
-    const string subscriptionsTitle = "👀 Subscriptions";
-
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
     .AddFindButton()
     .AddSubscribeButton();
 
     if (userSubscribed)
-    {
-      var title = subscriptionsTitle + ((result != null && result.Subscriptions != 0) ?
-            $" [{result.Subscriptions}]" : string.Empty);
-      keyboardBuilder.EndRow().BeginRow().AddCallbackData(title, slash + GetSubscriptionsListCommand.NAME);
-    }
+      keyboardBuilder.EndRow().BeginRow().AddDisplaySubscriptionsButton(result?.Subscriptions ?? 0);
 
     keyboardBuilder.EndRow()
     .BeginRow()
     .AddCreateButton();
 
     if (userHasSirenas)
-    {
-      var title = listTitle + ((result != null && result.SirenasCount != 0) ?
-            $" [{result.SirenasCount}]" : string.Empty);
-      keyboardBuilder.AddCallbackData(title, slash + DisplayUsersSirenasCommand.NAME);
-    }
+      keyboardBuilder.AddDisplayUserSirenasButton(result?.SirenasCount ?? 0);
 
-    IReplyMarkup markup = new InlineKeyboardMarkup()
-    {
-      InlineKeyboard = keyboardBuilder.EndRow().Build()
-    };
-
-    return new SendMessage
-    {
-      ChatId = chatId,
-      Text = message,
-      ReplyMarkup = markup,
-      ProtectContent = false,
-      DisableNotification = true,
-    };
+    IReplyMarkup markup = keyboardBuilder.EndRow().ToReplyMarkup();
+    return CreateDefault(message, markup);
   }
 }

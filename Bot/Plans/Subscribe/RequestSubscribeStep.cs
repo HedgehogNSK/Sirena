@@ -21,7 +21,7 @@ public class RequestSubscribeStep : CommandStep
 
   public override IObservable<Report> Make()
   {
-    var id = sirenaIdContainter.Object;
+    var id = sirenaIdContainter.Get();
     var uid = contextContainer.Object.GetUser().Id;
 
     var request = subscribeOperation.Subscribe(uid, id).Publish().RefCount();
@@ -39,7 +39,7 @@ public class RequestSubscribeStep : CommandStep
 
   private Report CreateReportNotFound()
   {
-    var id = sirenaIdContainter.Object;
+    var id = sirenaIdContainter.Get();
     var chatId = contextContainer.Object.GetTargetChatId();
     return new(Result.Wait, new SirenaNotFoundMessageBuilder(chatId, id));
   }

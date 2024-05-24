@@ -19,7 +19,7 @@ public class GetSirenaInfoStep : CommandStep
   }
 
   public override IObservable<Report> Make()
-  => findSirena.Find(sirenaIdContainter.Object).Select(CreateReport);
+  => findSirena.Find(sirenaIdContainter.Get()).Select(CreateReport);
 
   private Report CreateReport(SirenRepresentation representation)
   {
@@ -28,7 +28,7 @@ public class GetSirenaInfoStep : CommandStep
 
     Result result = representation == null ? Result.Canceled : Result.Success;
     MessageBuilder builder = representation == null ?
-        new SirenaNotFoundMessageBuilder(chatId, sirenaIdContainter.Object)
+        new SirenaNotFoundMessageBuilder(chatId, sirenaIdContainter.Get())
         : new SirenaInfoMessageBuilder(chatId, uid, representation);
 
     return new Report(result, builder);

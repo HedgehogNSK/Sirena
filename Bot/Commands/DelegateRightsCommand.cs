@@ -34,7 +34,7 @@ public class DelegateRightsCommand : AbstractBotCommmand
     string[] parameters = context.GetArgsString().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
     if (parameters.Length < 3)
     {
-      Program.messageSender.Send(chatId, errorWrongParamters);
+      Program.botProxyRequests.Send(chatId, errorWrongParamters);
       return;
     }
     ObjectId sirenaId = default;
@@ -42,13 +42,13 @@ public class DelegateRightsCommand : AbstractBotCommmand
         && !ObjectId.TryParse(parameters[1], out sirenaId))
     {
       responseText = string.Format(errorWrongSirenaID, parameters[1]);
-      Program.messageSender.Send(chatId, responseText);
+      Program.botProxyRequests.Send(chatId, responseText);
       return;
     }
     if (!long.TryParse(parameters[2], out long duid))
     {
       responseText = string.Format(errorWrongUID, parameters[2]);
-      Program.messageSender.Send(chatId, responseText);
+      Program.botProxyRequests.Send(chatId, responseText);
       return;
     }
     if (sirenaId == default)
@@ -67,10 +67,10 @@ public class DelegateRightsCommand : AbstractBotCommmand
     if (updatedSiren == null)
     {
       responseText = string.Format(errorNoSirena, sirenaId);
-      Program.messageSender.Send(chatId, responseText);
+      Program.botProxyRequests.Send(chatId, responseText);
       return;
     }
     responseText = string.Format(successMessage, duid, updatedSiren);
-    Program.messageSender.Send(chatId, responseText);
+    Program.botProxyRequests.Send(chatId, responseText);
   }
 }

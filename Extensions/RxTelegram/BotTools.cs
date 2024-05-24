@@ -1,13 +1,14 @@
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Chats;
+using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 
 namespace Hedgey.Extensions.Telegram;
 
 public static class BotTools
 {
 
-  static public async Task<Chat?> GetChatByUID(this TelegramBot bot, long uid)
+  static public async Task<ChatFullInfo?> GetChatByUID(this TelegramBot bot, long uid)
   {
     var getChat = new GetChat { ChatId = uid };
     try
@@ -31,6 +32,18 @@ public static class BotTools
   public static async Task<string> GetUsername(TelegramBot bot, long uid)
   {
     var chat = await bot.GetChatByUID(uid);
-    return chat?.GetUsername() ?? "Ghost";
+    return chat?.Username ?? "Ghost";
+  }
+
+  public static CopyMessages Clone(this CopyMessages source){
+    return new CopyMessages(){
+       ChatId = source.ChatId,
+        DisableNotification = source.DisableNotification,
+        FromChatId = source.FromChatId,
+        MessageIds = source.MessageIds,
+        MessageThreadId = source.MessageThreadId,
+        ProtectContent = source.ProtectContent,
+        RemoveCaption = source.RemoveCaption
+    };
   }
 }

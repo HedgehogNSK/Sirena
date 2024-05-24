@@ -59,7 +59,7 @@ public class GetRequestsListCommand : AbstractBotCommmand
 
       messageText = await CreateMessageText(requestsList);
     }
-    Program.messageSender.Send(chatId, messageText);
+    Program.botProxyRequests.Send(chatId, messageText);
   }
 
   private async Task<string> CreateMessageText(IEnumerable<RequestInfo> requestsList)
@@ -73,7 +73,7 @@ public class GetRequestsListCommand : AbstractBotCommmand
     foreach (var request in requestsList)
     {
       var chat = await bot.GetChatByUID(request.UserId);
-      var username = chat?.GetUsername()?? "Ghost";
+      var username = chat?.Username ?? "Ghost";
       builder.AppendLine().Append(number).Append(". User *")
         .Append(username)
         .Append('|')

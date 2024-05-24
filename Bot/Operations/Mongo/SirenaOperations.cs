@@ -7,7 +7,10 @@ using System.Text.RegularExpressions;
 
 namespace Hedgey.Sirena.Bot.Operations.Mongo;
 
-public class SirenaOperations : IDeleteSirenaOperation, ISubscribeToSirenaOperation, IUnsubscribeSirenaOperation, IFindSirenaOperation, IGetUserRelatedSirenas
+public class SirenaOperations : IDeleteSirenaOperation
+, ISubscribeToSirenaOperation, IUnsubscribeSirenaOperation
+, IFindSirenaOperation, IGetUserRelatedSirenas
+, IUpdateSirenaOperation
 {
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly IMongoCollection<UserRepresentation> users;
@@ -29,7 +32,6 @@ public class SirenaOperations : IDeleteSirenaOperation, ISubscribeToSirenaOperat
   {
     var sirenFilter = Builders<SirenRepresentation>.Filter.Eq(x => x.Id, id);
     return sirens.FindOneAndDeleteAsync(sirenFilter).ToObservable();
-    // return await sirens.Find(sirenFilter).FirstOrDefaultAsync();
   }
 
   public IObservable<UpdateResult> DeleteSirenaIdFromOwner(long uid, ObjectId id)
@@ -85,4 +87,10 @@ public class SirenaOperations : IDeleteSirenaOperation, ISubscribeToSirenaOperat
     return sirens.Find(filterSiren).Skip(number).FirstOrDefaultAsync().ToObservable();
   }
 
+  public IObservable<SirenRepresentation> UpdateLastCall(ObjectId sirenId, SirenRepresentation.CallInfo  callInfo)
+  {
+    var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.Id, sirenId);
+    var update = Builders<SirenRepresentation>.Update.Set(x => x.LastCall, callInfo);
+    return sirens.FindOneAndUpdateAsync(filter, update).ToObservable();
+  }
 }

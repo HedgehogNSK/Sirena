@@ -1,3 +1,4 @@
+using RxTelegram.Bot.Interface.BaseTypes.Enums;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 
@@ -10,17 +11,16 @@ public abstract class MessageBuilder
   {
     this.chatId = chatId;
   }
+  public void ChangeTarget(long chatId)=> this.chatId = chatId;
   public abstract SendMessage Build();
-
-  protected SendMessage CreateDefault(string message, IReplyMarkup? replyMarkup = null)
-  {
-    return new SendMessage()
-    {
-      ChatId = chatId,
-      DisableNotification = true,
-      ProtectContent = true,
-      Text = message,
-      ReplyMarkup = replyMarkup,
-    };
-  }
+  protected SendMessage CreateDefault(string message, IReplyMarkup? replyMarkup = null) 
+    => new SendMessage()
+        {
+          ChatId = chatId,
+          DisableNotification = true,
+          ProtectContent = true,
+          Text = message,
+          ReplyMarkup = replyMarkup,
+          ParseMode = ParseMode.Markdown
+        };
 }

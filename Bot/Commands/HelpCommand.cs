@@ -31,7 +31,7 @@ namespace Hedgey.Sirena.Bot
         ChatId = uid,
         Text = builder.ToString()
       };
-      Program.messageSender.Send(response);
+      Program.botProxyRequests.Send(response);
     }
   }
 }

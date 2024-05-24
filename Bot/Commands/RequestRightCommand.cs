@@ -30,22 +30,22 @@ public class RequestRightsCommand : AbstractBotCommmand
 
     if (!ObjectId.TryParse(param, out ObjectId sid))
     {
-      Program.messageSender.Send(chatId, wrongParameter);
+      Program.botProxyRequests.Send(chatId, wrongParameter);
       return;
     }
     var userMessage = context.GetArgsString().SkipFirstNWords(1).BuildString();
     var updateResult = await requests.RequestRightsForSirena(sid, uid, userMessage);
     if (updateResult.MatchedCount == 0)
     {
-      Program.messageSender.Send(chatId, noSirenaMessage);
+      Program.botProxyRequests.Send(chatId, noSirenaMessage);
       return;
     }
     if (updateResult.ModifiedCount == 0)
     {
-      Program.messageSender.Send(chatId, noChangesMessage);
+      Program.botProxyRequests.Send(chatId, noChangesMessage);
       return;
     }
     responseText = string.Format(successMessage,sid);
-    Program.messageSender.Send(chatId, responseText);
+    Program.botProxyRequests.Send(chatId, responseText);
   }
 }

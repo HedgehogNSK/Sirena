@@ -19,9 +19,12 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
   private readonly SirenaOperations sirenaOperation;
   private readonly IGetUserInformation getUserInformation;
   private readonly IMessageSender messageSender;
+  private readonly IMessageForwarder messageForwarder;
+  private readonly IMessageCopier messsageCopier;
 
   public CommandFactory(FacadeMongoDBRequests requests, TelegramBot bot
-  , BotCommands botCommands, PlanScheduler planScheduler, IMessageSender messageSender)
+  , BotCommands botCommands, PlanScheduler planScheduler
+  , IMessageSender messageSender, IMessageForwarder messageForwarder, IMessageCopier messsageCopier)
   {
     this.requests = requests;
     this.db = requests.db;
@@ -33,6 +36,8 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
     sirenaOperation = new SirenaOperations(sirens, users);
     getUserInformation = new GetUserInformation(bot);
     this.messageSender = messageSender;
+    this.messageForwarder = messageForwarder;
+    this.messsageCopier = messsageCopier;
   }
   public AbstractBotCommmand Create(string commandName)
   {
@@ -43,7 +48,9 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
           IGetUserOverviewAsync getUserOverview = new GetUserStatsOperationAsync(sirens);
           return new MenuBotCommand(getUserOverview);
         }
-      case CallSirenaCommand.NAME: return new CallSirenaCommand(requests);
+      case CallSirenaCommand.NAME: {
+        var factory= new CallSirenaPlanFactory(sirenaOperation,messageSender,messageForwarder, messsageCopier, sirenaOperation);
+        return new CallSirenaCommand(factory, planScheduler);}
       case CreateSirenaCommand.NAME:
         {
           var getUserStats = new GetUserOperationAsync(users, requests);
@@ -51,7 +58,7 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
           var factory = new CreateSirenaPlanFactory(getUserStats, createSiren);
           return new CreateSirenaCommand(factory, planScheduler);
         }
-      case DelegateRightsCommand.NAME: return new DelegateRightsCommand(requests.db, requests, bot);
+      case DelegateRightsCommand.NAME: return new DelegateRightsCommand(db, requests, bot);
       case HelpCommand.NAME: return new HelpCommand(botCommands.Commands);
       case DisplayUsersSirenasCommand.NAME: return new DisplayUsersSirenasCommand(sirenaOperation,messageSender);
       case MuteUserSignalCommand.NAME: return new MuteUserSignalCommand(requests, bot);
@@ -61,8 +68,8 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
           return new DeleteSirenaCommand(factory, planScheduler);
         }
       case RequestRightsCommand.NAME: return new RequestRightsCommand(requests);
-      case GetRequestsListCommand.NAME: return new GetRequestsListCommand(requests.db, requests, bot);
-      case GetResponsiblesListCommand.NAME: return new GetResponsiblesListCommand(requests.db, requests, bot);
+      case GetRequestsListCommand.NAME: return new GetRequestsListCommand(db, requests, bot);
+      case GetResponsiblesListCommand.NAME: return new GetResponsiblesListCommand(db, requests, bot);
       case RevokeRightsCommand.NAME: return new RevokeRightsCommand(requests, bot);
       case FindSirenaCommand.NAME: {
         var factory = new FindSirenaPlanFactory(sirenaOperation,bot);

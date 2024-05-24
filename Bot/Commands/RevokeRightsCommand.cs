@@ -32,7 +32,7 @@ public class RevokeRightsCommand : AbstractBotCommmand
     string[] parameters = context.GetArgsString().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
     if (parameters.Length < 3)
     {
-      Program.messageSender.Send(chatId, errorWrongParamters);
+      Program.botProxyRequests.Send(chatId, errorWrongParamters);
       return;
     }
     ObjectId sirenaId = default;
@@ -41,10 +41,10 @@ public class RevokeRightsCommand : AbstractBotCommmand
         && !ObjectId.TryParse(sirenaIdString, out sirenaId))
     {
       responseText = string.Format(errorWrongSirenaID, sirenaIdString);
-      Program.messageSender.Send(chatId, responseText);
+      Program.botProxyRequests.Send(chatId, responseText);
       return;
     }
-    Chat? chat = null;
+    ChatFullInfo? chat = null;
     string userIdString = parameters[2];
     if (long.TryParse(userIdString, out long ruid))
     {
@@ -53,7 +53,7 @@ public class RevokeRightsCommand : AbstractBotCommmand
     if (chat == null)
     {
       responseText = string.Format(errorWrongUID, userIdString);
-      Program.messageSender.Send(chatId, responseText);
+      Program.botProxyRequests.Send(chatId, responseText);
       return;
     }
     ruid = chat.Id;
@@ -74,11 +74,11 @@ public class RevokeRightsCommand : AbstractBotCommmand
     if (updatedSiren == null)
     {
       responseText = errorNoSirena + sirenaId;
-      Program.messageSender.Send(chatId, responseText);
+      Program.botProxyRequests.Send(chatId, responseText);
       return;
     }
 
     responseText = string.Format(successMessage, ruid, updatedSiren);
-    Program.messageSender.Send(chatId, responseText);
+    Program.botProxyRequests.Send(chatId, responseText);
   }
 }

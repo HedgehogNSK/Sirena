@@ -19,7 +19,7 @@ public class TryUnsubscribeStep : CommandStep
 
   public override IObservable<Report> Make()
   {
-    var id = idContainer.Object;
+    var id = idContainer.Get();
     var uid = Context.GetUser().Id;
     return unsubscribeOperation.Unsubscribe(uid,id).Select(CreateReport);
   }

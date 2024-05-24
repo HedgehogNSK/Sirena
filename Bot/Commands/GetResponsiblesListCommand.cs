@@ -47,7 +47,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
       }
       else
       {
-        Program.messageSender.Send(chatId, string.Format(noSirenaWithNumber, number));
+        Program.botProxyRequests.Send(chatId, string.Format(noSirenaWithNumber, number));
         return;
       }
     }
@@ -57,18 +57,18 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
       if (sirena == null)
       {
 
-        Program.messageSender.Send(chatId, noSirenaMessage);
+        Program.botProxyRequests.Send(chatId, noSirenaMessage);
         return;
       }
     }
     else
     {
-      Program.messageSender.Send(chatId, wrongParamMessage);
+      Program.botProxyRequests.Send(chatId, wrongParamMessage);
       return;
     }
 
     var messageText = await CreateMessageText(sirena);
-    Program.messageSender.Send(chatId, messageText);
+    Program.botProxyRequests.Send(chatId, messageText);
   }
 
   private async Task<string[]> GetResponsibleNames(SirenRepresentation sirena)
@@ -77,7 +77,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
     for (int id = 0; id != sirena.Responsible.Length; ++id)
     {
       var chat = await bot.GetChatByUID(sirena.Responsible[id]);
-      names[id] = chat?.GetUsername() ?? string.Empty;
+      names[id] = chat?.Username ?? string.Empty;
       names[id] += "|" + sirena.Responsible[id];
     }
 
@@ -93,7 +93,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
     }
 
     var chat = await bot.GetChatByUID(sirena.OwnerId);
-    string owner = chat?.GetUsername() ?? "Ghost";
+    string owner = chat?.Username ?? "Ghost";
     owner += "|" + sirena.OwnerId;
 
     var builder = new StringBuilder("Sirena *\"")

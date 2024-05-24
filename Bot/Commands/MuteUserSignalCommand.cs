@@ -34,7 +34,7 @@ namespace Hedgey.Sirena.Bot
       string[] parameters = context.GetArgsString().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
       if (parameters.Length < 3)
       {
-        Program.messageSender.Send(chatId, errorWrongParamters);
+        Program.botProxyRequests.Send(chatId, errorWrongParamters);
         return;
       }
       var sirenaIdString = parameters[2];
@@ -44,10 +44,10 @@ namespace Hedgey.Sirena.Bot
           && !ObjectId.TryParse(sirenaIdString, out sirenaId))
       {
         responseText = string.Format(sirenaIdString, errorWrongSirenaID);
-        Program.messageSender.Send(chatId, responseText);
+        Program.botProxyRequests.Send(chatId, responseText);
         return;
       }
-      Chat? chat = null;
+      ChatFullInfo? chat = null;
       if (long.TryParse(userIdString, out long _UIDtoMute))
       {
         chat = await Extensions.Telegram.BotTools.GetChatByUID(bot, _UIDtoMute);
@@ -55,24 +55,24 @@ namespace Hedgey.Sirena.Bot
       if (chat == null)
       {
         responseText = string.Format(errorWrongUID, userIdString);
-        Program.messageSender.Send(chatId, responseText);
+        Program.botProxyRequests.Send(chatId, responseText);
         return;
       }
       _UIDtoMute = chat.Id;
 
       var isMutable = await requests.IsPossibleToMute(uid,_UIDtoMute,sirenaId);
       if(!isMutable){
-        Program.messageSender.Send(chatId, errorCantMute);
+        Program.botProxyRequests.Send(chatId, errorCantMute);
         return;
       }
       var result = await requests.SetUserMute(uid,_UIDtoMute, sirenaId);
       if(result ==null)
       {
-        Program.messageSender.Send(chatId, errorNoSirena);
+        Program.botProxyRequests.Send(chatId, errorNoSirena);
        return;
       }
         responseText = string.Format(successMessage, _UIDtoMute, sirenaId);
-        Program.messageSender.Send(chatId, responseText);
+        Program.botProxyRequests.Send(chatId, responseText);
     }
   }
 }

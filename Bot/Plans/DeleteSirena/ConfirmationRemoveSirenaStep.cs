@@ -18,7 +18,7 @@ public class ConfirmationRemoveSirenaStep : DeleteSirenaStep
     if (!bool.TryParse(param, out bool value))
     {
       long chatId = Context.GetTargetChatId();
-      var messageBuilder = new ConfirmRemoveSirenaMessageBuilder(chatId, sirenaContainer.Object);
+      var messageBuilder = new ConfirmRemoveSirenaMessageBuilder(chatId, sirenaContainer.Get());
       report = new Report(Result.Wait, messageBuilder);
     }
     else

@@ -1,5 +1,8 @@
+using Hedgey.Structure.Factory;
+
 namespace Hedgey.Sirena.Bot;
-public class CommandsCollectionInitializer{
+public class CommandsCollectionInitializer
+{
   private static List<string> commandNames = [MenuBotCommand.NAME,
   CreateSirenaCommand.NAME,
   CallSirenaCommand.NAME,
@@ -19,21 +22,20 @@ public class CommandsCollectionInitializer{
   GetRequestsListCommand.NAME,
   HelpCommand.NAME,
   StartCommand.NAME,];
-  private readonly BotCommands botCommands;
-  private readonly CommandFactory factory;
+  private readonly IFactory<string, AbstractBotCommmand> factory;
 
-  public CommandsCollectionInitializer(BotCommands botCommands, CommandFactory factory)
+  public CommandsCollectionInitializer(IFactory<string, AbstractBotCommmand> factory)
   {
-    this.botCommands = botCommands;
     this.factory = factory;
   }
 
-  public void Initialize(){
+  public void Initialize(BotCommands botCommands)
+  {
     botCommands.Clear();
-     foreach(var commandName in commandNames)
-     {
+    foreach (var commandName in commandNames)
+    {
       var command = factory.Create(commandName);
       botCommands.Add(command);
-     }
+    }
   }
 }

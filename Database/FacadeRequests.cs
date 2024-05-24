@@ -46,7 +46,7 @@ public class FacadeMongoDBRequests
         {
           const string failMessageText = "You don't have this *sirena*";
           //ChatId for personal chat is equal to userId
-          Program.messageSender.Send(uid, failMessageText);
+          Program.botProxyRequests.Send(uid, failMessageText);
         }
       }
     return id;
