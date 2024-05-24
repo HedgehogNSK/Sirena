@@ -1,3 +1,4 @@
+using RxTelegram.Bot.Interface.BaseTypes.Enums;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using System.Text;
 
@@ -29,7 +30,8 @@ namespace Hedgey.Sirena.Bot
       var response = new SendMessage()
       {
         ChatId = uid,
-        Text = builder.ToString()
+        Text = builder.ToString(),
+        ParseMode = ParseMode.Markdown
       };
       Program.botProxyRequests.Send(response);
     }

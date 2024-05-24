@@ -60,7 +60,7 @@ static internal class Program
 
     var approveCallbackStream = observableCallbackPublisher
         .SelectMany(SendCallbackApprove)
-        .Subscribe(Console.WriteLine, OnError);
+        .Subscribe(_=>{ }, OnError);
 
     var callbackStream = observableCallbackPublisher.Connect();
     var schedulerTrackPublisher = planScheduler.Track().Publish();

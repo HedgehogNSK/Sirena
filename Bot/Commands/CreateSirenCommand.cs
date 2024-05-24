@@ -5,7 +5,7 @@ namespace Hedgey.Sirena.Bot;
 public class CreateSirenaCommand : AbstractBotCommmand
 {
   public const string NAME = "create";
-  public const string DESCRIPTION = "Creates a sirena with certain title. Example: `/create Sirena`";
+  public const string DESCRIPTION = "Creates a sirena with certain title";
   private readonly IFactory<IRequestContext, CommandPlan> planFactory;
   private readonly PlanScheduler planScheduler;
 

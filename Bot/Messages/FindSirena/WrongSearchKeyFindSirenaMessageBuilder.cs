@@ -12,7 +12,8 @@ public class WrongSearchKeyFindSirenaMessageBuilder : MessageBuilder
   {
     return CreateDefault(string.Format(errorDescription
       , ValidateSearchParamFindSirenaStep.MIN_SIMBOLS
-      , ValidateSearchParamFindSirenaStep.MAX_SIMBOLS), MarkupShortcuts.CreateMenuButtonOnlyMarkup());
+      , ValidateSearchParamFindSirenaStep.MAX_SIMBOLS)
+      , MarkupShortcuts.CreateMenuButtonOnlyMarkup());
   }
 }
 

@@ -1,6 +1,7 @@
 using Hedgey.Extensions.Telegram;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes;
+using RxTelegram.Bot.Interface.BaseTypes.Enums;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 
 namespace Hedgey.Sirena.Bot;
@@ -30,7 +31,7 @@ public class SirenaCallServiceMessageBuilder : MessageBuilder
       ProtectContent = false,
       Text = notification,
       ReplyMarkup = null,
-      ParseMode = RxTelegram.Bot.Interface.BaseTypes.Enums.ParseMode.Markdown
+      ParseMode =  ParseMode.Markdown
     };
     return message;
   }
