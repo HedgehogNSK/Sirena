@@ -4,7 +4,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class CompositeCommandStep : CompositeStep<CommandStep.Report>
 {
-  public CompositeCommandStep(IObservableStep<CommandStep.Report>[] steps) 
+  public CompositeCommandStep(params IObservableStep<CommandStep.Report>[] steps) 
   : base(steps)
   {
   }

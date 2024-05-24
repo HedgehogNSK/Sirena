@@ -8,8 +8,12 @@ namespace Hedgey.Structure.Plan;
 /// <typeparam name="T"></typeparam>
 public abstract class CompositeStep<T> : IObservableStep<T>
 {
-  public CompositeStep(IObservableStep<T>[] steps)
+  public CompositeStep(params IObservableStep<T>[] steps)
   {
+    if(steps.Length==0)
+    {
+       throw new ArgumentException("Input array has to be contains at least 1 step.", nameof(steps));
+    }
     Steps = steps;
   }
 
