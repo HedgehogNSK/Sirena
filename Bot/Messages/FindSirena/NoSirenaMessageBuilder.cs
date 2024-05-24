@@ -6,7 +6,7 @@ namespace Hedgey.Sirena.Bot;
 public class NoSirenaMessageBuilder : MessageBuilder
 {
   private readonly ObjectId id;
-  string key;
+  string key =string.Empty;
   public NoSirenaMessageBuilder(long chatId, string key) : base(chatId)
   {
     this.key = key;

@@ -4,9 +4,9 @@ namespace Hedgey.Structure.Plan;
 public abstract class ObservablePlan<TReport, TSummary>
 {
   public IEnumerable<IObservableStep<TReport>> Steps { get; }
-  protected IEnumerator< IObservableStep<TReport>>? enumerator = null;
-  public  IObservableStep<TReport>? CurrentStep { get; protected set; } = default;
-  public ObservablePlan(IEnumerable< IObservableStep<TReport>> steps)
+  protected IEnumerator<IObservableStep<TReport>>? enumerator = null;
+  public IObservableStep<TReport>? CurrentStep { get; protected set; } = default;
+  public ObservablePlan(IEnumerable<IObservableStep<TReport>> steps)
   {
     if (steps == null || !steps.Any())
       throw new ArgumentNullException("steps", "Steps couldn't be empty or equal `Null`");
@@ -25,7 +25,12 @@ public abstract class ObservablePlan<TReport, TSummary>
   public virtual IObservable<TSummary> Execute()
   {
     if (enumerator == null)
+    {
       Init();
+
+      if (enumerator == null)
+        throw new ArgumentNullException("It's a miracle! Enumerator is null. Did you miss the initialization of enumerator?");
+    }
     if (CurrentStep == null && !enumerator.MoveNext())
     {
       throw new ArgumentException("No more steps to do");
@@ -33,7 +38,7 @@ public abstract class ObservablePlan<TReport, TSummary>
     return RecursiveCallMake(enumerator).Select(CreateSummary);
   }
 
-  public IObservable<TReport> RecursiveCallMake(IEnumerator< IObservableStep<TReport>> enumerator)
+  public IObservable<TReport> RecursiveCallMake(IEnumerator<IObservableStep<TReport>> enumerator)
   {
     CurrentStep = enumerator.Current;
     return CurrentStep.Make()
@@ -41,11 +46,11 @@ public abstract class ObservablePlan<TReport, TSummary>
       {
         if (!IsStepSuccesful(_report))
         {
-          Console.WriteLine("Step didn't passed: " + _report.ToString());
+          Console.WriteLine("Step didn't passed: " + _report?.ToString()??string.Empty);
           return Observable.Return(_report);
         }
         else
-          Console.WriteLine("Step passed: " + _report.ToString());
+          Console.WriteLine("Step passed: " + _report?.ToString()??string.Empty);
 
         if (!enumerator.MoveNext())
         {
