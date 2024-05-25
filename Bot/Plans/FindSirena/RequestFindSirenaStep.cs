@@ -1,10 +1,10 @@
 using Hedgey.Extensions.Telegram;
+using Hedgey.Rx.Debug;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using MongoDB.Driver.Linq;
 using RxTelegram.Bot;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 
 namespace Hedgey.Sirena.Bot;
 
@@ -23,6 +23,7 @@ public class RequestFindSirenaStep : CommandStep
   {
     var searchKey = contextContainer.Object.GetArgsString();
     var findObservable = findSirenaOperation.Find(searchKey)
+      .DelaySubscription(TimeSpan.FromMicroseconds(1)) //Crunch to prevent early execution
       .Publish()
       .RefCount();
 
@@ -38,9 +39,8 @@ public class RequestFindSirenaStep : CommandStep
 
     return succesful.Merge(emptyList);
   }
-
   private IObservable<(SirenRepresentation sirena, string ownerName)> GetOwnerNickname(SirenRepresentation sirena)
-    => BotTools.GetUsername(bot, sirena.OwnerId).ToObservable().Select(x => (sirena, x));
+    => Observable.FromAsync(() => BotTools.GetUsername(bot, sirena.OwnerId)).Select(x => (sirena, x));
 
   private Report NoSirenaReport()
   {
