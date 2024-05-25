@@ -23,7 +23,7 @@ public abstract class CompositeStep<T> : IObservableStep<T>
   {
     var enumerator = Steps.GetEnumerator();
     if(!enumerator.MoveNext())
-      throw new ArgumentException("No more steps to do");
+      throw new ArgumentException("Steps collection is empty!");
     return RecursiveMake(enumerator);
   }
 

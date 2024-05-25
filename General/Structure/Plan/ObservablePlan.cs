@@ -44,17 +44,17 @@ public abstract class ObservablePlan<TReport, TSummary>
     return CurrentStep.Make()
       .SelectMany(_report =>
       {
+        Console.WriteLine(CurrentStep.GetType().Name + ' ' + _report);
+
         if (!IsStepSuccesful(_report))
-        {
-          Console.WriteLine("Step didn't passed: " + _report?.ToString()??string.Empty);
           return Observable.Return(_report);
-        }
-        else
-          Console.WriteLine("Step passed: " + _report?.ToString()??string.Empty);
+        
 
         if (!enumerator.MoveNext())
         {
-          Console.WriteLine("No more steps!");
+#if DEBUG
+          Console.WriteLine(GetType().Name + " has no more steps to do!");
+#endif
           return Observable.Return(_report);
         }
         return RecursiveCallMake(enumerator);
