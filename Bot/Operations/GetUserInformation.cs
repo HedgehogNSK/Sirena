@@ -1,6 +1,6 @@
 using Hedgey.Extensions.Telegram;
 using RxTelegram.Bot;
-using System.Reactive.Threading.Tasks;
+using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot.Operations;
 
@@ -15,6 +15,6 @@ public class GetUserInformation : IGetUserInformation
 
   public IObservable<string> GetNickname(long uid)
   {
-    return BotTools.GetUsername(bot, uid).ToObservable();
+    return Observable.FromAsync(() => BotTools.GetDisplayName(bot, uid));
   }
 }

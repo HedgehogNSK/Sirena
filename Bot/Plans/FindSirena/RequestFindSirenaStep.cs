@@ -1,5 +1,4 @@
 using Hedgey.Extensions.Telegram;
-using Hedgey.Rx.Debug;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using MongoDB.Driver.Linq;
@@ -40,7 +39,7 @@ public class RequestFindSirenaStep : CommandStep
     return succesful.Merge(emptyList);
   }
   private IObservable<(SirenRepresentation sirena, string ownerName)> GetOwnerNickname(SirenRepresentation sirena)
-    => Observable.FromAsync(() => BotTools.GetUsername(bot, sirena.OwnerId)).Select(x => (sirena, x));
+    => Observable.FromAsync(() => BotTools.GetDisplayName(bot, sirena.OwnerId)).Select(x => (sirena, x));
 
   private Report NoSirenaReport()
   {

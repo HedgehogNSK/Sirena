@@ -22,17 +22,26 @@ public static class BotTools
       return default;
     }
   }
-  public static string GetUsername(this Chat chat)
-    => !string.IsNullOrEmpty(chat.Username) ? '@' + chat.Username :
-        (chat.FirstName + chat.LastName);
-  public static string GetUsername(this User user)
-    => !string.IsNullOrEmpty(user.Username) ? '@' + user.Username :
-        (user.FirstName + user.LastName);
+  
+  private static string GetDisplayName(string Username, string FirstName, string LastName)
+  {
+    return !string.IsNullOrEmpty(Username) ? '@' + Username :
+          (FirstName + ' ' + LastName);
+  }
+  public static string GetDisplayName(this Chat chat)
+  => GetDisplayName(chat.Username, chat.FirstName, chat.LastName);
+  public static string GetDisplayName(this ChatFullInfo chatInfo)
+  => GetDisplayName(chatInfo.Username, chatInfo.FirstName, chatInfo.LastName);
 
-  public static async Task<string> GetUsername(TelegramBot bot, long uid)
+  public static string GetDisplayName(this User user)
+  => GetDisplayName(user.Username, user.FirstName, user.LastName);
+
+  public static async Task<string> GetDisplayName(TelegramBot bot, long uid)
   {
     var chat = await bot.GetChatByUID(uid);
-    return chat?.Username ?? "Ghost";
+    if(chat==null)
+      return "Ghost";
+    return chat.GetDisplayName();
   }
 
   public static CopyMessages Clone(this CopyMessages source){

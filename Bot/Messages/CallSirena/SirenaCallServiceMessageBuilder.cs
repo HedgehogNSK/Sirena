@@ -21,7 +21,7 @@ public class SirenaCallServiceMessageBuilder : MessageBuilder
   public override SendMessage Build()
   { 
     const string notificationBase = "*\"{0}\"*\n _Called by_ {1}.";
-    string userName = BotTools.GetUsername(initiator);
+    string userName = BotTools.GetDisplayName(initiator);
     long uid = initiator.Id;
     string notification = string.Format(notificationBase, sirena.Title,userName , uid);
 
