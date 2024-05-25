@@ -39,8 +39,8 @@ public static class MarkupShortcuts
 
   public static IInlineKeyboardRow AddMenuButton(this IInlineKeyboardRow inlineKeyboardRow)
     => inlineKeyboardRow.AddButton(menuTitle, MenuBotCommand.NAME);
-  public static IInlineKeyboardRow AddCallSirenaButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId sirenaId)
-    => inlineKeyboardRow.AddButton(callTitle, CallSirenaCommand.NAME, sirenaId.ToString());
+  public static IInlineKeyboardRow AddCallSirenaButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId? sirenaId=null)
+    => inlineKeyboardRow.AddButton(callTitle, CallSirenaCommand.NAME, sirenaId?.ToString()??string.Empty);
   public static IInlineKeyboardRow AddCreateButton(this IInlineKeyboardRow inlineKeyboardRow)
     => inlineKeyboardRow.AddButton(createTitle, CreateSirenaCommand.NAME);
   public static IInlineKeyboardRow AddDeleteButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId sirenaId, string title = deleteTitle)

@@ -56,15 +56,13 @@ namespace Hedgey.Sirena.Bot
     {
       return targetArray.Select(CreateCopyForCertainChat).Concat();
 
-      IObservable<MessageIdObject[]> CreateCopyForCertainChat(long chatId, int index)
-      {
-        return Observable.Defer(() =>
-            {
-              copy.ChatId = chatId;
-              return Observable.Return(copy);
-            })
-            .SelectMany(Copy);
-      }
+      IObservable<MessageIdObject[]> CreateCopyForCertainChat(long chatId, int index) 
+      => Observable.Defer(() =>
+          {
+            copy.ChatId = chatId;
+            return Observable.Return(copy);
+          })
+        .SelectMany(Copy);
     }
     const string forwardErrorMessage = "Exception on forward message [{0}|{1}] to chat: {2}";
     public IObservable<Message> Forward(ForwardMessage message, params long[] targetArray)

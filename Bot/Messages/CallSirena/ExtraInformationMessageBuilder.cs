@@ -18,7 +18,7 @@ internal class ExtraInformationMessageBuilder : MessageBuilder
     const string notification = "You can send extra information for subscribers or just click the *Call* button.";
     
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-      .AddCallbackData(MarkupShortcuts.callTitle,"skip").AddMenuButton().EndRow()
+      .AddCallSirenaButton().AddMenuButton().EndRow()
       .ToReplyMarkup();
 
     return CreateDefault(notification,markup);
