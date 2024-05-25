@@ -18,5 +18,6 @@ public abstract class CreateSirenaStep : CommandStep
     {
       MessageBuilder = messageBuilder;
     }
+    public UserRepresentation GetUser() => User ?? throw new ArgumentNullException(nameof(User));
   }
 }

@@ -14,8 +14,8 @@ public class RequestDBToCreateSirenaStep(Container<IRequestContext> contextConta
   {
     var user = buffer.User;
     var sirenaTitle = buffer.SirenaTitle;
-    return Observable.Start(()=> buffer)
-    .SelectMany(_buffer => createSirenAsync.CreateAsync(_buffer.User.UID, _buffer.SirenaTitle).ToObservable())
+    return Observable.Start(() => buffer)
+    .SelectMany(_buffer => createSirenAsync.CreateAsync(_buffer.GetUser().UID, _buffer.SirenaTitle).ToObservable())
     .Select(CreateReport);
   }
 
