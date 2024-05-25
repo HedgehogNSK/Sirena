@@ -32,14 +32,14 @@ static internal class Program
     var telegramFactory = new TelegramHelpFactory();
     bot = ((IFactory<TelegramBot>)telegramFactory).Create();
     var botMesssageSender = new BotMesssageSender(bot);
-    botProxyRequests = new BotMessageSenderTimerProxy(botMesssageSender,botMesssageSender,botMesssageSender);    
+    botProxyRequests = new BotMessageSenderTimerProxy(botMesssageSender, botMesssageSender, botMesssageSender);
     planScheduler = new PlanScheduler();
   }
   private static void Initialization()
   {
     var commandFactory = new CommandFactory(requests, bot, botCommands
-    , planScheduler, botProxyRequests, botProxyRequests,botProxyRequests);
-    var botCommandsInitializer = new CommandsCollectionInitializer( commandFactory);
+    , planScheduler, botProxyRequests, botProxyRequests, botProxyRequests);
+    var botCommandsInitializer = new CommandsCollectionInitializer(commandFactory);
     botCommandsInitializer.Initialize(botCommands);//Fill bot commands collection only with working commands
   }
   private static async Task Main(string[] args)
@@ -60,7 +60,7 @@ static internal class Program
 
     var approveCallbackStream = observableCallbackPublisher
         .SelectMany(SendCallbackApprove)
-        .Subscribe(_=>{ }, OnError);
+        .Subscribe(_ => { }, OnError);
 
     var callbackStream = observableCallbackPublisher.Connect();
     var schedulerTrackPublisher = planScheduler.Track().Publish();
@@ -148,31 +148,43 @@ static internal class Program
   private static void DetermineAndExecuteCommand(IRequestContext context)
   {
     var uid = context.GetUser().Id;
-    AbstractBotCommmand? command = GetCommmand(context);
-    if (command == null)
-    {
+    bool commandIsSet = botCommands.TryGetCommand(context.GetCommandName(), out var command);
+    bool planIsSet = planDictionary.TryGetValue(uid, out CommandPlan? plan);
 
-      if (planDictionary.TryGetValue(uid, out CommandPlan? plan))
+    if (!commandIsSet && !planIsSet)
+    {
+      botProxyRequests.Send(uid, errorNoCommand);
+      return;
+    }
+
+    if (!commandIsSet)
+    {
+      ExecutePlan();
+      return;
+    }
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+    if (planIsSet)
+    {
+      if (command.Command.Equals(plan.contextContainer.Object.GetCommandName()))
       {
-        plan.contextContainer.Set(context);
-        planScheduler.Push(plan);
+        ExecutePlan();
         return;
       }
       else
-      {
-        botProxyRequests.Send(uid, errorNoCommand);
-        return;
-      }
+        planDictionary.Remove(uid);
     }
-    planDictionary.Remove(uid);
-    Console.WriteLine($"user {uid} calls {context.GetCommandName()}");
+
+    Console.WriteLine($"{uid}: call -> {command.Command}");
     command.Execute(context);
-  }
-  private static AbstractBotCommmand? GetCommmand(IRequestContext context)
-  {
-    if (string.IsNullOrEmpty(context.GetCommandName()))
-      return null;
-    var command = botCommands.Find(context.IsValid);
-    return command;
+
+    void ExecutePlan()
+    {
+      string name =plan.contextContainer.Object.GetCommandName();
+      Console.WriteLine($"{uid}: update -> {name}");
+      plan.Update(context);
+      planScheduler.Push(plan);
+    }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
   }
 }

@@ -33,7 +33,7 @@ public abstract class ObservablePlan<TReport, TSummary>
     }
     if (CurrentStep == null && !enumerator.MoveNext())
     {
-      throw new ArgumentException("No more steps to do");
+      throw new ArgumentException("No steps to do");
     }
     return RecursiveCallMake(enumerator).Select(CreateSummary);
   }
@@ -44,19 +44,14 @@ public abstract class ObservablePlan<TReport, TSummary>
     return CurrentStep.Make()
       .SelectMany(_report =>
       {
-        Console.WriteLine(CurrentStep.GetType().Name + ' ' + _report);
+        Console.WriteLine( CurrentStep.GetType().Name + ": " + _report);
 
         if (!IsStepSuccesful(_report))
-          return Observable.Return(_report);
-        
+          return Observable.Return(_report);        
 
         if (!enumerator.MoveNext())
-        {
-#if DEBUG
-          Console.WriteLine(GetType().Name + " has no more steps to do!");
-#endif
           return Observable.Return(_report);
-        }
+          
         return RecursiveCallMake(enumerator);
       });
   }

@@ -17,7 +17,7 @@ public class CommandPlan : ObservablePlan<CommandStep.Report, CommandPlan.Report
   {
     return report.Result == CommandStep.Result.Success;
   }
-
+  public void Update(IRequestContext context) => contextContainer.Set(context);
   public enum Result
   {
     Success,
