@@ -14,6 +14,6 @@ public class PlanScheduler : IDisposable{
       subject.OnNext(plan);
   }
   public IObservable<CommandPlan.Report> Track(){
-     return subject.SelectMany(x=> x.Execute());
+     return subject.SelectMany(x=> x.Execute().Select(_report => new CommandPlan.Report(x, _report)));
   }
 }

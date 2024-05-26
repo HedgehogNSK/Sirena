@@ -8,7 +8,6 @@ using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Callbacks;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 
 namespace Hedgey.Sirena;
 static internal class Program
@@ -52,20 +51,39 @@ static internal class Program
         .Select(_message => (IRequestContext)new MessageRequestContext(_message));
 
     var observableCallbackPublisher = bot.Updates.CallbackQuery.Publish();
-    var observableCallbackContext = observableCallbackPublisher
-        .Select(_query => new CallbackRequestContext(_query));
 
-    var constexStream = observableMessages.Merge(observableCallbackContext)
+    var constexStream = observableCallbackPublisher
+        .Select(_query => new CallbackRequestContext(_query))
+        .Merge(observableMessages)
         .Subscribe(DetermineAndExecuteCommand, OnError);
 
     var approveCallbackStream = observableCallbackPublisher
         .SelectMany(SendCallbackApprove)
+        .Catch((Exception _ex) =>
+        {
+          OnError(_ex);
+          return Observable.Empty<bool>();
+        })
+        .Repeat()
         .Subscribe(_ => { }, OnError);
 
     var callbackStream = observableCallbackPublisher.Connect();
-    var schedulerTrackPublisher = planScheduler.Track().Publish();
-    var planProcessingStream = schedulerTrackPublisher.Subscribe(ProcessPlanSummary, OnError);
-    var sendMessagesStream = schedulerTrackPublisher.Subscribe(SendResult);
+    var schedulerTrackPublisher = planScheduler.Track()
+        .Catch((Exception _ex) =>
+        {
+          OnError(_ex);
+          return Observable.Empty<CommandPlan.Report>();
+        })
+        .Repeat()
+        .Publish();
+    var planProcessingStream = schedulerTrackPublisher
+        .Subscribe(ProcessPlanReport);
+#pragma warning disable CS8604 // Possible null reference argument.
+    var sendMessagesStream = schedulerTrackPublisher
+        .Where(_report => _report.StepReport.MessageBuilder != null)
+        .SelectMany(_report => botProxyRequests.ObservableSend(_report.StepReport.MessageBuilder))
+        .Subscribe();
+#pragma warning restore CS8604 // Possible null reference argument.
     var schedulerTrackStream = schedulerTrackPublisher.Connect();
 
     IDisposable subscription = new CompositeDisposable(callbackStream
@@ -81,40 +99,28 @@ static internal class Program
     subscription.Dispose();
   }
 
-  private static void SendResult(CommandPlan.Report report)
+  private static void ProcessPlanReport(CommandPlan.Report report)
   {
-    var message = report.LastStepReport?.MessageBuilder?.Build() ?? null;
-    if (message == null)
-      return;
-    botProxyRequests.Send(message);
-  }
-
-  private static void ProcessPlanSummary(CommandPlan.Report report)
-  {
-    var uid = report.Plan.contextContainer.Object.GetUser().Id;
-    switch (report.LastStepReport.Result)
+    var uid = report.Plan.Context.GetUser().Id;
+    switch (report.StepReport.Result)
     {
       case CommandStep.Result.Success:
+        {
+          if (report.Plan.IsComplete)
+            planDictionary.Remove(uid);
+        }; break;
       case CommandStep.Result.Canceled:
-      case CommandStep.Result.Exception:
-        {
-
-          planDictionary.Remove(uid);
-        }
-        break;
-      case CommandStep.Result.Wait:
-        {
-          planDictionary[uid] = report.Plan;
-        }
-        break;
+      case CommandStep.Result.Exception: planDictionary.Remove(uid); break;
+      case CommandStep.Result.Wait: planDictionary[uid] = report.Plan; break;
       default:
-        throw new ArgumentOutOfRangeException(nameof(report.LastStepReport.Result)
-      , "Exception caught for plan:" + report.Plan.GetType().Name + " on step: " + report.LastStepReport.GetType().Name);
+        throw new ArgumentOutOfRangeException(nameof(report.StepReport.Result));
     }
   }
 
   private static void OnError(Exception exception)
   {
+    const string dateFormat = "HH:mm:ss dd.MM.yyyy";
+    var time = $"[{DateTimeOffset.UtcNow.ToString(dateFormat)}] ";
     var ex = exception;
     do
     {
@@ -122,10 +128,11 @@ static internal class Program
       {
         case ApiException apiException:
           {
-            Console.WriteLine(apiException.Message + '\n' + apiException.Description);
+            string message =time + apiException.Message + ": " + apiException.Description;
+            Console.WriteLine(message);
           }
           break;
-        default: Console.WriteLine(exception); break;
+        default: Console.WriteLine(time + exception.Message); break;
       }
       ex = ex.InnerException;
     }
@@ -138,53 +145,59 @@ static internal class Program
       CallbackQueryId = query.Id,
     };
 
-    return bot.AnswerCallbackQuery(callbackAnswer).ToObservable().Catch((ApiException ex) =>
+    return Observable.FromAsync(()=> bot.AnswerCallbackQuery(callbackAnswer))
+      .Catch((ApiException _ex) =>
     {
-      var wrappedEx = new Exception($"Exception in {query.From.Id} on command: {query.Data}\nreason: {ex.StatusCode}\n{ex.Description}", ex);
-      Console.WriteLine(wrappedEx);
-      throw wrappedEx;
+       throw new Exception($"Error on callback answer to user {query.From.Id} on request: \"{query.Data}\"",_ex);
     });
   }
   private static void DetermineAndExecuteCommand(IRequestContext context)
   {
-    var uid = context.GetUser().Id;
-    bool commandIsSet = botCommands.TryGetCommand(context.GetCommandName(), out var command);
-    bool planIsSet = planDictionary.TryGetValue(uid, out CommandPlan? plan);
+      var uid = context.GetUser().Id;
+      bool commandIsSet = botCommands.TryGetCommand(context.GetCommandName(), out var command);
+      bool planIsSet = planDictionary.TryGetValue(uid, out CommandPlan? plan);
 
-    if (!commandIsSet && !planIsSet)
-    {
-      botProxyRequests.Send(uid, errorNoCommand);
-      return;
-    }
+      if (!commandIsSet && !planIsSet)
+      {
+        botProxyRequests.Send(uid, errorNoCommand);
+        return;
+      }
 
-    if (!commandIsSet)
-    {
-      ExecutePlan();
-      return;
-    }
-
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-    if (planIsSet)
-    {
-      if (command.Command.Equals(plan.contextContainer.Object.GetCommandName()))
+      if (!commandIsSet)
       {
         ExecutePlan();
         return;
       }
-      else
-        planDictionary.Remove(uid);
-    }
 
-    Console.WriteLine($"{uid}: call -> {command.Command}");
-    command.Execute(context);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+      if (planIsSet)
+      {
+        if (command.Command.Equals(plan.contextContainer.Object.GetCommandName()))
+        {
+          ExecutePlan();
+          return;
+        }
+        else
+          planDictionary.Remove(uid);
+      }
 
-    void ExecutePlan()
+    try
     {
-      string name =plan.contextContainer.Object.GetCommandName();
-      Console.WriteLine($"{uid}: update -> {name}");
-      plan.Update(context);
-      planScheduler.Push(plan);
+      Console.WriteLine($"{uid}: call -> {command.Command}");
+      command.Execute(context);
+
     }
+    catch (Exception ex)
+    { 
+      OnError(ex);
+    }
+      void ExecutePlan()
+      {
+        string name = plan.contextContainer.Object.GetCommandName();
+        Console.WriteLine($"{uid}: update -> {name}");
+        plan.Update(context);
+        planScheduler.Push(plan);
+      }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
   }
 }

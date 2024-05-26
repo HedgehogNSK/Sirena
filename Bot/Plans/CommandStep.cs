@@ -31,7 +31,8 @@ public abstract class CommandStep : IObservableStep<CommandStep.Report>
     Exception,
   }
 
-  public record class Report(Result Result, MessageBuilder? MessageBuilder =null){
+  public record class Report(Result Result, MessageBuilder? MessageBuilder = null)
+  {
     public override string ToString()
     {
       return $"Report: [State: {Result} | {MessageBuilder?.GetType().Name ?? "No message"}]";

@@ -1,11 +1,12 @@
 using System.Reactive.Linq;
 
 namespace Hedgey.Structure.Plan;
-public abstract class ObservablePlan<TReport, TSummary>
+public abstract class ObservablePlan<TReport>
 {
   public IEnumerable<IObservableStep<TReport>> Steps { get; }
   protected IEnumerator<IObservableStep<TReport>>? enumerator = null;
   public IObservableStep<TReport>? CurrentStep { get; protected set; } = default;
+  public bool IsComplete{get; protected set;} = false;
   public ObservablePlan(IEnumerable<IObservableStep<TReport>> steps)
   {
     if (steps == null || !steps.Any())
@@ -16,13 +17,13 @@ public abstract class ObservablePlan<TReport, TSummary>
   {
     enumerator = Steps.GetEnumerator();
     CurrentStep = default;
+    IsComplete = false;
   }
   public virtual void Restart()
   {
     Init();
   }
-
-  public virtual IObservable<TSummary> Execute()
+  public virtual IObservable<TReport> Execute()
   {
     if (enumerator == null)
     {
@@ -35,26 +36,24 @@ public abstract class ObservablePlan<TReport, TSummary>
     {
       throw new ArgumentException("No steps to do");
     }
-    return RecursiveCallMake(enumerator).Select(CreateSummary);
-  }
-
-  public IObservable<TReport> RecursiveCallMake(IEnumerator<IObservableStep<TReport>> enumerator)
-  {
     CurrentStep = enumerator.Current;
     return CurrentStep.Make()
-      .SelectMany(_report =>
+      .Expand(_report =>
       {
-        Console.WriteLine( CurrentStep.GetType().Name + ": " + _report);
-
-        if (!IsStepSuccesful(_report))
-          return Observable.Return(_report);        
-
-        if (!enumerator.MoveNext())
-          return Observable.Return(_report);
-          
-        return RecursiveCallMake(enumerator);
-      });
+        bool nextIsSet = false;
+        if (IsStepSuccesful(_report))
+        {
+          nextIsSet = enumerator.MoveNext();
+          if (nextIsSet)
+           {
+            CurrentStep = enumerator.Current;
+             return CurrentStep.Make();}
+        }
+        if (!nextIsSet)
+          IsComplete = true;
+        return Observable.Empty<TReport>();
+      })
+      .Do(_report => Console.WriteLine(CurrentStep.GetType().Name + ": " + _report));
   }
-  protected abstract TSummary CreateSummary(TReport report);
   protected abstract bool IsStepSuccesful(TReport report);
 }

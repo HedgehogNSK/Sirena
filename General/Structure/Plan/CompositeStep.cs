@@ -22,21 +22,19 @@ public abstract class CompositeStep<T> : IObservableStep<T>
   public virtual IObservable<T> Make()
   {
     var enumerator = Steps.GetEnumerator();
-    if(!enumerator.MoveNext())
+    if (!enumerator.MoveNext())
       throw new ArgumentException("Steps collection is empty!");
-    return RecursiveMake(enumerator);
-  }
-
-  public IObservable<T> RecursiveMake(IEnumerator<IObservableStep<T>> enumerator)
-  {
-    var step = enumerator.Current;
-    return step.Make()
-      .SelectMany(x =>
+    return enumerator.Current.Make()
+      .Expand(_result =>
       {
-        if (!IsStepSuccesful(x) || !enumerator.MoveNext())
-          return Observable.Return(x);
-        return RecursiveMake(enumerator);
-      });
+        if (IsStepSuccesful(_result) && !enumerator.MoveNext())
+        {
+          return enumerator.Current.Make();
+        }
+        return Observable.Empty(_result);
+      })
+      .Do(_report => Console.WriteLine(enumerator.Current.GetType().Name + ": " + _report))
+      .LastAsync();
   }
 
   protected abstract bool IsStepSuccesful(T x);
