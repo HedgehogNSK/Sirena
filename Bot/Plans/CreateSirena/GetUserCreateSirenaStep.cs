@@ -21,7 +21,7 @@ public class GetUserCreateSirenaStep : CreateSirenaStep
   {
     User botUser = contextContainer.Object.GetUser();
     long uid = botUser.Id;
-    return getUserOperationAsync.GetAsync(uid).ToObservable()
+    return Observable.FromAsync(() =>getUserOperationAsync.GetAsync(uid))
     .Select(CreateReport);
   }
 
@@ -29,6 +29,10 @@ public class GetUserCreateSirenaStep : CreateSirenaStep
   {
     buffer.User = representation;
     buffer.MessageBuilder.SetUser(representation);
-    return new Report(representation != null ? Result.Success : Result.Wait, buffer.MessageBuilder);
+
+    if (representation == null)
+      return new Report(Result.Wait, buffer.MessageBuilder);
+
+    return new(Result.Success, null);
   }
 }

@@ -15,7 +15,7 @@ public class CreateMessageBuilder : MessageBuilder
   public CreateMessageBuilder(long chatId) : base(chatId)
   {
   }
-  internal void SetUser(UserRepresentation representation)
+  internal void  SetUser(UserRepresentation representation)
   {
     userIsSet = representation != null;
   }

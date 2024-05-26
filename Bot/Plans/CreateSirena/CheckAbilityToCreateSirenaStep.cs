@@ -9,13 +9,20 @@ public class CheckAbilityToCreateSirenaStep( Container<IRequestContext> contextC
 
   public override IObservable<Report> Make()
   {
-    var ownedSignalsCount = buffer.User.Owner.Length;    
-    var result = ownedSignalsCount <SIGNAL_LIMIT? Result.Success: Result.Canceled;
-
+    var ownedSignalsCount = buffer.User.Owner.Length;
     var builder = buffer.MessageBuilder;
-    builder.IsUserAllowedToCreateSirena(result ==Result.Success);
 
-    var report = new Report(result, builder);
+    Report report;
+    if (ownedSignalsCount < SIGNAL_LIMIT)
+    {
+      builder.IsUserAllowedToCreateSirena(true);
+      report = new Report(Result.Success, null);
+    }
+    else
+    {
+      builder.IsUserAllowedToCreateSirena(false);
+      report = new Report(Result.Canceled, builder);
+    }
     return Observable.Return(report);
   }
 }

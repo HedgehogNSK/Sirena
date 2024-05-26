@@ -21,8 +21,7 @@ public class RequestDBToCreateSirenaStep(Container<IRequestContext> contextConta
 
   private Report CreateReport(SirenRepresentation sirena)
   {
-    CommandStep.Result result = sirena!=null? Result.Success : Result.Canceled;
     buffer.MessageBuilder.SetSirena(sirena);
-    return new(result, buffer.MessageBuilder);
+    return new(sirena != null ? Result.Success : Result.Canceled, buffer.MessageBuilder);
   }
 }
