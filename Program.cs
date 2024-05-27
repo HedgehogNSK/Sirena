@@ -48,9 +48,22 @@ static internal class Program
     var me = await bot.GetMe();
     Console.WriteLine($"Bot name: @{me.Username}");
     var observableMessages = bot.Updates.Message
+        .Catch((Exception _ex) =>
+        {
+          OnError(_ex);
+          return Observable.Empty<Message>().Delay(TimeSpan.FromSeconds(1));
+        })
+        .Repeat()
         .Select(_message => (IRequestContext)new MessageRequestContext(_message));
 
-    var observableCallbackPublisher = bot.Updates.CallbackQuery.Publish();
+    var observableCallbackPublisher = bot.Updates.CallbackQuery
+        .Catch((Exception _ex) =>
+        {
+          OnError(_ex);
+          return Observable.Empty<CallbackQuery>().Delay(TimeSpan.FromSeconds(1));
+        })
+        .Repeat()
+        .Publish();
 
     var constexStream = observableCallbackPublisher
         .Select(_query => new CallbackRequestContext(_query))
@@ -128,7 +141,7 @@ static internal class Program
       {
         case ApiException apiException:
           {
-            string message =time + apiException.Message + ": " + apiException.Description;
+            string message = time + apiException.Message + ": " + apiException.Description;
             Console.WriteLine(message);
           }
           break;
@@ -145,59 +158,58 @@ static internal class Program
       CallbackQueryId = query.Id,
     };
 
-    return Observable.FromAsync(()=> bot.AnswerCallbackQuery(callbackAnswer))
+    return Observable.FromAsync(() => bot.AnswerCallbackQuery(callbackAnswer))
       .Catch((ApiException _ex) =>
     {
-       throw new Exception($"Error on callback answer to user {query.From.Id} on request: \"{query.Data}\"",_ex);
+      throw new Exception($"Error on callback answer to user {query.From.Id} on request: \"{query.Data}\"", _ex);
     });
   }
   private static void DetermineAndExecuteCommand(IRequestContext context)
   {
-      var uid = context.GetUser().Id;
-      bool commandIsSet = botCommands.TryGetCommand(context.GetCommandName(), out var command);
-      bool planIsSet = planDictionary.TryGetValue(uid, out CommandPlan? plan);
+    var uid = context.GetUser().Id;
+    bool commandIsSet = botCommands.TryGetCommand(context.GetCommandName(), out var command);
+    bool planIsSet = planDictionary.TryGetValue(uid, out CommandPlan? plan);
 
-      if (!commandIsSet && !planIsSet)
-      {
-        botProxyRequests.Send(uid, errorNoCommand);
-        return;
-      }
+    if (!commandIsSet && !planIsSet)
+    {
+      botProxyRequests.Send(uid, errorNoCommand);
+      return;
+    }
 
-      if (!commandIsSet)
+    if (!commandIsSet)
+    {
+      ExecutePlan();
+      return;
+    }
+
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+    if (planIsSet)
+    {
+      if (command.Command.Equals(plan.contextContainer.Object.GetCommandName()))
       {
         ExecutePlan();
         return;
       }
-
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-      if (planIsSet)
-      {
-        if (command.Command.Equals(plan.contextContainer.Object.GetCommandName()))
-        {
-          ExecutePlan();
-          return;
-        }
-        else
-          planDictionary.Remove(uid);
-      }
+      else
+        planDictionary.Remove(uid);
+    }
 
     try
     {
       Console.WriteLine($"{uid}: call -> {command.Command}");
       command.Execute(context);
-
     }
     catch (Exception ex)
-    { 
+    {
       OnError(ex);
     }
-      void ExecutePlan()
-      {
-        string name = plan.contextContainer.Object.GetCommandName();
-        Console.WriteLine($"{uid}: update -> {name}");
-        plan.Update(context);
-        planScheduler.Push(plan);
-      }
+    void ExecutePlan()
+    {
+      string name = plan.contextContainer.Object.GetCommandName();
+      Console.WriteLine($"{uid}: update -> {name}");
+      plan.Update(context);
+      planScheduler.Push(plan);
+    }
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
   }
 }
