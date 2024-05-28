@@ -50,6 +50,7 @@ static internal class Program
     var observableMessages = bot.Updates.Message
         .Catch((Exception _ex) =>
         {
+          Console.WriteLine("Updates.Messages exception: {0}", _ex);
           OnError(_ex);
           return Observable.Empty<Message>().Delay(TimeSpan.FromSeconds(1));
         })
@@ -59,6 +60,8 @@ static internal class Program
     var observableCallbackPublisher = bot.Updates.CallbackQuery
         .Catch((Exception _ex) =>
         {
+          Console.WriteLine("Updates.CallbackQuery exception: {0}", _ex);
+
           OnError(_ex);
           return Observable.Empty<CallbackQuery>().Delay(TimeSpan.FromSeconds(1));
         })
@@ -74,6 +77,8 @@ static internal class Program
         .SelectMany(SendCallbackApprove)
         .Catch((Exception _ex) =>
         {
+          Console.WriteLine("Send callback approve exception: {0}", _ex);
+
           OnError(_ex);
           return Observable.Empty<bool>();
         })
