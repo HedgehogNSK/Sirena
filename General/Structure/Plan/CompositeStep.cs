@@ -27,7 +27,7 @@ public abstract class CompositeStep<T> : IObservableStep<T>
     return enumerator.Current.Make()
       .Expand(_result =>
       {
-        if (IsStepSuccesful(_result) && !enumerator.MoveNext())
+        if (IsStepSuccesful(_result) && enumerator.MoveNext())
         {
           return enumerator.Current.Make();
         }
