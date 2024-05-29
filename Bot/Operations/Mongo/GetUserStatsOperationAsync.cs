@@ -31,7 +31,7 @@ public class GetUserStatsOperationAsync : IGetUserOverviewAsync
 }
 
 
-public class UserStatistics
+public struct UserStatistics
 {
   public int SirenasCount { get; set; }
   public int Subscriptions { get; set; }
