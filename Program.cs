@@ -1,4 +1,5 @@
-﻿using Hedgey.Sirena.Bot;
+﻿using Hedgey.Extensions;
+using Hedgey.Sirena.Bot;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using MongoDB.Driver;
@@ -137,8 +138,7 @@ static internal class Program
 
   private static void OnError(Exception exception)
   {
-    const string dateFormat = "HH:mm:ss dd.MM.yyyy";
-    var time = $"[{DateTimeOffset.UtcNow.ToString(dateFormat)}] ";
+    var time = Shortucts.CurrentTimeLabel();
     var ex = exception;
     do
     {
@@ -201,7 +201,8 @@ static internal class Program
 
     try
     {
-      Console.WriteLine($"{uid}: call -> {command.Command}");
+      var time = Shortucts.CurrentTimeLabel();
+      Console.WriteLine($"{time}{uid} -> {command.Command}");
       command.Execute(context);
     }
     catch (Exception ex)
