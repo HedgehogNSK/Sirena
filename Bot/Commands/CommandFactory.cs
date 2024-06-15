@@ -1,3 +1,4 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Bot.Operations.Mongo;
 using Hedgey.Sirena.Database;
@@ -21,10 +22,11 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
   private readonly IMessageSender messageSender;
   private readonly IMessageForwarder messageForwarder;
   private readonly IMessageCopier messsageCopier;
-
+  private readonly ILocalizationProvider localizationProvider;
   public CommandFactory(FacadeMongoDBRequests requests, TelegramBot bot
   , BotCommands botCommands, PlanScheduler planScheduler
-  , IMessageSender messageSender, IMessageForwarder messageForwarder, IMessageCopier messsageCopier)
+  , IMessageSender messageSender, IMessageForwarder messageForwarder
+  , IMessageCopier messsageCopier, ILocalizationProvider localizationProvider)
   {
     this.requests = requests;
     this.db = requests.db;
@@ -38,6 +40,7 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
     this.messageSender = messageSender;
     this.messageForwarder = messageForwarder;
     this.messsageCopier = messsageCopier;
+    this.localizationProvider = localizationProvider;
   }
   public AbstractBotCommmand Create(string commandName)
   {
@@ -55,7 +58,7 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
         {
           var getUserStats = new GetUserOperationAsync(users, requests);
           var createSiren = new CreateSirenaOperationAsync(sirens, users);
-          var factory = new CreateSirenaPlanFactory(getUserStats, createSiren);
+          var factory = new CreateSirenaPlanFactory(getUserStats, createSiren,localizationProvider);
           return new CreateSirenaCommand(factory, planScheduler);
         }
       case DelegateRightsCommand.NAME: return new DelegateRightsCommand(db, requests, bot);

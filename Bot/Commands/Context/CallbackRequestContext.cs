@@ -1,3 +1,4 @@
+using System.Globalization;
 using Hedgey.Sirena.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 
@@ -26,7 +27,7 @@ public class CallbackRequestContext : IRequestContext
   public long GetTargetChatId()
   => query.From.Id;
   public User GetUser() => query.From;
-
+  public CultureInfo GetCultureInfo() => new(GetUser().LanguageCode);
   public bool IsValid(AbstractBotCommmand command)
   {
     return command.Command == commandName;

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="command.create_sirena.error.limit_reached">
+    <value>*Вы достигли лимита!* Вы больше не можете создавать новые сирены.
+Пожалуйста, удалите одну из ранее созданных и повторите попытку.</value>
+  </data>
+  <data name="command.create_sirena.error.no_title">
+    <value>Пожалуйста, введите название для *Сирены*. Заголовок должен быть длиной от {0} до {1} символов.
+
+ _Опционально, вы можете создавать *Сирены* с помощью командны:_
+`/create название_сирены`</value>
+  </data>
+  <data name="command.create_sirena.error.no_user">
+    <value>Мы не можем найти пользователя с ИД: {0}</value>
+  </data>
+  <data name="command.create_sirena.error.unknown">
+    <value>Неизвестная ошибка. Не удалось создать Сирену.</value>
+  </data>
+  <data name="command.create_sirena.success">
+    <value>Сирена с ИД: `{0}` была успешно создана. Перешлите ИД своим подписчикам.</value>
+  </data>
+</root>

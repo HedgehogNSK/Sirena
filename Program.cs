@@ -1,4 +1,5 @@
 ﻿using Hedgey.Extensions;
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
@@ -9,6 +10,7 @@ using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Callbacks;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Resources;
 
 namespace Hedgey.Sirena;
 static internal class Program
@@ -21,6 +23,7 @@ static internal class Program
   public static BotCommands botCommands;
   public static readonly PlanScheduler planScheduler;
   private static Dictionary<long, CommandPlan> planDictionary;
+  private static ILocalizationProvider localizationProvider;
 
   static Program()
   {
@@ -33,12 +36,14 @@ static internal class Program
     bot = ((IFactory<TelegramBot>)telegramFactory).Create();
     var botMesssageSender = new BotMesssageSender(bot);
     botProxyRequests = new BotMessageSenderTimerProxy(botMesssageSender, botMesssageSender, botMesssageSender);
-    planScheduler = new PlanScheduler();
+    planScheduler = new PlanScheduler();    
   }
   private static void Initialization()
   {
+    var rm = new ResourceManager("Sirena.Resources.Commands", typeof(Program).Assembly);
+    localizationProvider = new ResourceManagerAdapterLocalizationProvider(rm);
     var commandFactory = new CommandFactory(requests, bot, botCommands
-    , planScheduler, botProxyRequests, botProxyRequests, botProxyRequests);
+    , planScheduler, botProxyRequests, botProxyRequests, botProxyRequests, localizationProvider);
     var botCommandsInitializer = new CommandsCollectionInitializer(commandFactory);
     botCommandsInitializer.Initialize(botCommands);//Fill bot commands collection only with working commands
   }

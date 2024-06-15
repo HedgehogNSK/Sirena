@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="command.create_sirena.error.limit_reached">
+    <value>*You&apos;ve reached the limit!* You can&apos;t create new sirenas anymore.
+Please remove one of your sirenas and try again.</value>
+  </data>
+  <data name="command.create_sirena.error.no_title">
+    <value>Please insert title of the Sirena. Title must be between {0} and {1} symbols long.
+
+ _Alternatively you can create Sirena via command syntax:_
+`/create title_of_sirena`</value>
+  </data>
+  <data name="command.create_sirena.error.no_user">
+    <value>We can&apos;t find user with id: {0}</value>
+  </data>
+  <data name="command.create_sirena.error.unknown">
+    <value>Unknown error. Sirena wasn&apos;t created.</value>
+  </data>
+  <data name="command.create_sirena.success">
+    <value>Signal has been created successfuly. It&apos;s ID: `{0}`  Share it with subscribers.</value>
+  </data>
+</root>

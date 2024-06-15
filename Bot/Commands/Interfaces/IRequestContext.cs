@@ -1,3 +1,4 @@
+using System.Globalization;
 using Hedgey.Sirena.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 
@@ -11,4 +12,5 @@ public interface IRequestContext : IValidator<AbstractBotCommmand>
   Chat GetChat();
   Message GetMessage();
   long GetTargetChatId();
+  CultureInfo GetCultureInfo();
 }

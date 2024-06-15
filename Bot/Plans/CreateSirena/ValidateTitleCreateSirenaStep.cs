@@ -6,8 +6,8 @@ public class ValidateTitleCreateSirenaStep(Container<IRequestContext> contextCon
   , CreateSirenaStep.Buffer buffer)
 : CreateSirenaStep(contextContainer, buffer)
 {
-  private const int TITLE_MAX_LENGHT = 256;
-  private const int TITLE_MIN_LENGHT = 3;
+  public const int TITLE_MAX_LENGHT = 256;
+  public const int TITLE_MIN_LENGHT = 3;
 
   public override IObservable<Report> Make()
   {
@@ -16,13 +16,13 @@ public class ValidateTitleCreateSirenaStep(Container<IRequestContext> contextCon
     Report report;
     if (string.IsNullOrEmpty(sirenaTitle) || sirenaTitle.Length < TITLE_MIN_LENGHT)
     {
-      buffer.MessageBuilder.IsTitleValid(false, TITLE_MIN_LENGHT, TITLE_MAX_LENGHT);
+      buffer.MessageBuilder.IsTitleValid(false);
       report = new Report(Result.Wait, buffer.MessageBuilder);
     }
     else
     {
       buffer.SirenaTitle = sirenaTitle;
-      buffer.MessageBuilder.IsTitleValid(true, TITLE_MIN_LENGHT, TITLE_MAX_LENGHT);
+      buffer.MessageBuilder.IsTitleValid(true);
       report = new(Result.Success, null);
     }
     return Observable.Return(report);

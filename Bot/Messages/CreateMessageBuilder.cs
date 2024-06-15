@@ -1,6 +1,8 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 public class CreateMessageBuilder : MessageBuilder
@@ -11,11 +13,17 @@ public class CreateMessageBuilder : MessageBuilder
   private int minSymbols;
   private int maxSymbols;
   private SirenRepresentation? sirena;
+  private readonly ILocalizationProvider localizationProvider;
+  private readonly CultureInfo info;
 
-  public CreateMessageBuilder(long chatId) : base(chatId)
+  public CreateMessageBuilder(int minSymbols, int maxSymbols, ILocalizationProvider localizationProvider, CultureInfo info, long chatId) : base(chatId)
   {
+    this.minSymbols = minSymbols;
+    this.maxSymbols = maxSymbols;
+    this.localizationProvider = localizationProvider;
+    this.info = info;
   }
-  internal void  SetUser(UserRepresentation representation)
+  internal void SetUser(UserRepresentation representation)
   {
     userIsSet = representation != null;
   }
@@ -27,33 +35,38 @@ public class CreateMessageBuilder : MessageBuilder
   {
     this.isAllowed = isAllowed;
   }
-  public void IsTitleValid(bool isValid, int minSymbols, int maxSymbols)
+  public void IsTitleValid(bool isValid)
   {
     isTitleValid = isValid;
-    this.minSymbols = minSymbols;
-    this.maxSymbols = maxSymbols;
   }
   public override SendMessage Build()
   {
     string message;
-    const string noUser = "We can't find user with id: {0}";
-    const string offLimit = "*You've reached the limit!* You can't create new sirenas anymore.\nPlease remove one of your sirenas and try again.";
-    const string emptyTitleWarning = "Please insert title of the Sirena. Title must be between {0} and {1} symbols long.\n\n _Alternatively you can create Sirena via command syntax:_\n`/create title_of_sirena`";
-    const string success = "Signal has been created successfuly. It's ID: `{0}`  Share it with subscribers.";
-    
+
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
-
     if (!userIsSet)
-      message = string.Format(noUser, chatId);
+    {
+      message = localizationProvider.Get("command.create_sirena.error.no_user", info);
+      message = string.Format(message, chatId);
+    }
     else if (!isAllowed)
-      message = offLimit;
+    {
+      message = localizationProvider.Get("command.create_sirena.error.limit_reached", info);
+    }
     else if (!isTitleValid)
-      message = string.Format(emptyTitleWarning, minSymbols, maxSymbols);
+    {
+      message = localizationProvider.Get("command.create_sirena.error.no_title", info);
+      message = string.Format(message, minSymbols, maxSymbols);
+    }
     else if (sirena == null)
-      message = "Unknown error. Sirena wasn't created.";
+    {
+      message = localizationProvider.Get("command.create_sirena.error.unknown", info);
+    }
     else
-      message = string.Format(success, sirena.Id);
-
+    {
+      message = localizationProvider.Get("command.create_sirena.success", info);
+      message = string.Format(message, sirena.Id);
+    }
     var markup = keyboardBuilder.AddMenuButton().EndRow().ToReplyMarkup();
     return CreateDefault(message, markup);
   }

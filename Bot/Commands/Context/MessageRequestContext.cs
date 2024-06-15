@@ -1,3 +1,4 @@
+using System.Globalization;
 using Hedgey.Extensions;
 using RxTelegram.Bot.Interface.BaseTypes;
 
@@ -18,9 +19,8 @@ public class MessageRequestContext : IRequestContext
   public string GetArgsString() => argString;
   public Chat GetChat() => message.Chat;
   public string GetCommandName() => commandName;
-
+  public CultureInfo GetCultureInfo() => new(GetUser().LanguageCode);
   public Message GetMessage() => message;
-
   public long GetTargetChatId() => message.From.Id;
   public User GetUser() => message.From;
   public bool IsCommandSet() => commandIsSet;
