@@ -26,8 +26,9 @@ public class TryUnsubscribeStep : CommandStep
 
   private Report CreateReport(bool isSuccess)
   {
+    var info = Context.GetCultureInfo();
     Result result =isSuccess? Result.Success : Result.Canceled;
-    MessageBuilder builder = new UnsubscribeMessageBuilder(Context.GetTargetChatId(), isSuccess);
+    MessageBuilder builder = new UnsubscribeMessageBuilder(Context.GetTargetChatId(),info, Program.LocalizationProvider, isSuccess);
     return new Report(result, builder);
   }
 }

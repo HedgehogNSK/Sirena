@@ -1,17 +1,20 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SuccesfulSubscriptionMessageBuilder : MessageBuilder
+public class SuccesfulSubscriptionMessageBuilder : LocalizedMessageBuilder
 {
   private SirenRepresentation representation;
 
-  public SuccesfulSubscriptionMessageBuilder(long chatId
+  public SuccesfulSubscriptionMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider  localizationProvider
     , SirenRepresentation representation)
-   : base(chatId)
+   : base(chatId,info,localizationProvider)
   {
     this.representation = representation;
   }
@@ -19,7 +22,7 @@ public class SuccesfulSubscriptionMessageBuilder : MessageBuilder
   public override SendMessage Build()
   {
     IReplyMarkup markup = KeyboardBuilder.CreateInlineKeyboard()
-      .BeginRow().AddMenuButton().EndRow()
+      .BeginRow().AddMenuButton(Info).EndRow()
       .ToReplyMarkup();
 
     const string notificationText = "You successfully subscribed to *Sirena*: _{0}_";

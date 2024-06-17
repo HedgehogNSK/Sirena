@@ -1,16 +1,19 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using System.Globalization;
 using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-public class ListSirenaMessageBuilder : MessageBuilder
+public class ListSirenaMessageBuilder : LocalizedMessageBuilder
 {
   private (SirenRepresentation sirena, string ownerName)[] collection;
 
-  public ListSirenaMessageBuilder(long chatId, (SirenRepresentation sirena, string ownerName)[] collection)
-  : base(chatId)
+  public ListSirenaMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider  localizationProvider, (SirenRepresentation sirena, string ownerName)[] collection)
+  : base(chatId,info,localizationProvider)
   {
     this.collection = collection;
   }
@@ -33,14 +36,14 @@ public class ListSirenaMessageBuilder : MessageBuilder
       {
         keyboardBuilder.EndRow().BeginRow();
       }
-      keyboardBuilder.AddSirenaInfoButton(tuple.sirena.Id, number.ToString());
+      keyboardBuilder.AddSirenaInfoButton(Info,tuple.sirena.Id, number.ToString());
 
       builder.Append(number)
       .AppendFormat(template, sirena.Title, owner, sirena.Id);
     }
 
     var markup = keyboardBuilder.EndRow().BeginRow()
-       .AddFindButton().AddMenuButton().EndRow()
+       .AddFindButton(Info).AddMenuButton(Info).EndRow()
        .ToReplyMarkup();
 
     return CreateDefault(builder.ToString(), markup);

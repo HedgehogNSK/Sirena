@@ -19,7 +19,7 @@ public class DeleteConcretteSirenaStep : DeleteSirenaStep
 
   public override IObservable<Report> Make()
   {
-    var uid = contextContainer.Object.GetUser().Id;
+    var uid = Context.GetUser().Id;
     var sirenaId = sirenaContainer.Get().Id;
     return sirenaDeleteOperation.Delete(uid, sirenaId)
     .Select(CreateReport);
@@ -27,7 +27,8 @@ public class DeleteConcretteSirenaStep : DeleteSirenaStep
 
   private Report CreateReport(SirenRepresentation deletedSirena)
   {
-    var builder = new SuccesfulDeleteMessageBuilder(contextContainer.Object.GetTargetChatId(), deletedSirena);
+    var info = Context.GetCultureInfo();
+    var builder = new SuccesfulDeleteMessageBuilder(Context.GetTargetChatId(),info, Program.LocalizationProvider, deletedSirena);
     return new Report(Result.Success, builder);
   }
 }

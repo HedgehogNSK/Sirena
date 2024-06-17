@@ -1,5 +1,4 @@
 using Hedgey.Sirena.Database;
-using RxTelegram.Bot.Interface.BaseTypes;
 
 namespace Hedgey.Sirena.Bot;
 
@@ -17,11 +16,11 @@ public class StartCommand : AbstractBotCommmand
   }
   public override async void Execute(IRequestContext context)
   {
-    User botUser = context.GetUser();
-    long uid = botUser.Id;
+    long uid = context.GetUser().Id;
+    var info = context.GetCultureInfo();
     long chatId = context.GetChat().Id;
     var user = await requests.CreateUser(uid, chatId);
-    var message = new MenuMessageBuilder(uid).Build();
+    var message = new MenuMessageBuilder(uid, info, Program.LocalizationProvider).Build();
     message.Text = welcomeMessage;
     Program.botProxyRequests.Send(message);
   }

@@ -5,7 +5,7 @@ using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
-public class CreateMessageBuilder : MessageBuilder
+public class CreateMessageBuilder : LocalizedMessageBuilder
 {
   private bool userIsSet;
   private bool isAllowed;
@@ -13,15 +13,13 @@ public class CreateMessageBuilder : MessageBuilder
   private int minSymbols;
   private int maxSymbols;
   private SirenRepresentation? sirena;
-  private readonly ILocalizationProvider localizationProvider;
-  private readonly CultureInfo info;
 
-  public CreateMessageBuilder(int minSymbols, int maxSymbols, ILocalizationProvider localizationProvider, CultureInfo info, long chatId) : base(chatId)
+  public CreateMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider localizationProvider, int minSymbols, int maxSymbols)
+   : base(chatId,info,localizationProvider)
   {
     this.minSymbols = minSymbols;
     this.maxSymbols = maxSymbols;
-    this.localizationProvider = localizationProvider;
-    this.info = info;
   }
   internal void SetUser(UserRepresentation representation)
   {
@@ -46,28 +44,28 @@ public class CreateMessageBuilder : MessageBuilder
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
     if (!userIsSet)
     {
-      message = localizationProvider.Get("command.create_sirena.error.no_user", info);
+      message = Localize("command.create_sirena.error.no_user");
       message = string.Format(message, chatId);
     }
     else if (!isAllowed)
     {
-      message = localizationProvider.Get("command.create_sirena.error.limit_reached", info);
+      message = Localize("command.create_sirena.error.limit_reached");
     }
     else if (!isTitleValid)
     {
-      message = localizationProvider.Get("command.create_sirena.error.no_title", info);
+      message = Localize("command.create_sirena.error.no_title");
       message = string.Format(message, minSymbols, maxSymbols);
     }
     else if (sirena == null)
     {
-      message = localizationProvider.Get("command.create_sirena.error.unknown", info);
+      message = Localize("command.create_sirena.error.unknown");
     }
     else
     {
-      message = localizationProvider.Get("command.create_sirena.success", info);
+      message = Localize("command.create_sirena.success");
       message = string.Format(message, sirena.Id);
     }
-    var markup = keyboardBuilder.AddMenuButton().EndRow().ToReplyMarkup();
+    var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
     return CreateDefault(message, markup);
   }
 }

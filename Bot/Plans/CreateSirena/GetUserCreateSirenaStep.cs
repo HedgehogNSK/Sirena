@@ -19,7 +19,7 @@ public class GetUserCreateSirenaStep : CreateSirenaStep
 
   public override IObservable<Report> Make()
   {
-    User botUser = contextContainer.Object.GetUser();
+    User botUser = Context.GetUser();
     long uid = botUser.Id;
     return Observable.FromAsync(() =>getUserOperationAsync.GetAsync(uid))
     .Select(CreateReport);

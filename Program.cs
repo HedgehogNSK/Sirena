@@ -23,7 +23,8 @@ static internal class Program
   public static BotCommands botCommands;
   public static readonly PlanScheduler planScheduler;
   private static Dictionary<long, CommandPlan> planDictionary;
-  private static ILocalizationProvider localizationProvider;
+
+  public static ILocalizationProvider LocalizationProvider { get; private set; }
 
   static Program()
   {
@@ -41,9 +42,10 @@ static internal class Program
   private static void Initialization()
   {
     var rm = new ResourceManager("Sirena.Resources.Commands", typeof(Program).Assembly);
-    localizationProvider = new ResourceManagerAdapterLocalizationProvider(rm);
+    LocalizationProvider = new ResourceManagerAdapterLocalizationProvider(rm);
+    MarkupShortcuts.LocalizationProvider = LocalizationProvider;
     var commandFactory = new CommandFactory(requests, bot, botCommands
-    , planScheduler, botProxyRequests, botProxyRequests, botProxyRequests, localizationProvider);
+    , planScheduler, botProxyRequests, botProxyRequests, botProxyRequests, LocalizationProvider);
     var botCommandsInitializer = new CommandsCollectionInitializer(commandFactory);
     botCommandsInitializer.Initialize(botCommands);//Fill bot commands collection only with working commands
   }
@@ -195,7 +197,7 @@ static internal class Program
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
     if (planIsSet)
     {
-      if (command.Command.Equals(plan.contextContainer.Object.GetCommandName()))
+      if (command.Command.Equals(plan.Context.GetCommandName()))
       {
         ExecutePlan();
         return;
@@ -216,7 +218,7 @@ static internal class Program
     }
     void ExecutePlan()
     {
-      string name = plan.contextContainer.Object.GetCommandName();
+      string name = plan.Context.GetCommandName();
       Console.WriteLine($"{uid}: update -> {name}");
       plan.Update(context);
       planScheduler.Push(plan);

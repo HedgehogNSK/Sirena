@@ -1,19 +1,22 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
-public class MenuMessageBuilder : MessageBuilder
+public class MenuMessageBuilder : LocalizedMessageBuilder
 {
-  const string message = "Bot menu";
+  const string menuTitle = "command.menu.title";
   private bool userHasSirenas = false;
   private bool userSubscribed = false;
   private UserStatistics? result = null;
 
-  public MenuMessageBuilder(long chatId) : base(chatId)
-  {
-  }
+  public MenuMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider  localizationProvider) 
+  : base(chatId, info,localizationProvider)
+  { }
 
   public MenuMessageBuilder UserHasSirenas(bool userHasSirenas)
   {
@@ -35,20 +38,21 @@ public class MenuMessageBuilder : MessageBuilder
   public override SendMessage Build()
   {
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-    .AddFindButton()
-    .AddSubscribeButton();
+    .AddFindButton(Info)
+    .AddSubscribeButton(Info);
 
     if (userSubscribed)
-      keyboardBuilder.EndRow().BeginRow().AddDisplaySubscriptionsButton(result?.Subscriptions ?? 0);
+      keyboardBuilder.EndRow().BeginRow().AddDisplaySubscriptionsButton(Info, result?.Subscriptions ?? 0);
 
     keyboardBuilder.EndRow()
     .BeginRow()
-    .AddCreateButton();
+    .AddCreateButton(Info);
 
     if (userHasSirenas)
-      keyboardBuilder.AddDisplayUserSirenasButton(result?.SirenasCount ?? 0);
+      keyboardBuilder.AddDisplayUserSirenasButton(Info,result?.SirenasCount ?? 0);
 
     IReplyMarkup markup = keyboardBuilder.EndRow().ToReplyMarkup();
-    return CreateDefault(message, markup);
+    string localizedMessage = Localize(menuTitle);
+    return CreateDefault(localizedMessage, markup);
   }
 }

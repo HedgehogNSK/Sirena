@@ -25,11 +25,12 @@ public class GetSirenaInfoStep : CommandStep
   {
     var chatId = Context.GetTargetChatId();
     var uid = Context.GetUser().Id;
+    var info = Context.GetCultureInfo();
 
     Result result = representation == null ? Result.Canceled : Result.Success;
     MessageBuilder builder = representation == null ?
-        new SirenaNotFoundMessageBuilder(chatId, sirenaIdContainter.Get())
-        : new SirenaInfoMessageBuilder(chatId, uid, representation);
+        new SirenaNotFoundMessageBuilder(chatId,info, Program.LocalizationProvider, sirenaIdContainter.Get())
+        : new SirenaInfoMessageBuilder(chatId,info, Program.LocalizationProvider, uid, representation);
 
     return new Report(result, builder);
   }

@@ -1,6 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
-using RxTelegram.Bot.Interface.BaseTypes;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
@@ -25,22 +24,23 @@ public class GetSubscriptionsListCommand : AbstractBotCommmand, IBotCommand, IDi
 
   public override void Execute(IRequestContext context)
   {
-    User botUser = context.GetUser();
-    long uid = botUser.Id;
-    long chatId = context.GetChat().Id;
+    long uid = context.GetUser().Id;
 
     IDisposable userSubscriptionsStream = findSirena.GetSubscriptions(uid)
       .SelectMany(_sirenas => _sirenas)
       .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId)
           .Select(_nick => (_sirena, _nick)))
-      .ToArray().Subscribe(_subscriptions => ProcessResult(_subscriptions, chatId));
+      .ToArray()
+      .Subscribe(_subscriptions => ProcessResult(_subscriptions, context));
 
     disposables.Add(userSubscriptionsStream);
   }
 
-  private void ProcessResult((SirenRepresentation _sirena, string _nick)[] subscriptions, long chatId)
+  private void ProcessResult((SirenRepresentation _sirena, string _nick)[] subscriptions, IRequestContext context)
   {
-    MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId, subscriptions);
+    long chatId = context.GetChat().Id;
+    var info = context.GetCultureInfo();
+    MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId, info, Program.LocalizationProvider, subscriptions);
     messageSender.Send(builder.Build());
   }
 

@@ -1,17 +1,20 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using MongoDB.Driver;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using System.Globalization;
 using System.Reactive.Linq;
 using System.Text;
 
 namespace Hedgey.Sirena.Bot;
-internal class SubscriptionsMesssageBuilder : MessageBuilder
+internal class SubscriptionsMesssageBuilder : LocalizedMessageBuilder
 {
   private IEnumerable<(SirenRepresentation sirena, string nickname)> source;
 
-  public SubscriptionsMesssageBuilder(long chatId, IEnumerable<(SirenRepresentation, string)> source)
-  : base(chatId)
+  public SubscriptionsMesssageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider  localizationProvider, IEnumerable<(SirenRepresentation, string)> source)
+  : base(chatId,info,localizationProvider)
   {
     this.chatId = chatId;
     this.source = source;
@@ -36,7 +39,7 @@ internal class SubscriptionsMesssageBuilder : MessageBuilder
         {
           keyboardBuilder.EndRow().BeginRow();
         }
-        keyboardBuilder.AddSirenaInfoButton(tuple.sirena.Id,number.ToString());
+        keyboardBuilder.AddSirenaInfoButton(Info,tuple.sirena.Id,number.ToString());
         
         builder.Append(number)
           .AppendFormat(template, tuple.sirena.Title, tuple.nickname, tuple.sirena.Id);
@@ -46,13 +49,13 @@ internal class SubscriptionsMesssageBuilder : MessageBuilder
     }
     else if(source.Any()){
       var subscription =source.First();
-      return new  SirenaInfoMessageBuilder(chatId, chatId, subscription.sirena).Build();
+      return new SirenaInfoMessageBuilder(chatId,Info, LocalizationProvider, chatId, subscription.sirena).Build();
     }
     else
     {
       const string noSubs = "You don't have any subscription yet.";
       builder.Append(noSubs);
-      return CreateDefault(builder.ToString(), MarkupShortcuts.CreateMenuButtonOnlyMarkup());
+      return CreateDefault(builder.ToString(),  MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info));
     }
   }
 }

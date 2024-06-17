@@ -27,8 +27,9 @@ public class AddExtraInformationStep : CommandStep
     Report report;
     if (message.From.IsBot && !userNotified)
     {
+      var info = Context.GetCultureInfo();
       userNotified = true;
-      report = new(Result.Wait, new ExtraInformationMessageBuilder(chatId, sirena));
+      report = new(Result.Wait, new ExtraInformationMessageBuilder(chatId,info, Program.LocalizationProvider, sirena));
     }
     else
     {

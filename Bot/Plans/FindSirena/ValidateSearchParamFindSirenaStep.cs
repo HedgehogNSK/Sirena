@@ -12,15 +12,15 @@ public class ValidateSearchParamFindSirenaStep : CommandStep
 
   public override IObservable<Report> Make()
   {
-    var context = contextContainer.Object;
-    var key = context.GetArgsString();
-    long chatId = context.GetTargetChatId();
+    var key = Context.GetArgsString();
+    var info = Context.GetCultureInfo();
+    long chatId = Context.GetTargetChatId();
     Result result = Result.Success;
     MessageBuilder? messageBuilder = null;
     if (key.Length < MIN_SIMBOLS || key.Length > MAX_SIMBOLS)
     {
       result = Result.Wait;
-      messageBuilder = new WrongSearchKeyFindSirenaMessageBuilder(chatId);
+      messageBuilder = new WrongSearchKeyFindSirenaMessageBuilder(chatId,info, Program.LocalizationProvider);
     }
     return Observable.Return(new Report(result, messageBuilder));
   }

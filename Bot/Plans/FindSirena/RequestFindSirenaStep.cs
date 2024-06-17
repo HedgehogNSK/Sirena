@@ -20,7 +20,7 @@ public class RequestFindSirenaStep : CommandStep
   }
   public override IObservable<Report> Make()
   {
-    var searchKey = contextContainer.Object.GetArgsString();
+    var searchKey = Context.GetArgsString();
     var findObservable = findSirenaOperation.Find(searchKey)
       .DelaySubscription(TimeSpan.FromMicroseconds(1)) //Crunch to prevent early execution
       .Publish()
@@ -43,16 +43,18 @@ public class RequestFindSirenaStep : CommandStep
 
   private Report NoSirenaReport()
   {
-    var chatId = contextContainer.Object.GetTargetChatId();
-    string key = contextContainer.Object.GetArgsString();
-    MessageBuilder builder = new NoSirenaMessageBuilder(chatId, key);
+    var chatId = Context.GetTargetChatId();
+    var info = Context.GetCultureInfo();
+    string key = Context.GetArgsString();
+    MessageBuilder builder = new NoSirenaMessageBuilder(chatId,info, Program.LocalizationProvider, key);
     return new Report(Result.Wait, builder);
   }
 
   private Report CreateReport((SirenRepresentation, string)[] source)
   {
-    var chatId = contextContainer.Object.GetTargetChatId();
-    MessageBuilder builder = new ListSirenaMessageBuilder(chatId, source);
+    var info = Context.GetCultureInfo();
+    var chatId = Context.GetTargetChatId();
+    MessageBuilder builder = new ListSirenaMessageBuilder(chatId,info, Program.LocalizationProvider, source);
     return new Report(Result.Success, builder);
   }
 }

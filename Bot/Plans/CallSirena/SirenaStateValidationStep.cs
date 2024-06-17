@@ -19,6 +19,7 @@ public class SirenaStateValidationStep : CommandStep
   {
     long uid = Context.GetUser().Id;
     long chatId = Context.GetTargetChatId();
+    var info = Context.GetCultureInfo();
 
     SirenRepresentation sirena = sirenaContainer.Get();
     Report report;
@@ -27,7 +28,7 @@ public class SirenaStateValidationStep : CommandStep
       report = new Report(Result.Success,null);
     }
     else
-      report = new Report(Result.Canceled, new NotAllowedToCallMessageBuilder(chatId, sirena, uid));
+      report = new Report(Result.Canceled, new NotAllowedToCallMessageBuilder(chatId,info, Program.LocalizationProvider, sirena, uid));
     return Observable.Return(report);
   }
 

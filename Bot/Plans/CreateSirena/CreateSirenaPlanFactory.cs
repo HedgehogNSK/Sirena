@@ -22,8 +22,10 @@ public class CreateSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
   public CommandPlan Create(IRequestContext context)
   {
     Container<IRequestContext> contextContainer = new(context);
-    CreateMessageBuilder messageBuilder = new(ValidateTitleCreateSirenaStep.TITLE_MIN_LENGHT
-    , ValidateTitleCreateSirenaStep.TITLE_MAX_LENGHT, localizationProvider, context.GetCultureInfo(), context.GetChat().Id);
+    CreateMessageBuilder messageBuilder = new(context.GetChat().Id
+    , context.GetCultureInfo(), localizationProvider
+    , ValidateTitleCreateSirenaStep.TITLE_MIN_LENGHT
+    , ValidateTitleCreateSirenaStep.TITLE_MAX_LENGHT);
     CreateSirenaStep.Buffer buffer = new(messageBuilder);
     CommandStep[] steps = [
       new GetUserCreateSirenaStep(contextContainer,buffer, getUserOperationAsync),

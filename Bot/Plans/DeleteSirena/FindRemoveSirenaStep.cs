@@ -24,17 +24,17 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
 
   public override IObservable<Report> Make()
   {
-    var context = contextContainer.Object;
-    User botUser = context.GetUser();
+    User botUser = Context.GetUser();
     long uid = botUser.Id;
-    long chatId = context.GetTargetChatId();
-    string param = context.GetArgsString().GetParameterByNumber(0);
+    long chatId = Context.GetTargetChatId();
+    var info = Context.GetCultureInfo();
+    string param = Context.GetArgsString().GetParameterByNumber(0);
     IObservable<SirenRepresentation?> observableSirena;
     int number = 0;
     if (string.IsNullOrEmpty(param))
     {
       return getUserSirenasOperation.GetUserSirenas(uid)
-        .Select(_sireans => new RemoveSirenaMenuMessageBuilder(chatId, _sireans))
+        .Select(_sireans => new RemoveSirenaMenuMessageBuilder(chatId, info, Program.LocalizationProvider, _sireans))
         .Select(_removeMenuBuilder => new Report(Result.Wait, _removeMenuBuilder));
     }
     else if (ObjectId.TryParse(param, out var id))
@@ -47,19 +47,20 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     }
     else
     {
-      var builder = new IncorrectParameterMessageBuilder(chatId);
+      var builder = new IncorrectParameterMessageBuilder(chatId, info, Program.LocalizationProvider);
       var report = new Report(Result.Wait, builder);
       return Observable.Return(report);
     }
 
-    return observableSirena.Select((_sirena) => ProcessRequestById(_sirena, context));
+    return observableSirena.Select((_sirena) => ProcessRequestById(_sirena, Context));
   }
 
   private Report ProcessRequestById(SirenRepresentation? sirena, IRequestContext context)
   {
     if (sirena == null || sirena.OwnerId != context.GetUser().Id)
     {
-      var builder = new IncorrectParameterMessageBuilder(context.GetTargetChatId());
+      var info = Context.GetCultureInfo();
+      var builder = new IncorrectParameterMessageBuilder(context.GetTargetChatId(), info, Program.LocalizationProvider);
       var report = new Report(Result.Wait, builder);
       return report;
     }

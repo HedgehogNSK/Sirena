@@ -1,6 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
-using RxTelegram.Bot.Interface.BaseTypes;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
@@ -21,23 +20,26 @@ public class DisplayUsersSirenasCommand : AbstractBotCommmand, IBotCommand
 
   public override void Execute(IRequestContext context)
   {
-    User botUser = context.GetUser();
-    long uid = botUser.Id;
-    long chatId = context.GetTargetChatId();
+    long uid = context.GetUser().Id;
 
     IDisposable displaySirenasStream = getUserSirenas.GetUserSirenas(uid)
-     .Subscribe(x => DisplaySirenas(x, chatId, uid));
+     .Subscribe(x => DisplaySirenas(x, context));
   }
 
-  private void DisplaySirenas(IEnumerable<SirenRepresentation> userSirenas, long chatId, long uid)
+  private void DisplaySirenas(IEnumerable<SirenRepresentation> userSirenas, IRequestContext context)
   {
     var enumerator = userSirenas.GetEnumerator();
     SirenRepresentation? sirena = null;
     if (enumerator.MoveNext())
       sirena = enumerator.Current;
+
+    var info = context.GetCultureInfo();
+    long uid = context.GetUser().Id;
+    long chatId = context.GetTargetChatId();
+
     MessageBuilder message = sirena == null || enumerator.MoveNext() ?
-      new UserSirenasMessageBuilder(chatId, userSirenas)
-      : new SirenaInfoMessageBuilder(chatId, uid, sirena);
+      new UserSirenasMessageBuilder(chatId, info, Program.LocalizationProvider, userSirenas)
+      : new SirenaInfoMessageBuilder(chatId, info, Program.LocalizationProvider, uid, sirena);
     messageSender.Send(message.Build());
   }
 }

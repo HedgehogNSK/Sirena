@@ -11,7 +11,7 @@ public class ValidateTitleCreateSirenaStep(Container<IRequestContext> contextCon
 
   public override IObservable<Report> Make()
   {
-    string sirenaTitle = contextContainer.Object.GetArgsString().Trim();
+    string sirenaTitle = Context.GetArgsString().Trim();
 
     Report report;
     if (string.IsNullOrEmpty(sirenaTitle) || sirenaTitle.Length < TITLE_MIN_LENGHT)

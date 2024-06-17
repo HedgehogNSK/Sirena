@@ -1,34 +1,33 @@
+using Hedgey.Localization;
 using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Utils.Keyboard;
 using RxTelegram.Bot.Utils.Keyboard.Interfaces;
+using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
 public static class MarkupShortcuts
 {
-  public const string menuTitle = "🧾 Menu";
-  public const string callTitle = "🔊 Launch Sirena";
-  public const string createTitle = "🆕 Create";
-  public const string getInfoTitle = "ℹ️ Info";
-  public const string findTitle = "🔎 Find";
-  public const string subscribeTitle = "🔔 Subscribe";
-  public const string unsubscribeTitle = "🔕 UnSubscribe";
-  public const string deleteTitle = "🗑 Delete";
-  public const string displaySirenasTitle = "🖥 Your Sirenas";
-  public const string getReuqestsTitle = "👽 Requests [{0}]";
-  public const string getResponsiblesTitle = "🫡 Responsibles [{0}]";
-  public const string requestRightTitle = "🙏 Ask rights";
-  public const string subscriptionsTitle = "👀 Subscriptions";
+  const string prefix = "menu.buttons.";
+  public const string menuTitle = prefix + "menu.title";
+  public const string callTitle = prefix + "call.title";
+  public const string createTitle = prefix + "create.title";
+  public const string getInfoTitle = prefix + "getInfo.title";
+  public const string findTitle = prefix + "find.title";
+  public const string subscribeTitle = prefix + "subscribe.title";
+  public const string unsubscribeTitle = prefix + "unsubscribe.title";
+  public const string deleteTitle = prefix + "delete.title";
+  public const string displaySirenasTitle = prefix + "displaySirenas.title";
+  public const string getReuqestsTitle = prefix + "getReuqests.title";
+  public const string getResponsiblesTitle = prefix + "getResponsibles.title";
+  public const string requestRightTitle = prefix + "requestRight.title";
+  public const string subscriptionsTitle = prefix + "subscriptions.title";
 
-  private static IInlineKeyboardRow AddButton(this IInlineKeyboardRow inlineKeyboardRow
-    , string title, string commandName)
-  {
-    string command = '/' + commandName;
-    return inlineKeyboardRow.AddCallbackData(title, command);
-  }
-  private static IInlineKeyboardRow AddButton(this IInlineKeyboardRow inlineKeyboardRow
+  public static ILocalizationProvider? LocalizationProvider { get; set;}
+
+  public static IInlineKeyboardRow AddButton(this IInlineKeyboardRow inlineKeyboardRow
     , string title, string commandName, string param = "")
   {
     string command = '/' + commandName;
@@ -37,57 +36,69 @@ public static class MarkupShortcuts
     return inlineKeyboardRow.AddCallbackData(title, command);
   }
 
-  public static IInlineKeyboardRow AddMenuButton(this IInlineKeyboardRow inlineKeyboardRow)
-    => inlineKeyboardRow.AddButton(menuTitle, MenuBotCommand.NAME);
-  public static IInlineKeyboardRow AddCallSirenaButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId? sirenaId=null)
-    => inlineKeyboardRow.AddButton(callTitle, CallSirenaCommand.NAME, sirenaId?.ToString()??string.Empty);
-  public static IInlineKeyboardRow AddCreateButton(this IInlineKeyboardRow inlineKeyboardRow)
-    => inlineKeyboardRow.AddButton(createTitle, CreateSirenaCommand.NAME);
-  public static IInlineKeyboardRow AddDeleteButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId sirenaId, string title = deleteTitle)
-    => inlineKeyboardRow.AddButton(title, DeleteSirenaCommand.NAME, sirenaId.ToString());
-  public static IInlineKeyboardRow AddDisplaySubscriptionsButton(this IInlineKeyboardRow inlineKeyboardRow, int count = 0, string title = subscriptionsTitle)
+  private static IInlineKeyboardRow AddLocalizedButton(this IInlineKeyboardRow inlineKeyboardRow
+  , string title, CultureInfo info, string commandName, string param = ""){
+    if(LocalizationProvider==null)
+      throw new ArgumentNullException(nameof(LocalizationProvider));
+    string localTitle = LocalizationProvider.Get(title, info);
+    return inlineKeyboardRow.AddButton(localTitle, commandName, param);
+  }
+
+  public static IInlineKeyboardRow AddMenuButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info)
+    => inlineKeyboardRow.AddLocalizedButton(menuTitle,info, MenuBotCommand.NAME);
+  public static IInlineKeyboardRow AddCallSirenaButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info, ObjectId? sirenaId = null)
+    => inlineKeyboardRow.AddLocalizedButton(callTitle, info, CallSirenaCommand.NAME, sirenaId?.ToString() ?? string.Empty);
+  public static IInlineKeyboardRow AddCreateButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info)
+    => inlineKeyboardRow.AddLocalizedButton(createTitle, info, CreateSirenaCommand.NAME);
+  public static IInlineKeyboardRow AddDeleteButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info, ObjectId sirenaId, string title = deleteTitle)
+    => inlineKeyboardRow.AddLocalizedButton(title, info, DeleteSirenaCommand.NAME, sirenaId.ToString());
+  public static IInlineKeyboardRow AddDisplaySubscriptionsButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info, int count = 0, string title = subscriptionsTitle)
   {
     if (count != 0)
       title += $" [{count}]";
-    return inlineKeyboardRow.AddButton(title, GetSubscriptionsListCommand.NAME);
+    return inlineKeyboardRow.AddLocalizedButton(title, info, GetSubscriptionsListCommand.NAME);
   }
 
-  public static IInlineKeyboardRow AddDisplayUserSirenasButton(this IInlineKeyboardRow inlineKeyboardRow
+  public static IInlineKeyboardRow AddDisplayUserSirenasButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info
     , int count = 0, string title = displaySirenasTitle)
   {
     if (count != 0)
       title += $" [{count}]";
-    return inlineKeyboardRow.AddButton(title, DisplayUsersSirenasCommand.NAME);
+    return inlineKeyboardRow.AddLocalizedButton(title, info, DisplayUsersSirenasCommand.NAME);
   }
 
-  public static IInlineKeyboardRow AddFindButton(this IInlineKeyboardRow inlineKeyboardRow)
-    => inlineKeyboardRow.AddButton(findTitle, FindSirenaCommand.NAME);
-  public static IInlineKeyboardRow AddRequestButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId sirenaId, string title = requestRightTitle) => inlineKeyboardRow.AddButton(title, RequestRightsCommand.NAME, sirenaId.ToString());
-  public static IInlineKeyboardRow AddSirenaInfoButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId sirenaId, string title = getInfoTitle) => inlineKeyboardRow.AddButton(title, DisplaySirenaInfoCommand.NAME, sirenaId.ToString());
-  public static IInlineKeyboardRow AddSubscribeButton(this IInlineKeyboardRow inlineKeyboardRow)
-   => inlineKeyboardRow.AddButton(subscribeTitle, SubscribeCommand.NAME);
-  public static IInlineKeyboardRow AddSubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId sirenaId)
-   => inlineKeyboardRow.AddButton(subscribeTitle, SubscribeCommand.NAME, sirenaId.ToString());
-  public static IInlineKeyboardRow AddUnsubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId sirenaId)
-    => inlineKeyboardRow.AddButton(unsubscribeTitle, UnsubscribeCommand.NAME, sirenaId.ToString());
-  public static IInlineKeyboardRow AddDisplayRequestsButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId sirenaId, int count)
+  public static IInlineKeyboardRow AddFindButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info)
+    => inlineKeyboardRow.AddLocalizedButton(findTitle, info, FindSirenaCommand.NAME);
+  public static IInlineKeyboardRow AddRequestButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info
+  , ObjectId sirenaId, string title = requestRightTitle) 
+    => inlineKeyboardRow.AddLocalizedButton(title, info, RequestRightsCommand.NAME, sirenaId.ToString());
+  public static IInlineKeyboardRow AddSirenaInfoButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info
+  , ObjectId sirenaId, string title = getInfoTitle) 
+    => inlineKeyboardRow.AddLocalizedButton(title, info, DisplaySirenaInfoCommand.NAME, sirenaId.ToString());
+  public static IInlineKeyboardRow AddSubscribeButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info)
+   => inlineKeyboardRow.AddLocalizedButton(subscribeTitle, info, SubscribeCommand.NAME);
+  public static IInlineKeyboardRow AddSubscribeButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info, ObjectId sirenaId)
+   => inlineKeyboardRow.AddLocalizedButton(subscribeTitle, info, SubscribeCommand.NAME, sirenaId.ToString());
+  public static IInlineKeyboardRow AddUnsubscribeButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info, ObjectId sirenaId)
+    => inlineKeyboardRow.AddLocalizedButton(unsubscribeTitle, info, UnsubscribeCommand.NAME, sirenaId.ToString());
+  public static IInlineKeyboardRow AddDisplayRequestsButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info, ObjectId sirenaId, int count)
   {
     string title = string.Format(getReuqestsTitle, count);
-    return inlineKeyboardRow.AddButton(title, GetRequestsListCommand.NAME, sirenaId.ToString());
+    return inlineKeyboardRow.AddLocalizedButton(title, info, GetRequestsListCommand.NAME, sirenaId.ToString());
   }
 
-  public static IInlineKeyboardRow AddDisplayResponsiblesButton(this IInlineKeyboardRow inlineKeyboardRow, ObjectId sirenaId, int count)
+  public static IInlineKeyboardRow AddDisplayResponsiblesButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info, ObjectId sirenaId, int count)
   {
     string title = string.Format(getResponsiblesTitle, count);
-    return inlineKeyboardRow.AddButton(title, GetResponsiblesListCommand.NAME, sirenaId.ToString());
+    return inlineKeyboardRow.AddLocalizedButton(title, info, GetResponsiblesListCommand.NAME, sirenaId.ToString());
   }
 
-  public static IReplyMarkup CreateMenuButtonOnlyMarkup()
+  public static IReplyMarkup CreateMenuButtonOnlyMarkup(CultureInfo info)
   {
     return new InlineKeyboardMarkup()
     {
       InlineKeyboard = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-       .AddMenuButton().EndRow().Build()
+       .AddMenuButton(info).EndRow().Build()
     };
   }
   public static IReplyMarkup ToReplyMarkup(this IInlineKeyboardBuilder builder)

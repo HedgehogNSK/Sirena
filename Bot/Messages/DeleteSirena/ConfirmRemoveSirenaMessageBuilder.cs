@@ -1,14 +1,17 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class ConfirmRemoveSirenaMessageBuilder : MessageBuilder
+public class ConfirmRemoveSirenaMessageBuilder : LocalizedMessageBuilder
 {
   private readonly SirenRepresentation sirena;
 
-  public ConfirmRemoveSirenaMessageBuilder(long chatId, SirenRepresentation sirena) : base(chatId)
+  public ConfirmRemoveSirenaMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider  localizationProvider, SirenRepresentation sirena) : base(chatId,info,localizationProvider)
   {
     this.sirena = sirena;
   }
@@ -19,7 +22,7 @@ public class ConfirmRemoveSirenaMessageBuilder : MessageBuilder
     const string confirm = "✅ Yes";
     const string cancel = "⛔️ No";
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-      .AddSirenaInfoButton(sirena.Id,cancel)
+      .AddSirenaInfoButton(Info,sirena.Id,cancel)
       .AddCallbackData(confirm, true.ToString())
       .EndRow().ToReplyMarkup();
 

@@ -1,16 +1,19 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using System.Globalization;
 using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-public class UserSirenasMessageBuilder : MessageBuilder
+public class UserSirenasMessageBuilder : LocalizedMessageBuilder
 {
   private readonly IEnumerable<SirenRepresentation> sirens;
 
-  public UserSirenasMessageBuilder(long chatId, IEnumerable<SirenRepresentation> sirens) : base(chatId)
+  public UserSirenasMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider  localizationProvider, IEnumerable<SirenRepresentation> sirens) : base(chatId,info,localizationProvider)
   {
     this.sirens = sirens;
   }
@@ -36,7 +39,7 @@ public class UserSirenasMessageBuilder : MessageBuilder
         {
           keyboardBuilder.EndRow().BeginRow();
         }
-        keyboardBuilder.AddSirenaInfoButton(sirena.Id, number.ToString());
+        keyboardBuilder.AddSirenaInfoButton(Info,sirena.Id, number.ToString());
 
         builder.Append(number).AppendFormat(template, sirena.Id, sirena.Title);
         if (sirena.Listener.Length != 0)
@@ -51,7 +54,7 @@ public class UserSirenasMessageBuilder : MessageBuilder
     else
     {
       var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-          .AddCreateButton().AddMenuButton().EndRow().ToReplyMarkup();
+          .AddCreateButton(Info).AddMenuButton(Info).EndRow().ToReplyMarkup();
       return CreateDefault(noCreatedSirens, markup);
     }
   }

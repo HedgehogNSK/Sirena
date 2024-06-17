@@ -1,18 +1,21 @@
 using Hedgey.Extensions.Telegram;
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Enums;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
+using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SirenaCallServiceMessageBuilder : MessageBuilder
+public class SirenaCallServiceMessageBuilder : LocalizedMessageBuilder
 {
   private readonly User initiator;
   private readonly SirenRepresentation sirena;
 
-  public SirenaCallServiceMessageBuilder(long chatId, User initiator, SirenRepresentation sirena)
-  :base(chatId)
+  public SirenaCallServiceMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider  localizationProvider, User initiator, SirenRepresentation sirena)
+  : base(chatId, info, localizationProvider)
   {
     this.initiator = initiator;
     this.sirena = sirena;

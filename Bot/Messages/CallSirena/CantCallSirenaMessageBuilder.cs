@@ -1,15 +1,18 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class NotAllowedToCallSirenaMessageBuilder : MessageBuilder
+public class NotAllowedToCallSirenaMessageBuilder : LocalizedMessageBuilder
 {
   private SirenRepresentation sirena;
 
-  public NotAllowedToCallSirenaMessageBuilder(long chatId, SirenRepresentation sirena)
-  :base(chatId)
+  public NotAllowedToCallSirenaMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider  localizationProvider, SirenRepresentation sirena)
+  :base(chatId,info,localizationProvider)
   {
     this.sirena = sirena;
   }
@@ -20,9 +23,9 @@ public class NotAllowedToCallSirenaMessageBuilder : MessageBuilder
     string message = string.Format(notification,sirena.Title, sirena.Id);
 
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-    .AddDisplayUserSirenasButton()
-    .AddDisplaySubscriptionsButton().EndRow()
-    .BeginRow().AddMenuButton().EndRow().ToReplyMarkup();
+    .AddDisplayUserSirenasButton(Info)
+    .AddDisplaySubscriptionsButton(Info).EndRow()
+    .BeginRow().AddMenuButton(Info).EndRow().ToReplyMarkup();
 
     return CreateDefault(message, markup);
   }

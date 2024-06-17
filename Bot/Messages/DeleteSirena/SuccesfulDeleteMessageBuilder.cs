@@ -1,14 +1,17 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
+using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SuccesfulDeleteMessageBuilder : MessageBuilder
+public class SuccesfulDeleteMessageBuilder : LocalizedMessageBuilder
 {
   private SirenRepresentation deletedSirena;
 
-  public SuccesfulDeleteMessageBuilder(long chatId, SirenRepresentation deletedSirena)
-  :base(chatId)
+  public SuccesfulDeleteMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider  localizationProvider, SirenRepresentation deletedSirena)
+  : base(chatId, info, localizationProvider)
   {
     this.deletedSirena = deletedSirena;
   }
@@ -17,6 +20,6 @@ public class SuccesfulDeleteMessageBuilder : MessageBuilder
   {
     const string notification = "Sirena *\"{0}\"* has been deleted";
     string message = string.Format(notification, deletedSirena.Title ) ;
-    return CreateDefault(message, MarkupShortcuts.CreateMenuButtonOnlyMarkup());
+    return CreateDefault(message,  MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info));
   }
 }

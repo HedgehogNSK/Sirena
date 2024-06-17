@@ -31,9 +31,10 @@ public class SirenaExistensValidationStep : CommandStep
   private Report CreateReport(SirenRepresentation representation)
   {
     var chatId = Context.GetTargetChatId();
+    var info = Context.GetCultureInfo();
     var sirenaId = idContainer.Get();
     if (representation==null)
-      return new Report(Result.Wait, new NoSirenaMessageBuilder(chatId, sirenaId));
+      return new Report(Result.Wait, new NoSirenaMessageBuilder(chatId,info, Program.LocalizationProvider, sirenaId));
     sirenaContainer.Set(representation);
     return new Report(Result.Success);
   }

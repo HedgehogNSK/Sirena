@@ -33,6 +33,7 @@ public class CallSirenaStep : CommandStep
   {
     var sirena = sirenaContainer.Get();
     var chatId = Context.GetTargetChatId();
+    var info = Context.GetCultureInfo();
     var uid = Context.GetUser().Id;
     Stack<long> receiversStack = GetReceiversStack(sirena, uid);
     SirenRepresentation.CallInfo callInfo = new(uid, DateTimeOffset.Now);
@@ -49,7 +50,7 @@ public class CallSirenaStep : CommandStep
     Report CreateReport(int notifications)
     {
       if (notifications != 0)
-        return new(Result.Success, new SirenaCallReportMessageBuilder(chatId, notifications, sirena));
+        return new(Result.Success, new SirenaCallReportMessageBuilder(chatId,info, Program.LocalizationProvider, notifications, sirena));
       else
         return new(Result.Canceled);
     }
@@ -105,7 +106,10 @@ public class CallSirenaStep : CommandStep
         return Observable.Empty<CopyParams>();
 
       if (sirenaMessage == null)
-        sirenaMessage = new SirenaCallServiceMessageBuilder(uid, Context.GetUser(), sirena);
+      {
+        var info = Context.GetCultureInfo();
+        sirenaMessage = new SirenaCallServiceMessageBuilder(uid, info, Program.LocalizationProvider, Context.GetUser(), sirena);
+      }
       else
         sirenaMessage.ChangeTarget(uid);
 

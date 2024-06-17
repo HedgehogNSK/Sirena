@@ -1,14 +1,17 @@
+using Hedgey.Localization;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class StringNotIdMessageBuilder : MessageBuilder
+public class StringNotIdMessageBuilder : LocalizedMessageBuilder
 {
   private string param;
 
-  public StringNotIdMessageBuilder(long chatId, string param)
-  : base(chatId)
+  public StringNotIdMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider  localizationProvider, string param)
+  : base(chatId,info,localizationProvider)
   {
     this.chatId = chatId;
     this.param = param;
@@ -21,7 +24,7 @@ public class StringNotIdMessageBuilder : MessageBuilder
     string message = string.IsNullOrEmpty(param) ? notification : paramIncorrect + notification;
 
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-      .AddDisplayUserSirenasButton().AddMenuButton().EndRow().ToReplyMarkup();
+      .AddDisplayUserSirenasButton(Info).AddMenuButton(Info).EndRow().ToReplyMarkup();
     return CreateDefault(message, markup);
   }
 }

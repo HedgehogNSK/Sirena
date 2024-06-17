@@ -15,9 +15,10 @@ public class MenuBotCommand : AbstractBotCommmand
 
   public override async void Execute(IRequestContext context)
   {
+    var info = context.GetCultureInfo();
     var uid = context.GetUser().Id;
     var result = await getOverview.Get(uid);
-    var messageBuilder = new MenuMessageBuilder(uid).AddUserStatistics(result);
+    var messageBuilder = new MenuMessageBuilder(uid, info, Program.LocalizationProvider).AddUserStatistics(result);
     var message = messageBuilder.Build();
     Program.botProxyRequests.Send(message);
   }

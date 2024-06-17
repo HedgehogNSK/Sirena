@@ -22,11 +22,12 @@ public class SirenaIdValidationStep : CommandStep
   {
     var chatId = Context.GetTargetChatId();
     var param = Context.GetArgsString();
+    var info = Context.GetCultureInfo();
 
     Report report;
     if (!ObjectId.TryParse(param, out ObjectId sirenaId))
     {
-      MessageBuilder builder = new StringNotIdMessageBuilder(chatId, param);
+      MessageBuilder builder = new StringNotIdMessageBuilder(chatId,info, Program.LocalizationProvider, param);
       report = new Report(Result.Wait, builder);
     }
     else

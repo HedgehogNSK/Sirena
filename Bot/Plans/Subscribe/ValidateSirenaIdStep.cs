@@ -16,15 +16,15 @@ public class ValidateSirenaIdStep : CommandStep
 
   public override IObservable<Report> Make()
   {
-    var context = contextContainer.Object;
-    var key = context.GetArgsString();
-    long chatId = context.GetTargetChatId();
+    var key = Context.GetArgsString();
+    var info = Context.GetCultureInfo();
+    long chatId = Context.GetTargetChatId();
     Result result = Result.Success;
     MessageBuilder? messageBuilder = null;
     if (string.IsNullOrEmpty(key) || !ObjectId.TryParse(key, out var id))
     {
       result = Result.Wait;
-      messageBuilder = new AskSirenaIdMessageBuilder(chatId);
+      messageBuilder = new AskSirenaIdMessageBuilder(chatId,info, Program.LocalizationProvider);
     }
     else if (id != default)
       sirenaIdContainter.Set(id);

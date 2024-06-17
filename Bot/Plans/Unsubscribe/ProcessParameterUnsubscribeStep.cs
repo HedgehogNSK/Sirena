@@ -44,8 +44,9 @@ public class ProcessParameterUnsubscribeStep : CommandStep
 
   private Report CreateSubscriptionList(IEnumerable<(SirenRepresentation, string)> source)
   {
+    var info = Context.GetCultureInfo();
     long chatId = Context.GetTargetChatId();
-    MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId, source);
+    MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId,info, Program.LocalizationProvider, source);
     return new Report(!source.Any() ? Result.Wait : Result.Canceled, builder);
   }
 }

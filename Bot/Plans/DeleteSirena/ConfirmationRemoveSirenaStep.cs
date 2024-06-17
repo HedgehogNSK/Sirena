@@ -14,11 +14,12 @@ public class ConfirmationRemoveSirenaStep : DeleteSirenaStep
   public override IObservable<Report> Make()
   {
     Report report;
+    var info = Context.GetCultureInfo();
     var param = Context.GetArgsString();
     if (!bool.TryParse(param, out bool value))
     {
       long chatId = Context.GetTargetChatId();
-      var messageBuilder = new ConfirmRemoveSirenaMessageBuilder(chatId, sirenaContainer.Get());
+      var messageBuilder = new ConfirmRemoveSirenaMessageBuilder(chatId,info, Program.LocalizationProvider, sirenaContainer.Get());
       report = new Report(Result.Wait, messageBuilder);
     }
     else

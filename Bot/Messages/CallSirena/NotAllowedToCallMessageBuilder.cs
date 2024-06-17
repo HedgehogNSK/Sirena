@@ -1,17 +1,20 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using System.Globalization;
 using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-public class NotAllowedToCallMessageBuilder : MessageBuilder
+public class NotAllowedToCallMessageBuilder : LocalizedMessageBuilder
 {
   private SirenRepresentation sirena;
   private long uid;
 
-  public NotAllowedToCallMessageBuilder(long chatId, SirenRepresentation sirena, long uid)
-  : base(chatId)
+  public NotAllowedToCallMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider  localizationProvider, SirenRepresentation sirena, long uid)
+  : base(chatId,info,localizationProvider)
   {
     this.sirena = sirena;
     this.uid = uid;
@@ -42,11 +45,11 @@ public class NotAllowedToCallMessageBuilder : MessageBuilder
     }
 
     var keyboardRow = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-      .AddDisplayUserSirenasButton();
+      .AddDisplayUserSirenasButton(Info);
     if (cantCalled)
-      keyboardRow = keyboardRow.AddRequestButton(sirena.Id).EndRow().BeginRow();
+      keyboardRow = keyboardRow.AddRequestButton(Info,sirena.Id).EndRow().BeginRow();
     
-    var markup = keyboardRow.AddMenuButton().EndRow().ToReplyMarkup();
+    var markup = keyboardRow.AddMenuButton(Info).EndRow().ToReplyMarkup();
 
     return CreateDefault(builder.ToString(), markup);
   }

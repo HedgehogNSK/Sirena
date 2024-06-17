@@ -22,7 +22,7 @@ public class RequestSubscribeStep : CommandStep
   public override IObservable<Report> Make()
   {
     var id = sirenaIdContainter.Get();
-    var uid = contextContainer.Object.GetUser().Id;
+    var uid = Context.GetUser().Id;
 
     var request = subscribeOperation.Subscribe(uid, id).Publish().RefCount();
     var fail = request.Where(x => x == null).Select(_ => CreateReportNotFound());
@@ -32,15 +32,17 @@ public class RequestSubscribeStep : CommandStep
 
   private Report CreateSuccesfulReport(SirenRepresentation representation)
   {
-    var chatId = contextContainer.Object.GetTargetChatId();
-    MessageBuilder meesage = new SuccesfulSubscriptionMessageBuilder(chatId, representation);
+    var chatId = Context.GetTargetChatId();
+    var info = Context.GetCultureInfo();
+    MessageBuilder meesage = new SuccesfulSubscriptionMessageBuilder(chatId,info, Program.LocalizationProvider , representation);
     return new Report(Result.Success, meesage);
   }
 
   private Report CreateReportNotFound()
   {
     var id = sirenaIdContainter.Get();
-    var chatId = contextContainer.Object.GetTargetChatId();
-    return new(Result.Wait, new SirenaNotFoundMessageBuilder(chatId, id));
+    var info = Context.GetCultureInfo();
+    var chatId = Context.GetTargetChatId();
+    return new(Result.Wait, new SirenaNotFoundMessageBuilder(chatId,info, Program.LocalizationProvider, id));
   }
 }
