@@ -6,7 +6,6 @@ public class PlanScheduler : IDisposable{
   readonly Subject<CommandPlan> subject= new Subject<CommandPlan>();
   public void Dispose()
   {
-    subject.OnCompleted();
     subject.Dispose();
   }
 

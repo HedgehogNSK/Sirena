@@ -21,7 +21,7 @@ public class CreateMessageBuilder : LocalizedMessageBuilder
     this.minSymbols = minSymbols;
     this.maxSymbols = maxSymbols;
   }
-  internal void SetUser(UserRepresentation representation)
+  internal void SetUser(UserRepresentation? representation)
   {
     userIsSet = representation != null;
   }

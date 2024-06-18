@@ -25,7 +25,7 @@ public class GetUserCreateSirenaStep : CreateSirenaStep
     .Select(CreateReport);
   }
 
-  private Report CreateReport(UserRepresentation representation)
+  private Report CreateReport(UserRepresentation? representation)
   {
     buffer.User = representation;
     buffer.MessageBuilder.SetUser(representation);

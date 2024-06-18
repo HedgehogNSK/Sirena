@@ -9,7 +9,7 @@ public class CheckAbilityToCreateSirenaStep( Container<IRequestContext> contextC
 
   public override IObservable<Report> Make()
   {
-    var ownedSignalsCount = buffer.User.Owner.Length;
+    var ownedSignalsCount = buffer.GetUser().Owner.Length;
     var builder = buffer.MessageBuilder;
 
     Report report;

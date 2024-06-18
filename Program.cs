@@ -37,6 +37,8 @@ static internal class Program
     var botMesssageSender = new BotMesssageSender(bot);
     botProxyRequests = new BotMessageSenderTimerProxy(botMesssageSender, botMesssageSender, botMesssageSender);
     planScheduler = new PlanScheduler();
+    var rm = new ResourceManager("Sirena.Resources.Commands", typeof(Program).Assembly);
+    LocalizationProvider = new ResourceManagerAdapterLocalizationProvider(rm);
   }
   private static void Initialization()
   {

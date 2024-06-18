@@ -12,7 +12,7 @@ public class GetUserOperationAsync : IGetUserOperationAsync
     this.usersCollection = usersCollection;
     this.requests = requests;
   }
-  public async Task<UserRepresentation> GetAsync(long uid)
+  public async Task<UserRepresentation?> GetAsync(long uid)
   {
     var filter = Builders<UserRepresentation>.Filter.Eq("_id", uid);
     var user = await usersCollection.Find(filter).FirstOrDefaultAsync();
@@ -21,7 +21,6 @@ public class GetUserOperationAsync : IGetUserOperationAsync
       user = await requests.CreateUser(uid, uid);
       if(user==null)
         Program.botProxyRequests.Send(uid, "Database couldn't create user. Please try latter");
-        return default;
       }
       return user;
   }

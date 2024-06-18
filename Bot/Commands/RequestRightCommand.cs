@@ -26,7 +26,7 @@ public class RequestRightsCommand : AbstractBotCommmand
 
     if (!ObjectId.TryParse(param, out ObjectId sid))
     {
-    string wrongParameter = Program.LocalizationProvider.Get("command.request_rights.incorrect_parameters", info);
+      string wrongParameter = Program.LocalizationProvider.Get("command.request_rights.incorrect_parameters", info);
       Program.botProxyRequests.Send(chatId, wrongParameter);
       return;
     }
@@ -34,18 +34,18 @@ public class RequestRightsCommand : AbstractBotCommmand
     var updateResult = await requests.RequestRightsForSirena(sid, uid, userMessage);
     if (updateResult.MatchedCount == 0)
     {
-    string  failMessage= Program.LocalizationProvider.Get("command.request_rights.fail", info);
+      string failMessage = Program.LocalizationProvider.Get("command.request_rights.fail", info);
       Program.botProxyRequests.Send(chatId, failMessage);
       return;
     }
     if (updateResult.ModifiedCount == 0)
     {
-    string  noChangesMessage= Program.LocalizationProvider.Get("command.request_rights.already_sent", info);
+      string noChangesMessage = Program.LocalizationProvider.Get("command.request_rights.already_sent", info);
       Program.botProxyRequests.Send(chatId, noChangesMessage);
       return;
     }
     string successMessage = Program.LocalizationProvider.Get("command.request_rights.success", info);
-    responseText = string.Format(successMessage,sid);
+    responseText = string.Format(successMessage, sid);
     Program.botProxyRequests.Send(chatId, responseText);
   }
 }
