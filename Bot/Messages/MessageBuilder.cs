@@ -17,7 +17,7 @@ public abstract class MessageBuilder
         {
           ChatId = chatId,
           DisableNotification = true,
-          ProtectContent = true,
+          ProtectContent = false,
           Text = message,
           ReplyMarkup = replyMarkup,
           ParseMode = ParseMode.Markdown
