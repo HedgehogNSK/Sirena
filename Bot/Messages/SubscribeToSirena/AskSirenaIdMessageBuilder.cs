@@ -13,12 +13,12 @@ public class AskSirenaIdMessageBuilder : LocalizedMessageBuilder
 
   public override SendMessage Build()
   {
-    const string errorDescription = "*Please input Sirena ID*.\nYou have to input exact ID of Sirena that you are going to subscribe to.\n\nYou can use *Find* command to find a Sirena by title.";
-    
+    string askSirenaId = Localize("command.subscribe.askSirenaId");
+
     var markup = KeyboardBuilder.CreateInlineKeyboard()
         .BeginRow().AddFindButton(Info).AddMenuButton(Info).EndRow()
         .ToReplyMarkup();
 
-    return CreateDefault(errorDescription, markup);
+    return CreateDefault(askSirenaId, markup);
   }
 }

@@ -11,12 +11,7 @@ public class RevokeRightsCommand : AbstractBotCommmand
   public const string DESCRIPTION = "Allows to request rights to call certain sirena of another user.";
   private readonly FacadeMongoDBRequests requests;
   private readonly TelegramBot bot;
-  const string errorWrongParamters = "Please input: /revoke {sirena number or id} {user id}";
-  const string errorWrongSirenaID = "{0} parameter is incorrect. First parameter has to be serial number or ID of your sirena";
-  const string errorWrongUID = "{0} parameter is incorrect. Second parameter has to be *UID* of user that is already responsible for sirena. And you won't to revoke they rights.";
-  const string errorNoSirena = "You couldn't revoke rights of this user. Possible reasons: user doesn't have rights or you don't own this sirena ";
-  const string successMessage = "The user: {0} has been deprived of his rights to call the sirena:\n {1}";
-  public RevokeRightsCommand( FacadeMongoDBRequests requests, TelegramBot bot)
+  public RevokeRightsCommand(FacadeMongoDBRequests requests, TelegramBot bot)
   : base(NAME, DESCRIPTION)
   {
     this.bot = bot;
@@ -29,9 +24,11 @@ public class RevokeRightsCommand : AbstractBotCommmand
     User botUser = context.GetUser();
     long uid = botUser.Id;
     long chatId = context.GetChat().Id;
+    var info = context.GetCultureInfo();
     string[] parameters = context.GetArgsString().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
     if (parameters.Length < 3)
     {
+      string errorWrongParamters = Program.LocalizationProvider.Get("command.revoke_rights.incorrect_parameters", info);
       Program.botProxyRequests.Send(chatId, errorWrongParamters);
       return;
     }
@@ -40,6 +37,7 @@ public class RevokeRightsCommand : AbstractBotCommmand
     if (!int.TryParse(sirenaIdString, out int number)
         && !ObjectId.TryParse(sirenaIdString, out sirenaId))
     {
+      string errorWrongSirenaID = Program.LocalizationProvider.Get("command.revoke_rights.incorrect_sirena_param", info);
       responseText = string.Format(errorWrongSirenaID, sirenaIdString);
       Program.botProxyRequests.Send(chatId, responseText);
       return;
@@ -52,6 +50,7 @@ public class RevokeRightsCommand : AbstractBotCommmand
     }
     if (chat == null)
     {
+      string errorWrongUID = Program.LocalizationProvider.Get("command.revoke_rights.incorrect_uid", info);
       responseText = string.Format(errorWrongUID, userIdString);
       Program.botProxyRequests.Send(chatId, responseText);
       return;
@@ -73,11 +72,13 @@ public class RevokeRightsCommand : AbstractBotCommmand
 
     if (updatedSiren == null)
     {
-      responseText = errorNoSirena + sirenaId;
+      string errorNoSirena = Program.LocalizationProvider.Get("command.revoke_rights.fail", info);
+      responseText = string.Format(errorNoSirena, sirenaId);
       Program.botProxyRequests.Send(chatId, responseText);
       return;
     }
 
+    string successMessage = Program.LocalizationProvider.Get("command.revoke_rights.success", info);
     responseText = string.Format(successMessage, ruid, updatedSiren);
     Program.botProxyRequests.Send(chatId, responseText);
   }

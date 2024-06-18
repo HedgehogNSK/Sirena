@@ -24,8 +24,8 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
   public override SendMessage Build()
   {
     bool userIsOwner = sirena.OwnerId == uid;
-    const string template = "Title: *{0}*\nID: `{1}`\nSubscribers: {2}\n";
-    const string lastCall = "Last call: {0}\n";
+    const string generalInfoKey = "command.sirena_info.general_info";
+    const string lastCallKey = "command.sirena_info.last_call";
 
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard()
         .BeginRow();
@@ -55,11 +55,15 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
       }
     }
     var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
+    string generalInfo = Localize(generalInfoKey);
     StringBuilder builder = new StringBuilder()
-    .AppendFormat(template, sirena.Title, sirena.Id, sirena.Listener.Length);
+    .AppendFormat(generalInfo, sirena.Title, sirena.Id, sirena.Listener.Length);
 
     if (sirena.LastCall != null)
-      builder.AppendFormat(lastCall, sirena.LastCall.Date);
+      {
+      string lastCall = Localize(lastCallKey);
+      builder.AppendFormat(lastCall, sirena.LastCall.Date); 
+      }
 
     return CreateDefault(builder.ToString(), markup);
   }

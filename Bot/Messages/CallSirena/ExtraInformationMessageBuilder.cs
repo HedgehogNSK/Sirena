@@ -19,7 +19,7 @@ internal class ExtraInformationMessageBuilder : LocalizedMessageBuilder
 
   public override SendMessage Build()
   {
-    const string notification = "You can send extra information for subscribers or just click the *Call* button.";
+    string notification = Localize("command.call.extra_info");;
     
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
       .AddCallSirenaButton(Info).AddMenuButton(Info).EndRow()

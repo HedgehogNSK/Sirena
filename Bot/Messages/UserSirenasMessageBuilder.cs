@@ -13,22 +13,21 @@ public class UserSirenasMessageBuilder : LocalizedMessageBuilder
   private readonly IEnumerable<SirenRepresentation> sirens;
 
   public UserSirenasMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider, IEnumerable<SirenRepresentation> sirens) : base(chatId,info,localizationProvider)
+  , ILocalizationProvider localizationProvider, IEnumerable<SirenRepresentation> sirens) : base(chatId, info, localizationProvider)
   {
     this.sirens = sirens;
   }
   public override SendMessage Build()
   {
     const int buttonsPerLine = 5;
-    const string template = ". `{0}` *{1}*\n";
-    const string subscribers = "_Subscribers[{0}]_\n";
-    const string noCreatedSirens = "You haven't created any Sirena yet.";
-    const string listIntroduction = "The list of your sirens:\n";
 
     StringBuilder builder = new StringBuilder();
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
     if (sirens.Any())
     {
+      const string template = ". `{0}` *{1}*\n";
+      string subscribers = Localize("command.display_sirenas.subscribers");
+      string listIntroduction = Localize("command.display_sirenas.title");
 
       int number = 0;
       builder.Append(listIntroduction);
@@ -39,7 +38,7 @@ public class UserSirenasMessageBuilder : LocalizedMessageBuilder
         {
           keyboardBuilder.EndRow().BeginRow();
         }
-        keyboardBuilder.AddSirenaInfoButton(Info,sirena.Id, number.ToString());
+        keyboardBuilder.AddSirenaInfoButton(Info, sirena.Id, number.ToString());
 
         builder.Append(number).AppendFormat(template, sirena.Id, sirena.Title);
         if (sirena.Listener.Length != 0)
@@ -53,6 +52,7 @@ public class UserSirenasMessageBuilder : LocalizedMessageBuilder
     }
     else
     {
+      string noCreatedSirens = Localize("command.display_sirenas.no_created");
       var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
           .AddCreateButton(Info).AddMenuButton(Info).EndRow().ToReplyMarkup();
       return CreateDefault(noCreatedSirens, markup);

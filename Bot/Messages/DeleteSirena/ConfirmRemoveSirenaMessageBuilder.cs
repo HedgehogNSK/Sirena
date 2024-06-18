@@ -11,22 +11,22 @@ public class ConfirmRemoveSirenaMessageBuilder : LocalizedMessageBuilder
   private readonly SirenRepresentation sirena;
 
   public ConfirmRemoveSirenaMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider, SirenRepresentation sirena) : base(chatId,info,localizationProvider)
+  , ILocalizationProvider localizationProvider, SirenRepresentation sirena) : base(chatId, info, localizationProvider)
   {
     this.sirena = sirena;
   }
 
   public override SendMessage Build()
   {
-    const string question = "You are going to delete Sirena: *{0}*\n ID: `{1}`\n*Are your sure?* This action can't be canceled.";
-    const string confirm = "✅ Yes";
-    const string cancel = "⛔️ No";
+    string question = Localize("command.delete.notification");
+    string confirm = Localize("command.delete.confirm");
+    string cancel = Localize("command.delete.cancel");
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-      .AddSirenaInfoButton(Info,sirena.Id,cancel)
+      .AddSirenaInfoButton(Info, sirena.Id, cancel)
       .AddCallbackData(confirm, true.ToString())
       .EndRow().ToReplyMarkup();
 
-      var message = string.Format(question, sirena.Title, sirena.Id);
-      return CreateDefault(message, markup);
+    var message = string.Format(question, sirena.Title, sirena.Id);
+    return CreateDefault(message, markup);
   }
 }

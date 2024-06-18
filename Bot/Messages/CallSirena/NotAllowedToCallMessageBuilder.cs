@@ -21,9 +21,9 @@ public class NotAllowedToCallMessageBuilder : LocalizedMessageBuilder
   }
   public override SendMessage Build()
   {
-    const string notification = "You are not allowed to call this Sirena:\n{0}\n";
-    const string notOwner = "You can call Sirenas that were created by you or those Sirenas, that the owner gave you the rights to call";
-    const string notNow = "Last call was made recently by *{0}* at {1} UTC. Please wait {2} until next try.";
+    string notification = Localize("command.call.not_allowed");
+    string notOwner = Localize("command.call.explanation_rights");
+    string notNow = Localize("command.call.last_call");
 
     StringBuilder builder = new StringBuilder();
     builder.AppendFormat(notification, sirena);
@@ -38,8 +38,13 @@ public class NotAllowedToCallMessageBuilder : LocalizedMessageBuilder
       var timeLeft = SirenaStateValidationStep.allowedCallPeriod - timePassed;
       if (timeLeft.Ticks > 0)
       {
-        var initiator = sirena.LastCall.Caller == uid ? "*you*" : $"[other person](tg://user?id={uid})";
+        var initiator = sirena.LastCall.Caller == uid ? "command.call.user"
+         : "command.call.other";
+        initiator = Localize(initiator);
+        initiator = string.Format(initiator, uid);
+
         var timeLeftString = timeLeft.ToString(@"mm\:ss");
+        
         builder.AppendFormat(notNow, initiator, sirena.LastCall.Date, timeLeftString);
       }
     }

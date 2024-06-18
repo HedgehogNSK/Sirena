@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
+using System.Globalization;
 using System.Text;
 
 namespace Hedgey.Sirena.Bot;
@@ -13,18 +14,14 @@ public class GetRequestsListCommand : AbstractBotCommmand
 {
   public const string NAME = "requests";
   public const string DESCRIPTION = "Display a list of requests for permission to launch a sirena.";
-  private const string noRequestsMessage = "There are no requests for delegation of rights";
-  private const string noSirenaMessage = "You don't have any sirenas yet.";
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly TelegramBot bot;
-  private readonly FacadeMongoDBRequests requests;
 
-  public GetRequestsListCommand(IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
+  public GetRequestsListCommand(IMongoDatabase db, TelegramBot bot)
   : base(NAME, DESCRIPTION)
   {
     sirens = db.GetCollection<SirenRepresentation>("sirens");
     this.bot = bot;
-    this.requests = requests;
   }
 
   public override async void Execute(IRequestContext context)
@@ -32,6 +29,8 @@ public class GetRequestsListCommand : AbstractBotCommmand
     User botUser = context.GetUser();
     long uid = botUser.Id;
     long chatId = context.GetChat().Id;
+    CultureInfo info = context.GetCultureInfo();
+
     var filterBuilder = Builders<SirenRepresentation>.Filter;
     var filter = filterBuilder.Eq(x => x.OwnerId, uid)
                & filterBuilder.SizeGt(s => s.Requests, 0);
@@ -43,7 +42,7 @@ public class GetRequestsListCommand : AbstractBotCommmand
     string messageText;
     if (userSirensWithRequests.Count == 0)
     {
-      messageText = noSirenaMessage;
+      messageText = Program.LocalizationProvider.Get("command.get_requests.no_requests", info);
     }
     else
     {
@@ -57,31 +56,25 @@ public class GetRequestsListCommand : AbstractBotCommmand
                            Message = request.Message,
                          };
 
-      messageText = await CreateMessageText(requestsList);
+      messageText = await CreateMessageText(requestsList, info);
     }
     Program.botProxyRequests.Send(chatId, messageText);
   }
 
-  private async Task<string> CreateMessageText(IEnumerable<RequestInfo> requestsList)
+  private async Task<string> CreateMessageText(IEnumerable<RequestInfo> requestsList, CultureInfo info)
   {
-    if (!requestsList.Any())
-    {
-      return noRequestsMessage;
-    }
-    StringBuilder builder = new StringBuilder("Reuqests list\n");
+    string header = Program.LocalizationProvider.Get("command.get_requests.header", info);
+    StringBuilder builder = new StringBuilder(header);
     int number = 1;
+    string requestMessageTemplate = Program.LocalizationProvider.Get("command.get_requests.request_template", info);
     foreach (var request in requestsList)
     {
       var chat = await bot.GetChatByUID(request.UserId);
-      var username = chat?.Username ?? "Ghost";
-      builder.AppendLine().Append(number).Append(". User *")
-        .Append(username)
-        .Append('|')
-        .Append(request.UserId)
-        .Append("* is asking for access to \n ")
-        .Append("sirena ")
-        .Append(request)
-        .AppendLine();
+      var username = chat?.Username ?? Program.LocalizationProvider.Get("miscellaneous.user_ghost", info);
+
+      builder.AppendLine().Append(number)
+      .AppendFormat(requestMessageTemplate, username, request.UserId, request);
+
       if (!string.IsNullOrEmpty(request.Message))
       {
         builder.Append('\"')
@@ -103,7 +96,7 @@ public class GetRequestsListCommand : AbstractBotCommmand
 
     public override string ToString()
     {
-      return "*\""+Title+"\"* : _"+ SirenId+'_';
+      return "*\"" + Title + "\"* : `" + SirenId + '`';
     }
   }
 }

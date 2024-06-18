@@ -19,7 +19,7 @@ public class NotAllowedToCallSirenaMessageBuilder : LocalizedMessageBuilder
 
   public override SendMessage Build()
   {
-    const string notification = "You are not allowed to call sirena *\"{0}\"* with ID: `{1}`";
+    string notification = Localize("command.call.not_allowed");;
     string message = string.Format(notification,sirena.Title, sirena.Id);
 
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()

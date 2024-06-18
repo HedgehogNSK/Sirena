@@ -22,7 +22,7 @@ public class SirenaNotFoundMessageBuilder : LocalizedMessageBuilder
         .AddFindButton(Info).AddSubscribeButton(Info).AddMenuButton(Info)
         .EndRow().ToReplyMarkup();
 
-    const string noSirenaError = "*Attempt to subscribe is failed.*\nPossible reasons:\n1. There is no Sirena with such id;\n2. You are the owner of the Sirena.\n\n You can try to input another *Sirena ID*";
+    string noSirenaError = Localize("command.subscribe.notExists");
     var message = string.Format(noSirenaError, id);
     return CreateDefault(message, markup);
   }

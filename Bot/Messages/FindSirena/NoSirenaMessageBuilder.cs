@@ -22,10 +22,10 @@ public class NoSirenaMessageBuilder : LocalizedMessageBuilder
 
   public override SendMessage Build()
   {
-    const string noSirenaByKeyError = "There is no Sirena with title that contains: \"{0}\".\nPlease try another key phrase";
-    const string noSirenaByIdError = "There is no Sirena with this ID: \"{0}\".\nPlease try another ID phrase";
+    string noSirenaByKeyError = Localize("command.find.no_title");
+    string noSirenaByIdError = Localize("command.find.no_id");
     string message = id != default ? string.Format(noSirenaByIdError, id)
       : string.Format(noSirenaByKeyError, key);
-    return CreateDefault(message,  MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info));
+    return CreateDefault(message, MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info));
   }
 }

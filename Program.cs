@@ -15,7 +15,6 @@ using System.Resources;
 namespace Hedgey.Sirena;
 static internal class Program
 {
-  private const string errorNoCommand = $"No known command were found! Use /help to find out what I can do.";
   static TelegramBot bot;
   static MongoClient dbClient;
   static FacadeMongoDBRequests requests;
@@ -37,7 +36,7 @@ static internal class Program
     bot = ((IFactory<TelegramBot>)telegramFactory).Create();
     var botMesssageSender = new BotMesssageSender(bot);
     botProxyRequests = new BotMessageSenderTimerProxy(botMesssageSender, botMesssageSender, botMesssageSender);
-    planScheduler = new PlanScheduler();    
+    planScheduler = new PlanScheduler();
   }
   private static void Initialization()
   {
@@ -184,6 +183,7 @@ static internal class Program
 
     if (!commandIsSet && !planIsSet)
     {
+      string errorNoCommand = LocalizationProvider.Get("miscellaneous.no_command", context.GetCultureInfo());
       botProxyRequests.Send(uid, errorNoCommand);
       return;
     }

@@ -9,12 +9,7 @@ public class RequestRightsCommand : AbstractBotCommmand
 {
   public const string NAME = "request";
   public const string DESCRIPTION = "Request owner of sirena to delegate right to call sirena";
-  private const string noSirenaMessage = "Request failed. Possible reasons: \n1.There is no *sirena* with this id: *{0}*;\n2.You are *owner* of the sirena;\n3. You are already responsible for the sirena.";
-  private const string noChangesMessage = "You have *already sent* a permission request for the sirena.";
-  private const string successMessage = "You have successfuly sent a a permission request for the sirena: {0}";
   private readonly FacadeMongoDBRequests requests;
-  private const string wrongParameter = "Incorrect parameters. Please use syntax:\n /request {sirena id} [request message]\nYou can send request message or skip it. But you have to set correc sirena id";
-
   public RequestRightsCommand(FacadeMongoDBRequests requests) : base(NAME, DESCRIPTION)
   {
     this.requests = requests;
@@ -26,10 +21,12 @@ public class RequestRightsCommand : AbstractBotCommmand
     User botUser = context.GetUser();
     long uid = botUser.Id;
     long chatId = context.GetChat().Id;
+    var info = context.GetCultureInfo();
     var param = context.GetArgsString().GetParameterByNumber(0);
 
     if (!ObjectId.TryParse(param, out ObjectId sid))
     {
+    string wrongParameter = Program.LocalizationProvider.Get("command.request_rights.incorrect_parameters", info);
       Program.botProxyRequests.Send(chatId, wrongParameter);
       return;
     }
@@ -37,14 +34,17 @@ public class RequestRightsCommand : AbstractBotCommmand
     var updateResult = await requests.RequestRightsForSirena(sid, uid, userMessage);
     if (updateResult.MatchedCount == 0)
     {
-      Program.botProxyRequests.Send(chatId, noSirenaMessage);
+    string  failMessage= Program.LocalizationProvider.Get("command.request_rights.fail", info);
+      Program.botProxyRequests.Send(chatId, failMessage);
       return;
     }
     if (updateResult.ModifiedCount == 0)
     {
+    string  noChangesMessage= Program.LocalizationProvider.Get("command.request_rights.already_sent", info);
       Program.botProxyRequests.Send(chatId, noChangesMessage);
       return;
     }
+    string successMessage = Program.LocalizationProvider.Get("command.request_rights.success", info);
     responseText = string.Format(successMessage,sid);
     Program.botProxyRequests.Send(chatId, responseText);
   }

@@ -25,7 +25,7 @@ public class SuccesfulSubscriptionMessageBuilder : LocalizedMessageBuilder
       .BeginRow().AddMenuButton(Info).EndRow()
       .ToReplyMarkup();
 
-    const string notificationText = "You successfully subscribed to *Sirena*: _{0}_";
+    string notificationText = Localize("command.subscribe.success");
     var message = string.Format(notificationText, representation.Title);
     return CreateDefault(message, markup);
   }

@@ -14,15 +14,15 @@ public static class MarkupShortcuts
   public const string menuTitle = prefix + "menu.title";
   public const string callTitle = prefix + "call.title";
   public const string createTitle = prefix + "create.title";
-  public const string getInfoTitle = prefix + "getInfo.title";
+  public const string getInfoTitle = prefix + "get_info.title";
   public const string findTitle = prefix + "find.title";
   public const string subscribeTitle = prefix + "subscribe.title";
   public const string unsubscribeTitle = prefix + "unsubscribe.title";
   public const string deleteTitle = prefix + "delete.title";
-  public const string displaySirenasTitle = prefix + "displaySirenas.title";
-  public const string getReuqestsTitle = prefix + "getReuqests.title";
-  public const string getResponsiblesTitle = prefix + "getResponsibles.title";
-  public const string requestRightTitle = prefix + "requestRight.title";
+  public const string displaySirenasTitle = prefix + "display_sirenas.title";
+  public const string getReuqestsTitle = prefix + "get_requests.title";
+  public const string getResponsiblesTitle = prefix + "get_responsibles.title";
+  public const string requestRightTitle = prefix + "request_rights.title";
   public const string subscriptionsTitle = prefix + "subscriptions.title";
 
   public static ILocalizationProvider? LocalizationProvider { get; set;}
@@ -54,17 +54,23 @@ public static class MarkupShortcuts
     => inlineKeyboardRow.AddLocalizedButton(title, info, DeleteSirenaCommand.NAME, sirenaId.ToString());
   public static IInlineKeyboardRow AddDisplaySubscriptionsButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info, int count = 0, string title = subscriptionsTitle)
   {
+    if(LocalizationProvider==null)
+      throw new ArgumentNullException(nameof(LocalizationProvider));
+    string localTitle = LocalizationProvider.Get(title, info);
     if (count != 0)
       title += $" [{count}]";
-    return inlineKeyboardRow.AddLocalizedButton(title, info, GetSubscriptionsListCommand.NAME);
+    return inlineKeyboardRow.AddButton(localTitle, GetSubscriptionsListCommand.NAME);
   }
 
   public static IInlineKeyboardRow AddDisplayUserSirenasButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info
     , int count = 0, string title = displaySirenasTitle)
   {
+    if(LocalizationProvider==null)
+      throw new ArgumentNullException(nameof(LocalizationProvider));
+    string localTitle = LocalizationProvider.Get(title, info);
     if (count != 0)
-      title += $" [{count}]";
-    return inlineKeyboardRow.AddLocalizedButton(title, info, DisplayUsersSirenasCommand.NAME);
+      localTitle += $" [{count}]";
+    return inlineKeyboardRow.AddButton(localTitle, DisplayUsersSirenasCommand.NAME);
   }
 
   public static IInlineKeyboardRow AddFindButton(this IInlineKeyboardRow inlineKeyboardRow,CultureInfo info)

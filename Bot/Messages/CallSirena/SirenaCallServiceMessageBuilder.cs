@@ -23,7 +23,7 @@ public class SirenaCallServiceMessageBuilder : LocalizedMessageBuilder
 
   public override SendMessage Build()
   { 
-    const string notificationBase = "*\"{0}\"*\n _Called by_ {1}.";
+    string notificationBase = Localize("command.call.last_call.2");
     string userName = BotTools.GetDisplayName(initiator);
     long uid = initiator.Id;
     string notification = string.Format(notificationBase, sirena.Title,userName , uid);

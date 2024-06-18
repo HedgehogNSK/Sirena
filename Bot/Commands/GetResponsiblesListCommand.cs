@@ -21,7 +21,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
   private readonly TelegramBot bot;
   private readonly FacadeMongoDBRequests requests;
 
-  public GetResponsiblesListCommand( IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
+  public GetResponsiblesListCommand(IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
   : base(NAME, DESCRIPTION)
   {
     users = db.GetCollection<UserRepresentation>("users");
@@ -35,6 +35,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
     User botUser = context.GetUser();
     long uid = botUser.Id;
     long chatId = context.GetChat().Id;
+    var info = context.GetCultureInfo();
     string param = context.GetArgsString().GetParameterByNumber(0);
     SirenRepresentation sirena;
 
@@ -47,6 +48,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
       }
       else
       {
+        string noSirenaWithNumber = Program.LocalizationProvider.Get("command.get_responsibles.no_sirena_number", info);
         Program.botProxyRequests.Send(chatId, string.Format(noSirenaWithNumber, number));
         return;
       }
@@ -57,17 +59,19 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
       if (sirena == null)
       {
 
+        string noSirenaMessage = Program.LocalizationProvider.Get("command.get_responsibles.no_sirena_id", info);
         Program.botProxyRequests.Send(chatId, noSirenaMessage);
         return;
       }
     }
     else
     {
+      string wrongParamMessage = Program.LocalizationProvider.Get("command.get_responsibles.incorrect_parameters", info);
       Program.botProxyRequests.Send(chatId, wrongParamMessage);
       return;
     }
 
-    var messageText = await CreateMessageText(sirena);
+    var messageText = await CreateMessageText(sirena, info);
     Program.botProxyRequests.Send(chatId, messageText);
   }
 
@@ -76,31 +80,23 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
     string[] names = new string[sirena.Responsible.Length];
     for (int id = 0; id != sirena.Responsible.Length; ++id)
     {
-      var chat = await bot.GetChatByUID(sirena.Responsible[id]);
-      names[id] = chat?.Username ?? string.Empty;
-      names[id] += "|" + sirena.Responsible[id];
+      var uid = sirena.Responsible[id];
+      string nick = await bot.GetDisplayName(uid);
+      names[id] = $"{nick}|{uid}";
     }
 
     return names;
   }
 
-  private async Task<string> CreateMessageText(SirenRepresentation? sirena)
+  private async Task<string> CreateMessageText(SirenRepresentation? sirena, System.Globalization.CultureInfo info)
   {
     if (sirena == null)
-    {
-      const string message = "Sirena wasn't found";
-      return message;
-    }
+      return Program.LocalizationProvider.Get("command.get_responsibles.no_sirena", info);
 
-    var chat = await bot.GetChatByUID(sirena.OwnerId);
-    string owner = chat?.Username ?? "Ghost";
+    string owner = await bot.GetDisplayName(sirena.OwnerId);
     owner += "|" + sirena.OwnerId;
-
-    var builder = new StringBuilder("Sirena *\"")
-          .Append(sirena.Title)
-          .Append("\"* supervisors:\n")
-          .Append(owner)
-          .Append(" - Owner\n");
+    string template = Program.LocalizationProvider.Get("command.get_responsibles.template", info);
+    var builder = new StringBuilder().AppendFormat(template, sirena.Title, owner);
 
     if (sirena.Responsible.Any())
     {

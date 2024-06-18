@@ -21,7 +21,7 @@ public class SirenaCallReportMessageBuilder : LocalizedMessageBuilder
 
   public override SendMessage Build()
   {
-    const string notification = "{0} subscribers were notified";
+    string notification = Localize("command.call.success");
     string message = string.Format(notification, notifiedSubscribers);
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
      .AddMenuButton(Info).AddDeleteButton(Info,sirenRepresentation.Id).EndRow()

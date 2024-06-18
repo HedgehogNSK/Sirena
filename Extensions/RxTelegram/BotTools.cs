@@ -36,7 +36,7 @@ public static class BotTools
   public static string GetDisplayName(this User user)
   => GetDisplayName(user.Username, user.FirstName, user.LastName);
 
-  public static async Task<string> GetDisplayName(TelegramBot bot, long uid)
+  public static async Task<string> GetDisplayName(this TelegramBot bot, long uid)
   {
     var chat = await bot.GetChatByUID(uid);
     if(chat==null)

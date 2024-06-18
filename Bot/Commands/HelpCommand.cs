@@ -17,14 +17,14 @@ namespace Hedgey.Sirena.Bot
 
     public override void Execute(IRequestContext context)
     {
-      StringBuilder builder = new StringBuilder("List of commands:\n");
+      var info = context.GetCultureInfo();
+      string commandsList = Program.LocalizationProvider.Get("command.help.header",info);
+      StringBuilder builder = new StringBuilder(commandsList).AppendLine();
       foreach (var command in commands)
       {
-        builder.Append('/');
-        builder.Append(command.Command);
-        builder.Append(" - ");
-        builder.Append(command.Description);
-        builder.AppendLine();
+        builder.Append('/').Append(command.Command).Append(" - ");
+        string description = Program.LocalizationProvider.Get($"command.{command.Command}.description",info);
+        builder.Append(description).AppendLine();
       }
       long uid = context.GetUser().Id;
       var response = new SendMessage()

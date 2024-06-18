@@ -6,13 +6,13 @@ namespace Hedgey.Sirena.Bot;
 
 public class WrongSearchKeyFindSirenaMessageBuilder : LocalizedMessageBuilder
 {
-  const string errorDescription = "*Please input search phrase*.\nSearch phrase has to be at least {0} symbols length but less than {1} symbols.";
   public WrongSearchKeyFindSirenaMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider  localizationProvider)
 : base(chatId,info,localizationProvider) { }
 
   public override SendMessage Build()
   {
+    string errorDescription = Localize("command.find.input_phrase");
     return CreateDefault(string.Format(errorDescription
       , ValidateSearchParamFindSirenaStep.MIN_SIMBOLS
       , ValidateSearchParamFindSirenaStep.MAX_SIMBOLS)

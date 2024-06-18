@@ -26,8 +26,8 @@ public class RemoveSirenaMenuMessageBuilder : LocalizedMessageBuilder
     if (userSirenas.Any())
     {
       const int optionsPerLine = 5;
-      const string list = "Select Sirena you want to *DELETE*:\n";
-      const string template = ". *{0}* `{1}`\n";
+      string list = Localize("command.delete.header");
+      string template = Localize("command.delete.bref_info");
       int number = 0;
       builder.Append(list);
 
@@ -49,8 +49,7 @@ public class RemoveSirenaMenuMessageBuilder : LocalizedMessageBuilder
     }
     else
     {
-      const string noCreatedSirens = "You haven't created any siren yet.";
-
+      string noCreatedSirens = Localize("command.delete.no_sirenas");
       return CreateDefault(noCreatedSirens);
     }
   }

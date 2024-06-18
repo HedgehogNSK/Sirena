@@ -10,8 +10,8 @@ public class StringNotIdMessageBuilder : LocalizedMessageBuilder
   private string param;
 
   public StringNotIdMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider, string param)
-  : base(chatId,info,localizationProvider)
+  , ILocalizationProvider localizationProvider, string param)
+  : base(chatId, info, localizationProvider)
   {
     this.chatId = chatId;
     this.param = param;
@@ -19,8 +19,8 @@ public class StringNotIdMessageBuilder : LocalizedMessageBuilder
 
   public override SendMessage Build()
   {
-    const string paramIncorrect = "*Value is incorrect!*\n";
-    const string notification = "Please provide Sirena ID to call. It has to be ID of a Sirena that you own or you are responsible for";
+    string paramIncorrect = Localize("command.call.error.value_not_id");
+    string notification = Localize("command.call.ask_sirena_id");
     string message = string.IsNullOrEmpty(param) ? notification : paramIncorrect + notification;
 
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()

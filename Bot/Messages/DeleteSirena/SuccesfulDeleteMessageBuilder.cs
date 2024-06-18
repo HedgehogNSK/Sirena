@@ -18,7 +18,7 @@ public class SuccesfulDeleteMessageBuilder : LocalizedMessageBuilder
 
   public override SendMessage Build()
   {
-    const string notification = "Sirena *\"{0}\"* has been deleted";
+    string notification = Localize("command.delete.success");
     string message = string.Format(notification, deletedSirena.Title ) ;
     return CreateDefault(message,  MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info));
   }

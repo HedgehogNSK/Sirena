@@ -61,7 +61,7 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
           var factory = new CreateSirenaPlanFactory(getUserStats, createSiren,localizationProvider);
           return new CreateSirenaCommand(factory, planScheduler);
         }
-      case DelegateRightsCommand.NAME: return new DelegateRightsCommand(db, requests, bot);
+      case DelegateRightsCommand.NAME: return new DelegateRightsCommand(requests);
       case HelpCommand.NAME: return new HelpCommand(botCommands.Commands);
       case DisplayUsersSirenasCommand.NAME: return new DisplayUsersSirenasCommand(sirenaOperation,messageSender);
       case MuteUserSignalCommand.NAME: return new MuteUserSignalCommand(requests, bot);
@@ -71,7 +71,7 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
           return new DeleteSirenaCommand(factory, planScheduler);
         }
       case RequestRightsCommand.NAME: return new RequestRightsCommand(requests);
-      case GetRequestsListCommand.NAME: return new GetRequestsListCommand(db, requests, bot);
+      case GetRequestsListCommand.NAME: return new GetRequestsListCommand(db, bot);
       case GetResponsiblesListCommand.NAME: return new GetResponsiblesListCommand(db, requests, bot);
       case RevokeRightsCommand.NAME: return new RevokeRightsCommand(requests, bot);
       case FindSirenaCommand.NAME: {

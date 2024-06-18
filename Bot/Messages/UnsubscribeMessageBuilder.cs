@@ -16,14 +16,14 @@ internal class UnsubscribeMessageBuilder : LocalizedMessageBuilder
   }
   public override SendMessage Build()
   {
-    const string successMessage = "You successfully unsubsribed.";
-    const string failMessage =  "*Unsubscription failed.* Possible reasons: you're not listener of the Sirena or this sirena doens't exist.";
+     string successMessage = Localize("command.unsubscribe.success");
+     string failMessage =  Localize( "command.unsubscribe.fail");
     if(isSuccess)
     {
       return CreateDefault(successMessage,  MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info));
     }
     else{
-      const string unsubscribeTitle = "🔄 Another try";
+       string unsubscribeTitle =  Localize("menu.buttons.anotherTry.title");
       var replyMarkup = KeyboardBuilder.CreateInlineKeyboard()
       .BeginRow().AddMenuButton(Info)
       .AddCallbackData(unsubscribeTitle, '/'+ UnsubscribeCommand.NAME).EndRow()

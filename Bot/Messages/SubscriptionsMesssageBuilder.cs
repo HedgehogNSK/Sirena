@@ -26,11 +26,11 @@ internal class SubscriptionsMesssageBuilder : LocalizedMessageBuilder
     if (source.Skip(1).Any())
     {
       const int buttonsPerLine = 5;
-      const string template = ". *{0}* by {1}\nID: `{2}`\n\n";
-      const string prefix = "*Your subscriptions:*\n\n";
+      string sirenaInfo = Localize("command.subscriptions.bref_info");
+      string header = Localize("command.subscriptions.header");
 
       int number = 0;
-      builder.Append(prefix);
+      builder.Append(header);
       var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
       foreach (var tuple in source)
       {
@@ -42,7 +42,7 @@ internal class SubscriptionsMesssageBuilder : LocalizedMessageBuilder
         keyboardBuilder.AddSirenaInfoButton(Info,tuple.sirena.Id,number.ToString());
         
         builder.Append(number)
-          .AppendFormat(template, tuple.sirena.Title, tuple.nickname, tuple.sirena.Id);
+          .AppendFormat(sirenaInfo, tuple.sirena.Title, tuple.nickname, tuple.sirena.Id);
 
       }
       return CreateDefault(builder.ToString(), keyboardBuilder.EndRow().ToReplyMarkup());
@@ -53,7 +53,7 @@ internal class SubscriptionsMesssageBuilder : LocalizedMessageBuilder
     }
     else
     {
-      const string noSubs = "You don't have any subscription yet.";
+      string noSubs = Localize("command.subscriptions.noSubscriptions");
       builder.Append(noSubs);
       return CreateDefault(builder.ToString(),  MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info));
     }

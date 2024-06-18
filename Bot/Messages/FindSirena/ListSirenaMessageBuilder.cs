@@ -21,8 +21,8 @@ public class ListSirenaMessageBuilder : LocalizedMessageBuilder
   public override SendMessage Build()
   {
     const int buttonsPerLine = 5;
-    const string template = ".*{0}* by {1}\n`{2}`\n\n";
-    StringBuilder builder = new StringBuilder("Found sirenas:\n");
+    string template =Localize( "command.subscriptions.bref_info");
+    StringBuilder builder = new StringBuilder(Localize("command.find.header"));
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
     int number = 0;
     foreach (var tuple in collection)
