@@ -21,9 +21,18 @@ static internal class Program
     installer.Install();
     installer = new SharedCommandServicesInstaller(container);
     installer.Install();
-    installer = new CallSirenaCommandInstaller(container);
-    installer.Install();
 
+    var installerTypes =  System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
+      .Where(_type => _type.BaseType!=null 
+        && _type.BaseType.IsGenericType 
+        && _type.BaseType.GetGenericTypeDefinition() == typeof(CommandInstaller<>));
+
+    foreach(var type in installerTypes)
+    {
+      var instance = Activator.CreateInstance(type, container) as Installer;
+      instance?.Install();
+    }
+    
     container.Verify();
 
     var botProxyRequests = container.GetInstance<AbstractBotMessageSender>();

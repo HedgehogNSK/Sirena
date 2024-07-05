@@ -46,48 +46,42 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
   {
     switch (commandName)
     {
-      case MenuBotCommand.NAME:
-        {
-          IGetUserOverviewAsync getUserOverview = new GetUserStatsOperationAsync(sirens);
-          return new MenuBotCommand(getUserOverview);
-        }
-      case CreateSirenaCommand.NAME:
-        {
-          var getUserStats = new GetUserOperationAsync(users, requests);
-          var createSiren = new CreateSirenaOperationAsync(sirens, users);
-          var factory = new CreateSirenaPlanFactory(getUserStats, createSiren,localizationProvider);
-          return new CreateSirenaCommand(factory, planScheduler);
-        }
       case DelegateRightsCommand.NAME: return new DelegateRightsCommand(requests);
-      case HelpCommand.NAME: return new HelpCommand(botCommands.Commands);
-      case DisplayUsersSirenasCommand.NAME: return new DisplayUsersSirenasCommand(sirenaOperation,messageSender);
-      case MuteUserSignalCommand.NAME: return new MuteUserSignalCommand(requests, bot);
       case DeleteSirenaCommand.NAME:
         {
           var factory = new DeleteSirenaPlanFactory(sirenaOperation, sirenaOperation, sirenaOperation);
           return new DeleteSirenaCommand(factory, planScheduler);
         }
-      case RequestRightsCommand.NAME: return new RequestRightsCommand(requests);
-      case GetRequestsListCommand.NAME: return new GetRequestsListCommand(db, bot);
-      case GetResponsiblesListCommand.NAME: return new GetResponsiblesListCommand(db, requests, bot);
-      case RevokeRightsCommand.NAME: return new RevokeRightsCommand(requests, bot);
-      case FindSirenaCommand.NAME: {
+      case DisplayUsersSirenasCommand.NAME: return new DisplayUsersSirenasCommand(sirenaOperation,messageSender);
+      case DisplaySirenaInfoCommand.NAME: {
+        var factory = new GetSirenaInfoPlanFactory(sirenaOperation);
+        return new DisplaySirenaInfoCommand(factory, planScheduler);}
+      case FindSirenaCommand.NAME:
+        {
         var factory = new FindSirenaPlanFactory(sirenaOperation,bot);
         return new FindSirenaCommand(factory, planScheduler);}
+      case GetRequestsListCommand.NAME: return new GetRequestsListCommand(db, bot);
+      case GetResponsiblesListCommand.NAME: return new GetResponsiblesListCommand(db, requests, bot);
+      case GetSubscriptionsListCommand.NAME: 
+        return new GetSubscriptionsListCommand(messageSender,sirenaOperation,getUserInformation);
+      case HelpCommand.NAME: return new HelpCommand(botCommands.Commands);
+      case MenuBotCommand.NAME:
+        {
+          IGetUserOverviewAsync getUserOverview = new GetUserStatsOperationAsync(sirens);
+          return new MenuBotCommand(getUserOverview);
+        }
+      case MuteUserSignalCommand.NAME: return new MuteUserSignalCommand(requests, bot);
+      case RequestRightsCommand.NAME: return new RequestRightsCommand(requests);
+      case RevokeRightsCommand.NAME: return new RevokeRightsCommand(requests, bot);
       case StartCommand.NAME: return new StartCommand(requests);
       case SubscribeCommand.NAME:{
          var factory = new SubscribeSirenaPlanFactory(sirenaOperation);
          return new SubscribeCommand(factory,planScheduler);
          }
-      case GetSubscriptionsListCommand.NAME: 
-        return new GetSubscriptionsListCommand(messageSender,sirenaOperation,getUserInformation);
       case UnmuteUserSignalCommand.NAME: return new UnmuteUserSignalCommand(requests, bot);
       case UnsubscribeCommand.NAME: {
         var factory = new UnsubscribeSirenaPlanFactory(getUserInformation, sirenaOperation, sirenaOperation);
         return new UnsubscribeCommand(factory, planScheduler);}
-      case DisplaySirenaInfoCommand.NAME: {
-        var factory = new GetSirenaInfoPlanFactory(sirenaOperation);
-        return new DisplaySirenaInfoCommand(factory, planScheduler);}
 
       default:
         {
