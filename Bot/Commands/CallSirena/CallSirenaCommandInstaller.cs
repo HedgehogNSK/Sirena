@@ -7,7 +7,7 @@ using SimpleInjector;
 namespace Hedgey.Sirena.Bot;
 
 public class CallSirenaCommandInstaller(Container container)
- : CommandInstaller<CallSirenaCommand>(container)
+ :PlanBassedCommandInstaller<CallSirenaCommand,CallSirenaPlanFactory>(container)
 {
   public override void Install()
   {
@@ -17,8 +17,5 @@ public class CallSirenaCommandInstaller(Container container)
     Container.Register<NullableContainer<SirenRepresentation>>();
     Container.Register<NullableContainer<Message>>();
     Container.Register<IFactory<IRequestContext,Container<IRequestContext>>,RequestContextContainerFactory>();
-
-    Container.RegisterConditional<IFactory<IRequestContext, CommandPlan>, CallSirenaPlanFactory>((_predicate) 
-      => _predicate.Consumer.ImplementationType == typeof(CallSirenaCommand));
   }
 }
