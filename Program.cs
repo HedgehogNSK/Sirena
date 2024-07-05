@@ -1,4 +1,5 @@
-﻿using Hedgey.Localization;
+﻿using Hedgey.Extensions.Types;
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot;
 using MongoDB.Driver;
 using RxTelegram.Bot;
@@ -22,10 +23,9 @@ static internal class Program
     installer = new SharedCommandServicesInstaller(container);
     installer.Install();
 
-    var installerTypes =  System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
-      .Where(_type => _type.BaseType!=null 
-        && _type.BaseType.IsGenericType 
-        && _type.BaseType.GetGenericTypeDefinition() == typeof(CommandInstaller<>));
+    var installerTypes =  System.Reflection.Assembly.GetExecutingAssembly()
+      .GetTypes()
+      .Where(_type => !_type.IsGenericType && _type.HasParent(typeof(CommandInstaller<>)));
 
     foreach(var type in installerTypes)
     {
