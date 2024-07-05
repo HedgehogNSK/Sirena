@@ -3,7 +3,7 @@ using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 
 namespace Hedgey.Sirena.Bot;
-public abstract class MessageBuilder
+public abstract class MessageBuilder : IMessageBuilder
 {
   protected long chatId;
   public MessageBuilder(long chatId)
