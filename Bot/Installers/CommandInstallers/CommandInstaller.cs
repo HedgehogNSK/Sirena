@@ -2,7 +2,7 @@ using SimpleInjector;
 
 namespace Hedgey.Sirena.Bot;
 
-public abstract class CommandInstaller<T>(Container container) : Installer(container)
+public class CommandInstaller<T>(Container container) : Installer(container)
  where T : AbstractBotCommmand
 {
   public override void Install()
