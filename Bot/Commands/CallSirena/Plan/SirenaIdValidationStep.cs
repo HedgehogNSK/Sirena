@@ -1,21 +1,22 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using MongoDB.Bson;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-
 public class SirenaIdValidationStep : CommandStep
 {
   private readonly NullableContainer<ObjectId> idContainer;
-  private readonly IFindSirenaOperation findSirenaOperation;
+  private readonly ILocalizationProvider localizationProvider;
 
   public SirenaIdValidationStep(Container<IRequestContext> contextContainer
-  , NullableContainer<ObjectId> idContainer, IFindSirenaOperation findSirenaOperation)
+    , ILocalizationProvider localizationProvider
+    , NullableContainer<ObjectId> idContainer)
   : base(contextContainer)
   {
     this.idContainer = idContainer;
-    this.findSirenaOperation = findSirenaOperation;
+    this.localizationProvider = localizationProvider;
   }
 
   public override IObservable<Report> Make()
@@ -27,7 +28,7 @@ public class SirenaIdValidationStep : CommandStep
     Report report;
     if (!ObjectId.TryParse(param, out ObjectId sirenaId))
     {
-      MessageBuilder builder = new StringNotIdMessageBuilder(chatId,info, Program.LocalizationProvider, param);
+      MessageBuilder builder = new StringNotIdMessageBuilder(chatId,info, localizationProvider, param);
       report = new Report(Result.Wait, builder);
     }
     else

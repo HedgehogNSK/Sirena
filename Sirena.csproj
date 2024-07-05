@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.24.0" />
     <PackageReference Include="rxtelegram.bot" Version="7.3.0" />
+    <PackageReference Include="SimpleInjector" Version="5.4.6" />
     <PackageReference Include="System.Reactive" Version="6.0.0" />
     <PackageReference Include="telegram.bot" Version="19.0.0" />
   </ItemGroup>

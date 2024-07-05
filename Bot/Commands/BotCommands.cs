@@ -10,8 +10,7 @@ public class BotCommands
   public void Clear() => commands.Clear();
   public bool TryGetCommand(string name, out AbstractBotCommmand? command)
   {
-    command = Commands.FirstOrDefault(x=>x.Command.Equals(name));
-    return command!=null;
+    command = Commands.FirstOrDefault(x => x.Command.Equals(name));
+    return command != null;
   }
-
 }
