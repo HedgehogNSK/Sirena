@@ -29,8 +29,8 @@ public class GetSirenaInfoStep : CommandStep
 
     Result result = representation == null ? Result.Canceled : Result.Success;
     MessageBuilder builder = representation == null ?
-        new SirenaNotFoundMessageBuilder(chatId,info, Program.LocalizationProvider, sirenaIdContainter.Get())
-        : new SirenaInfoMessageBuilder(chatId,info, Program.LocalizationProvider, uid, representation);
+        new SirenaNotFoundMessageBuilder(chatId, info, Program.LocalizationProvider, sirenaIdContainter.Get())
+        : new SirenaInfoMessageBuilder(chatId, info, Program.LocalizationProvider, uid, representation);
 
     return new Report(result, builder);
   }

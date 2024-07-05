@@ -5,7 +5,7 @@ using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
-public class CreateMessageBuilder : LocalizedMessageBuilder
+public class CreateMessageBuilder : LocalizedMessageBuilder, IMessageBuilder
 {
   private bool userIsSet;
   private bool isAllowed;
