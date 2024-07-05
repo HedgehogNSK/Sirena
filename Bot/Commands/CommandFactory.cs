@@ -51,9 +51,6 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
           IGetUserOverviewAsync getUserOverview = new GetUserStatsOperationAsync(sirens);
           return new MenuBotCommand(getUserOverview);
         }
-      case CallSirenaCommand.NAME: {
-        var factory= new CallSirenaPlanFactory(sirenaOperation,messageSender,messageForwarder, messsageCopier, sirenaOperation);
-        return new CallSirenaCommand(factory, planScheduler);}
       case CreateSirenaCommand.NAME:
         {
           var getUserStats = new GetUserOperationAsync(users, requests);
