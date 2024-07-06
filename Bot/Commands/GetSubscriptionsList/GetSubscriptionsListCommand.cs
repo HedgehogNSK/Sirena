@@ -1,3 +1,4 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using System.Reactive.Disposables;
@@ -12,14 +13,16 @@ public class GetSubscriptionsListCommand : AbstractBotCommmand, IBotCommand//, I
   private readonly IMessageSender messageSender;
   private readonly IGetUserRelatedSirenas findSirena;
   private readonly IGetUserInformation getUserInformation;
+  private readonly ILocalizationProvider localizationProvider;
 
   public GetSubscriptionsListCommand(IMessageSender messageSender
-  , IGetUserRelatedSirenas findSirena, IGetUserInformation getUserInformation)
+  , IGetUserRelatedSirenas findSirena, IGetUserInformation getUserInformation, ILocalizationProvider localizationProvider)
     : base(NAME, DESCRIPTION)
   {
     this.messageSender = messageSender;
     this.findSirena = findSirena;
     this.getUserInformation = getUserInformation;
+    this.localizationProvider = localizationProvider;
   }
 
   public override void Execute(IRequestContext context)
@@ -40,7 +43,7 @@ public class GetSubscriptionsListCommand : AbstractBotCommmand, IBotCommand//, I
   {
     long chatId = context.GetChat().Id;
     var info = context.GetCultureInfo();
-    MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId, info, Program.LocalizationProvider, subscriptions);
+    MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId, info, localizationProvider, subscriptions);
     messageSender.Send(builder.Build());
   }
 

@@ -1,3 +1,4 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using System.Reactive.Linq;
 
@@ -7,12 +8,15 @@ public class SirenaStateValidationStep : CommandStep
 {
   private readonly NullableContainer<SirenRepresentation> sirenaContainer;
   static public readonly TimeSpan allowedCallPeriod = TimeSpan.FromMinutes(1);
+  private readonly ILocalizationProvider localizationProvider;
 
   public SirenaStateValidationStep(Container<IRequestContext> contextContainer
-  , NullableContainer<SirenRepresentation> sirenaContainer)
+  , NullableContainer<SirenRepresentation> sirenaContainer,
+ILocalizationProvider localizationProvider)
   : base(contextContainer)
   {
     this.sirenaContainer = sirenaContainer;
+    this.localizationProvider = localizationProvider;
   }
 
   public override IObservable<Report> Make()
@@ -28,7 +32,7 @@ public class SirenaStateValidationStep : CommandStep
       report = new Report(Result.Success,null);
     }
     else
-      report = new Report(Result.Canceled, new NotAllowedToCallMessageBuilder(chatId,info, Program.LocalizationProvider, sirena, uid));
+      report = new Report(Result.Canceled, new NotAllowedToCallMessageBuilder(chatId,info, localizationProvider, sirena, uid));
     return Observable.Return(report);
   }
 

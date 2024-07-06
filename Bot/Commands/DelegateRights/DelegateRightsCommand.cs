@@ -1,3 +1,4 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes;
@@ -9,10 +10,13 @@ public class DelegateRightsCommand : AbstractBotCommmand
   public const string NAME = "delegate";
   public const string DESCRIPTION = "Delegate rights to call sirena to another user.";
   private readonly FacadeMongoDBRequests requests;
-  public DelegateRightsCommand(FacadeMongoDBRequests requests)
+  private readonly ILocalizationProvider localizationProvider;
+
+  public DelegateRightsCommand(FacadeMongoDBRequests requests, ILocalizationProvider localizationProvider)
   : base(NAME, DESCRIPTION)
   {
     this.requests = requests;
+    this.localizationProvider = localizationProvider;
   }
 
   public async override void Execute(IRequestContext context)
@@ -26,7 +30,7 @@ public class DelegateRightsCommand : AbstractBotCommmand
     string[] parameters = context.GetArgsString().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
     if (parameters.Length < 3)
     {
-      string errorWrongParamters = Program.LocalizationProvider.Get("command.delegate.error.incorrect_paramters", info);
+      string errorWrongParamters = localizationProvider.Get("command.delegate.error.incorrect_paramters", info);
       Program.botProxyRequests.Send(chatId, errorWrongParamters);
       return;
     }
@@ -34,14 +38,14 @@ public class DelegateRightsCommand : AbstractBotCommmand
     if (!int.TryParse(parameters[1], out int number)
         && !ObjectId.TryParse(parameters[1], out sirenaId))
     {
-      string errorWrongSirenaID = Program.LocalizationProvider.Get("command.delegate.error.incorrect_id", info);
+      string errorWrongSirenaID = localizationProvider.Get("command.delegate.error.incorrect_id", info);
       responseText = string.Format(errorWrongSirenaID, parameters[1]);
       Program.botProxyRequests.Send(chatId, responseText);
       return;
     }
     if (!long.TryParse(parameters[2], out long duid))
     {
-      string errorWrongUID = Program.LocalizationProvider.Get("command.delegate.error.incorrect_user_id", info);
+      string errorWrongUID = localizationProvider.Get("command.delegate.error.incorrect_user_id", info);
       responseText = string.Format(errorWrongUID, parameters[2]);
       Program.botProxyRequests.Send(chatId, responseText);
       return;
@@ -61,12 +65,12 @@ public class DelegateRightsCommand : AbstractBotCommmand
 
     if (updatedSiren == null)
     {
-      string errorNoSirena = Program.LocalizationProvider.Get("command.delegate.error.no_sirena", info);
+      string errorNoSirena = localizationProvider.Get("command.delegate.error.no_sirena", info);
       responseText = string.Format(errorNoSirena, sirenaId);
       Program.botProxyRequests.Send(chatId, responseText);
       return;
     }
-    string successMessage = Program.LocalizationProvider.Get("command.delegate.success", info);
+    string successMessage = localizationProvider.Get("command.delegate.success", info);
     responseText = string.Format(successMessage, duid, updatedSiren);
     Program.botProxyRequests.Send(chatId, responseText);
   }

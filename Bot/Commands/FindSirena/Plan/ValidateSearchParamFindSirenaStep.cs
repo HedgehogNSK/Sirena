@@ -1,4 +1,5 @@
 using System.Reactive.Linq;
+using Hedgey.Localization;
 
 namespace Hedgey.Sirena.Bot;
 
@@ -6,9 +7,14 @@ public class ValidateSearchParamFindSirenaStep : CommandStep
 {
   public const int MIN_SIMBOLS = 3;
   public const int MAX_SIMBOLS = 200;
+  private readonly ILocalizationProvider localizationProvider;
 
-  public ValidateSearchParamFindSirenaStep(Container<IRequestContext> contextContainer)
-   : base(contextContainer) { }
+  public ValidateSearchParamFindSirenaStep(Container<IRequestContext> contextContainer
+  , ILocalizationProvider localizationProvider)
+   : base(contextContainer)
+  {
+    this.localizationProvider = localizationProvider;
+  }
 
   public override IObservable<Report> Make()
   {
@@ -20,7 +26,7 @@ public class ValidateSearchParamFindSirenaStep : CommandStep
     if (key.Length < MIN_SIMBOLS || key.Length > MAX_SIMBOLS)
     {
       result = Result.Wait;
-      messageBuilder = new WrongSearchKeyFindSirenaMessageBuilder(chatId,info, Program.LocalizationProvider);
+      messageBuilder = new WrongSearchKeyFindSirenaMessageBuilder(chatId,info, localizationProvider);
     }
     return Observable.Return(new Report(result, messageBuilder));
   }

@@ -1,3 +1,4 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using System.Reactive.Linq;
@@ -9,13 +10,16 @@ public class DisplayUsersSirenasCommand : AbstractBotCommmand, IBotCommand
   public const string DESCRIPTION = "Shows a list of sirenas that are being tracked.";
   private IGetUserRelatedSirenas getUserSirenas;
   private readonly IMessageSender messageSender;
+  private readonly ILocalizationProvider localizationProvider;
 
   public DisplayUsersSirenasCommand(IGetUserRelatedSirenas getUserSirenas,
-  IMessageSender messageSender)
+  IMessageSender messageSender,
+  ILocalizationProvider localizationProvider)
   : base(NAME, DESCRIPTION)
   {
     this.getUserSirenas = getUserSirenas;
     this.messageSender = messageSender;
+    this.localizationProvider = localizationProvider;
   }
 
   public override void Execute(IRequestContext context)
@@ -38,8 +42,8 @@ public class DisplayUsersSirenasCommand : AbstractBotCommmand, IBotCommand
     long chatId = context.GetTargetChatId();
 
     MessageBuilder message = sirena == null || enumerator.MoveNext() ?
-      new UserSirenasMessageBuilder(chatId, info, Program.LocalizationProvider, userSirenas)
-      : new SirenaInfoMessageBuilder(chatId, info, Program.LocalizationProvider, uid, sirena);
+      new UserSirenasMessageBuilder(chatId, info, localizationProvider, userSirenas)
+      : new SirenaInfoMessageBuilder(chatId, info, localizationProvider, uid, sirena);
     messageSender.Send(message.Build());
   }
   public class Installer(SimpleInjector.Container container)

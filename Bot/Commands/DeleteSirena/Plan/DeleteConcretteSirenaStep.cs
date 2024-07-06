@@ -1,3 +1,4 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using System.Data;
@@ -8,13 +9,16 @@ namespace Hedgey.Sirena.Bot;
 public class DeleteConcretteSirenaStep : DeleteSirenaStep
 {
   private readonly IDeleteSirenaOperation sirenaDeleteOperation;
+  private readonly ILocalizationProvider localizationProvider;
 
   public DeleteConcretteSirenaStep(Container<IRequestContext> contextContainer
   , NullableContainer<SirenRepresentation> sirenaContainer
-  , IDeleteSirenaOperation sirenaDeleteOperation)
-   : base(contextContainer, sirenaContainer )
+  , IDeleteSirenaOperation sirenaDeleteOperation,
+ILocalizationProvider localizationProvider)
+   : base(contextContainer, sirenaContainer)
   {
     this.sirenaDeleteOperation = sirenaDeleteOperation;
+    this.localizationProvider = localizationProvider;
   }
 
   public override IObservable<Report> Make()
@@ -28,7 +32,7 @@ public class DeleteConcretteSirenaStep : DeleteSirenaStep
   private Report CreateReport(SirenRepresentation deletedSirena)
   {
     var info = Context.GetCultureInfo();
-    var builder = new SuccesfulDeleteMessageBuilder(Context.GetTargetChatId(),info, Program.LocalizationProvider, deletedSirena);
+    var builder = new SuccesfulDeleteMessageBuilder(Context.GetTargetChatId(), info, localizationProvider, deletedSirena);
     return new Report(Result.Success, builder);
   }
 }

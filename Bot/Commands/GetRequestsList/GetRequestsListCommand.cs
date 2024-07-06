@@ -1,4 +1,5 @@
 using Hedgey.Extensions.Telegram;
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -16,12 +17,20 @@ public class GetRequestsListCommand : AbstractBotCommmand
   public const string DESCRIPTION = "Display a list of requests for permission to launch a sirena.";
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly TelegramBot bot;
+  private readonly ILocalizationProvider localizationProvider;
 
-  public GetRequestsListCommand(IMongoDatabase db, TelegramBot bot)
+  public GetRequestsListCommand(IMongoDatabase db, TelegramBot bot, ILocalizationProvider localizationProvider)
   : base(NAME, DESCRIPTION)
   {
     sirens = db.GetCollection<SirenRepresentation>("sirens");
     this.bot = bot;
+    this.localizationProvider = localizationProvider;
+  }
+
+  public override bool Equals(object? obj)
+  {
+    return obj is GetRequestsListCommand command &&
+           EqualityComparer<ILocalizationProvider>.Default.Equals(localizationProvider, command.localizationProvider);
   }
 
   public override async void Execute(IRequestContext context)
@@ -42,7 +51,7 @@ public class GetRequestsListCommand : AbstractBotCommmand
     string messageText;
     if (userSirensWithRequests.Count == 0)
     {
-      messageText = Program.LocalizationProvider.Get("command.get_requests.no_requests", info);
+      messageText = localizationProvider.Get("command.get_requests.no_requests", info);
     }
     else
     {
@@ -61,16 +70,21 @@ public class GetRequestsListCommand : AbstractBotCommmand
     Program.botProxyRequests.Send(chatId, messageText);
   }
 
+  public override int GetHashCode()
+  {
+    return HashCode.Combine(localizationProvider);
+  }
+
   private async Task<string> CreateMessageText(IEnumerable<RequestInfo> requestsList, CultureInfo info)
   {
-    string header = Program.LocalizationProvider.Get("command.get_requests.header", info);
+    string header = localizationProvider.Get("command.get_requests.header", info);
     StringBuilder builder = new StringBuilder(header);
     int number = 1;
-    string requestMessageTemplate = Program.LocalizationProvider.Get("command.get_requests.request_template", info);
+    string requestMessageTemplate = localizationProvider.Get("command.get_requests.request_template", info);
     foreach (var request in requestsList)
     {
       var chat = await bot.GetChatByUID(request.UserId);
-      var username = chat?.Username ?? Program.LocalizationProvider.Get("miscellaneous.user_ghost", info);
+      var username = chat?.Username ?? localizationProvider.Get("miscellaneous.user_ghost", info);
 
       builder.AppendLine().Append(number)
       .AppendFormat(requestMessageTemplate, username, request.UserId, request);

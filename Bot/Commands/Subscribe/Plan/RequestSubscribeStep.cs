@@ -1,3 +1,4 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
@@ -10,13 +11,16 @@ public class RequestSubscribeStep : CommandStep
 {
   private readonly NullableContainer<ObjectId> sirenaIdContainter;
   private readonly ISubscribeToSirenaOperation subscribeOperation;
+  private readonly ILocalizationProvider localizationProvider;
 
   public RequestSubscribeStep(Container<IRequestContext> contextContainer
-  , NullableContainer<ObjectId> sirenaIdContainter, ISubscribeToSirenaOperation subscribeOperation)
+  , NullableContainer<ObjectId> sirenaIdContainter
+  , ISubscribeToSirenaOperation subscribeOperation, ILocalizationProvider localizationProvider)
   : base(contextContainer)
   {
     this.sirenaIdContainter = sirenaIdContainter;
     this.subscribeOperation = subscribeOperation;
+    this.localizationProvider = localizationProvider;
   }
 
   public override IObservable<Report> Make()
@@ -34,7 +38,7 @@ public class RequestSubscribeStep : CommandStep
   {
     var chatId = Context.GetTargetChatId();
     var info = Context.GetCultureInfo();
-    MessageBuilder meesage = new SuccesfulSubscriptionMessageBuilder(chatId,info, Program.LocalizationProvider , representation);
+    MessageBuilder meesage = new SuccesfulSubscriptionMessageBuilder(chatId,info, localizationProvider , representation);
     return new Report(Result.Success, meesage);
   }
 
@@ -43,6 +47,6 @@ public class RequestSubscribeStep : CommandStep
     var id = sirenaIdContainter.Get();
     var info = Context.GetCultureInfo();
     var chatId = Context.GetTargetChatId();
-    return new(Result.Wait, new SirenaNotFoundMessageBuilder(chatId,info, Program.LocalizationProvider, id));
+    return new(Result.Wait, new SirenaNotFoundMessageBuilder(chatId,info, localizationProvider, id));
   }
 }

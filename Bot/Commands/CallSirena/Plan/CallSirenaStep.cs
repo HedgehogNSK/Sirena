@@ -1,3 +1,4 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes;
@@ -13,13 +14,15 @@ public class CallSirenaStep : CommandStep
   private readonly IMessageSender messageSender;
   private readonly IMessageCopier messageCopier;
   private readonly IUpdateSirenaOperation updateSirenaOperation;
+  private readonly ILocalizationProvider localizationProvider;
+
   public CallSirenaStep(Container<IRequestContext> contextContainer
   , NullableContainer<SirenRepresentation> sirenaContainer
   , NullableContainer<Message> messageContainer
   , IMessageSender messageSender
   , IMessageCopier messageCopier
   , IUpdateSirenaOperation updateSirenaOperation
-)
+  , ILocalizationProvider localizationProvider)
    : base(contextContainer)
   {
     this.sirenaContainer = sirenaContainer;
@@ -27,6 +30,7 @@ public class CallSirenaStep : CommandStep
     this.updateSirenaOperation = updateSirenaOperation;
     this.messageContainer = messageContainer;
     this.messageCopier = messageCopier;
+    this.localizationProvider = localizationProvider;
   }
 
   public override IObservable<Report> Make()
@@ -50,7 +54,7 @@ public class CallSirenaStep : CommandStep
     Report CreateReport(int notifications)
     {
       if (notifications != 0)
-        return new(Result.Success, new SirenaCallReportMessageBuilder(chatId,info, Program.LocalizationProvider, notifications, sirena));
+        return new(Result.Success, new SirenaCallReportMessageBuilder(chatId,info, localizationProvider, notifications, sirena));
       else
         return new(Result.Canceled);
     }
@@ -108,7 +112,7 @@ public class CallSirenaStep : CommandStep
       if (sirenaMessage == null)
       {
         var info = Context.GetCultureInfo();
-        sirenaMessage = new SirenaCallServiceMessageBuilder(uid, info, Program.LocalizationProvider, Context.GetUser(), sirena);
+        sirenaMessage = new SirenaCallServiceMessageBuilder(uid, info, localizationProvider, Context.GetUser(), sirena);
       }
       else
         sirenaMessage.ChangeTarget(uid);

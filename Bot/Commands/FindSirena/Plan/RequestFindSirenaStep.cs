@@ -1,4 +1,5 @@
 using Hedgey.Extensions.Telegram;
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using MongoDB.Driver.Linq;
@@ -11,12 +12,16 @@ public class RequestFindSirenaStep : CommandStep
 {
   private readonly IFindSirenaOperation findSirenaOperation;
   private readonly TelegramBot bot;
+  private readonly ILocalizationProvider localizationProvider;
+
   public RequestFindSirenaStep(Container<IRequestContext> contextContainer
-  , IFindSirenaOperation findSirenaOperation, TelegramBot bot)
+  , IFindSirenaOperation findSirenaOperation, TelegramBot bot
+  , ILocalizationProvider localizationProvider)
     : base(contextContainer)
   {
     this.findSirenaOperation = findSirenaOperation;
     this.bot = bot;
+    this.localizationProvider = localizationProvider;
   }
   public override IObservable<Report> Make()
   {
@@ -46,7 +51,7 @@ public class RequestFindSirenaStep : CommandStep
     var chatId = Context.GetTargetChatId();
     var info = Context.GetCultureInfo();
     string key = Context.GetArgsString();
-    MessageBuilder builder = new NoSirenaMessageBuilder(chatId,info, Program.LocalizationProvider, key);
+    MessageBuilder builder = new NoSirenaMessageBuilder(chatId,info, localizationProvider, key);
     return new Report(Result.Wait, builder);
   }
 
@@ -54,7 +59,7 @@ public class RequestFindSirenaStep : CommandStep
   {
     var info = Context.GetCultureInfo();
     var chatId = Context.GetTargetChatId();
-    MessageBuilder builder = new ListSirenaMessageBuilder(chatId,info, Program.LocalizationProvider, source);
+    MessageBuilder builder = new ListSirenaMessageBuilder(chatId,info, localizationProvider, source);
     return new Report(Result.Success, builder);
   }
 }

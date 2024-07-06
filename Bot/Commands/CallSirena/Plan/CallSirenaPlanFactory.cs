@@ -47,14 +47,14 @@ public class CallSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
     //Because we have to make all validations for each itteration of input data
     CompositeCommandStep compositeStep = new(
       new SirenaIdValidationStep(contextContainer,localizationProvider, objectIdContainer),
-      new SirenaExistensValidationStep(contextContainer, objectIdContainer, sirenaContainer, findSirenaOperation),
-      new SirenaStateValidationStep(contextContainer, sirenaContainer)
+      new SirenaExistensValidationStep(contextContainer, objectIdContainer, sirenaContainer, findSirenaOperation, localizationProvider),
+      new SirenaStateValidationStep(contextContainer, sirenaContainer, localizationProvider)
     );
     IObservableStep<CommandStep.Report>[] steps =
     [
       compositeStep,
-      new AddExtraInformationStep(contextContainer,sirenaContainer,messageContainer),
-      new CallSirenaStep(contextContainer,sirenaContainer,messageContainer,messageSender, messageCopier, sirenaUpdater)
+      new AddExtraInformationStep(contextContainer,sirenaContainer,messageContainer, localizationProvider),
+      new CallSirenaStep(contextContainer,sirenaContainer,messageContainer,messageSender, messageCopier, sirenaUpdater, localizationProvider)
       ];
     return new(steps, contextContainer);
   }

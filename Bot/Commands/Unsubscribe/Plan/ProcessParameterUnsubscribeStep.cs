@@ -1,4 +1,5 @@
 using Hedgey.Extensions;
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
@@ -10,18 +11,21 @@ namespace Hedgey.Sirena.Bot;
 
 public class ProcessParameterUnsubscribeStep : CommandStep
 {
-  NullableContainer<ObjectId> IdContainer;
-  IGetUserRelatedSirenas getSubscriptions;
-  IGetUserInformation getUserInformation;
+  private readonly ILocalizationProvider localizationProvider;
+  private readonly NullableContainer<ObjectId> IdContainer;
+  private readonly IGetUserRelatedSirenas getSubscriptions;
+  private readonly IGetUserInformation getUserInformation;
   public ProcessParameterUnsubscribeStep(Container<IRequestContext> contextContainer
   , NullableContainer<ObjectId> idContainer
   , IGetUserRelatedSirenas getSubscriptions
-  , IGetUserInformation getUserInformation)
+  , IGetUserInformation getUserInformation,
+ILocalizationProvider localizationProvider)
    : base(contextContainer)
   {
     this.getSubscriptions = getSubscriptions;
     this.getUserInformation = getUserInformation;
     IdContainer = idContainer;
+    this.localizationProvider = localizationProvider;
   }
 
   public override IObservable<Report> Make()
@@ -46,7 +50,7 @@ public class ProcessParameterUnsubscribeStep : CommandStep
   {
     var info = Context.GetCultureInfo();
     long chatId = Context.GetTargetChatId();
-    MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId,info, Program.LocalizationProvider, source);
+    MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId,info, localizationProvider, source);
     return new Report(!source.Any() ? Result.Wait : Result.Canceled, builder);
   }
 }

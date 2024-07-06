@@ -1,5 +1,6 @@
 using Hedgey.Extensions;
 using Hedgey.Extensions.Telegram;
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -20,14 +21,16 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly TelegramBot bot;
   private readonly FacadeMongoDBRequests requests;
+  private readonly ILocalizationProvider localizationProvider;
 
-  public GetResponsiblesListCommand(IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot)
+  public GetResponsiblesListCommand(IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot, ILocalizationProvider localizationProvider)
   : base(NAME, DESCRIPTION)
   {
     users = db.GetCollection<UserRepresentation>("users");
     sirens = db.GetCollection<SirenRepresentation>("sirens");
     this.bot = bot;
     this.requests = requests;
+    this.localizationProvider = localizationProvider;
   }
 
   public override async void Execute(IRequestContext context)
@@ -48,7 +51,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
       }
       else
       {
-        string noSirenaWithNumber = Program.LocalizationProvider.Get("command.get_responsibles.no_sirena_number", info);
+        string noSirenaWithNumber = localizationProvider.Get("command.get_responsibles.no_sirena_number", info);
         Program.botProxyRequests.Send(chatId, string.Format(noSirenaWithNumber, number));
         return;
       }
@@ -59,14 +62,14 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
       if (sirena == null)
       {
 
-        string noSirenaMessage = Program.LocalizationProvider.Get("command.get_responsibles.no_sirena_id", info);
+        string noSirenaMessage = localizationProvider.Get("command.get_responsibles.no_sirena_id", info);
         Program.botProxyRequests.Send(chatId, noSirenaMessage);
         return;
       }
     }
     else
     {
-      string wrongParamMessage = Program.LocalizationProvider.Get("command.get_responsibles.incorrect_parameters", info);
+      string wrongParamMessage = localizationProvider.Get("command.get_responsibles.incorrect_parameters", info);
       Program.botProxyRequests.Send(chatId, wrongParamMessage);
       return;
     }
@@ -91,11 +94,11 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
   private async Task<string> CreateMessageText(SirenRepresentation? sirena, System.Globalization.CultureInfo info)
   {
     if (sirena == null)
-      return Program.LocalizationProvider.Get("command.get_responsibles.no_sirena", info);
+      return localizationProvider.Get("command.get_responsibles.no_sirena", info);
 
     string owner = await bot.GetDisplayName(sirena.OwnerId);
     owner += "|" + sirena.OwnerId;
-    string template = Program.LocalizationProvider.Get("command.get_responsibles.template", info);
+    string template = localizationProvider.Get("command.get_responsibles.template", info);
     var builder = new StringBuilder().AppendFormat(template, sirena.Title, owner);
 
     if (sirena.Responsible.Any())

@@ -1,3 +1,4 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
@@ -10,12 +11,16 @@ public class UnsubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPla
   private readonly IGetUserRelatedSirenas getSubscriptions;
   private readonly IGetUserInformation getUserInformation;
   private readonly IUnsubscribeSirenaOperation unsubscribeSirenaOperation;
+  private readonly ILocalizationProvider localizationProvider;
+
   public UnsubscribeSirenaPlanFactory(IGetUserInformation getUserInformation
-  , IGetUserRelatedSirenas getSubscriptions, IUnsubscribeSirenaOperation unsubscribeSirenaOperation)
+  , IGetUserRelatedSirenas getSubscriptions, IUnsubscribeSirenaOperation unsubscribeSirenaOperation
+  , ILocalizationProvider localizationProvider)
   {
     this.getUserInformation = getUserInformation;
     this.getSubscriptions = getSubscriptions;
     this.unsubscribeSirenaOperation = unsubscribeSirenaOperation;
+    this.localizationProvider = localizationProvider;
   }
 
   public CommandPlan Create(IRequestContext context)
@@ -23,8 +28,8 @@ public class UnsubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPla
     Container<IRequestContext> contextContainer = new(context);
     NullableContainer<ObjectId> idContainer = new();
     IObservableStep<CommandStep.Report>[] steps = [
-      new ProcessParameterUnsubscribeStep(contextContainer,idContainer,getSubscriptions,getUserInformation),
-      new TryUnsubscribeStep(contextContainer,idContainer, unsubscribeSirenaOperation),
+      new ProcessParameterUnsubscribeStep(contextContainer,idContainer,getSubscriptions,getUserInformation, localizationProvider),
+      new TryUnsubscribeStep(contextContainer,idContainer, unsubscribeSirenaOperation, localizationProvider),
     ];
     var compositeStep = new CompositeCommandStep(steps);
 

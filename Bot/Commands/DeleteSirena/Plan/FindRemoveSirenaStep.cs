@@ -1,4 +1,5 @@
 using Hedgey.Extensions;
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
@@ -11,15 +12,18 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
 {
   private readonly IFindSirenaOperation findSirenaOperation;
   private readonly IGetUserRelatedSirenas getUserSirenasOperation;
+  private readonly ILocalizationProvider localizationProvider;
 
   public FindRemoveSirenaStep(Container<IRequestContext> contextContainer
   , NullableContainer<SirenRepresentation> sirenaContainer
   , IFindSirenaOperation findSirenaOperation
-  , IGetUserRelatedSirenas getUserSirenasOperation)
+  , IGetUserRelatedSirenas getUserSirenasOperation,
+ILocalizationProvider localizationProvider)
   : base(contextContainer, sirenaContainer)
   {
     this.findSirenaOperation = findSirenaOperation;
     this.getUserSirenasOperation = getUserSirenasOperation;
+    this.localizationProvider = localizationProvider;
   }
 
   public override IObservable<Report> Make()
@@ -34,7 +38,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     if (string.IsNullOrEmpty(param))
     {
       return getUserSirenasOperation.GetUserSirenas(uid)
-        .Select(_sireans => new RemoveSirenaMenuMessageBuilder(chatId, info, Program.LocalizationProvider, _sireans))
+        .Select(_sireans => new RemoveSirenaMenuMessageBuilder(chatId, info, localizationProvider, _sireans))
         .Select(_removeMenuBuilder => new Report(Result.Wait, _removeMenuBuilder));
     }
     else if (ObjectId.TryParse(param, out var id))
@@ -47,7 +51,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     }
     else
     {
-      var builder = new IncorrectParameterMessageBuilder(chatId, info, Program.LocalizationProvider);
+      var builder = new IncorrectParameterMessageBuilder(chatId, info, localizationProvider);
       var report = new Report(Result.Wait, builder);
       return Observable.Return(report);
     }
@@ -60,7 +64,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     if (sirena == null || sirena.OwnerId != context.GetUser().Id)
     {
       var info = Context.GetCultureInfo();
-      var builder = new IncorrectParameterMessageBuilder(context.GetTargetChatId(), info, Program.LocalizationProvider);
+      var builder = new IncorrectParameterMessageBuilder(context.GetTargetChatId(), info, localizationProvider);
       var report = new Report(Result.Wait, builder);
       return report;
     }

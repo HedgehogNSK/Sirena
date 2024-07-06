@@ -13,7 +13,6 @@ using System.Reactive.Linq;
 namespace Hedgey.Sirena;
 static internal class Program
 {
-  static public ILocalizationProvider LocalizationProvider{get;set;}
   static public AbstractBotMessageSender botProxyRequests{get;set;}
   private static async Task Main(string[] args)
   {
@@ -28,7 +27,6 @@ static internal class Program
 
     var botProxyRequests = container.GetInstance<AbstractBotMessageSender>();
     Program.botProxyRequests = botProxyRequests;
-    LocalizationProvider = container.GetInstance<ILocalizationProvider>();
     var bot = container.GetInstance<TelegramBot>();
     var me = await bot.GetMe();
     Console.WriteLine($"Bot name: @{me.Username}");

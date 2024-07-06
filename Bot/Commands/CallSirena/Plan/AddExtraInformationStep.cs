@@ -1,3 +1,4 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Reactive.Linq;
@@ -11,12 +12,15 @@ public class AddExtraInformationStep : CommandStep
 {
   private readonly NullableContainer<SirenRepresentation> sirenaContainer;
   private readonly NullableContainer<Message> messageContainer;
+  private readonly ILocalizationProvider localizationProvider;
   private bool userNotified = false;
   public AddExtraInformationStep(Container<IRequestContext> contextContainer
-  , NullableContainer<SirenRepresentation> sirenaContainer, NullableContainer<Message> messageContainer) : base(contextContainer)
+  , NullableContainer<SirenRepresentation> sirenaContainer, NullableContainer<Message> messageContainer
+  , ILocalizationProvider localizationProvider) : base(contextContainer)
   {
     this.sirenaContainer = sirenaContainer;
     this.messageContainer = messageContainer;
+    this.localizationProvider = localizationProvider;
   }
 
   public override IObservable<Report> Make()
@@ -29,12 +33,13 @@ public class AddExtraInformationStep : CommandStep
     {
       var info = Context.GetCultureInfo();
       userNotified = true;
-      report = new(Result.Wait, new ExtraInformationMessageBuilder(chatId,info, Program.LocalizationProvider, sirena));
+      var messageBuilder = new ExtraInformationMessageBuilder(chatId, info, localizationProvider, sirena);
+      report = new(Result.Wait, messageBuilder);
     }
     else
     {
-      if(!message.From.IsBot)
-            messageContainer.Set(message);
+      if (!message.From.IsBot)
+        messageContainer.Set(message);
       report = new(Result.Success);
     }
     return Observable.Return(report);

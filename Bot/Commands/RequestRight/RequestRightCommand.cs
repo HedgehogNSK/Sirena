@@ -1,4 +1,5 @@
 using Hedgey.Extensions;
+using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes;
@@ -10,9 +11,14 @@ public class RequestRightsCommand : AbstractBotCommmand
   public const string NAME = "request";
   public const string DESCRIPTION = "Request owner of sirena to delegate right to call sirena";
   private readonly FacadeMongoDBRequests requests;
-  public RequestRightsCommand(FacadeMongoDBRequests requests) : base(NAME, DESCRIPTION)
+  private readonly ILocalizationProvider localizationProvider;
+
+  public RequestRightsCommand(FacadeMongoDBRequests requests
+  , ILocalizationProvider localizationProvider)
+   : base(NAME, DESCRIPTION)
   {
     this.requests = requests;
+    this.localizationProvider = localizationProvider;
   }
 
   public override async void Execute(IRequestContext context)
@@ -26,7 +32,7 @@ public class RequestRightsCommand : AbstractBotCommmand
 
     if (!ObjectId.TryParse(param, out ObjectId sid))
     {
-      string wrongParameter = Program.LocalizationProvider.Get("command.request_rights.incorrect_parameters", info);
+      string wrongParameter = localizationProvider.Get("command.request_rights.incorrect_parameters", info);
       Program.botProxyRequests.Send(chatId, wrongParameter);
       return;
     }
@@ -34,17 +40,17 @@ public class RequestRightsCommand : AbstractBotCommmand
     var updateResult = await requests.RequestRightsForSirena(sid, uid, userMessage);
     if (updateResult.MatchedCount == 0)
     {
-      string failMessage = Program.LocalizationProvider.Get("command.request_rights.fail", info);
+      string failMessage = localizationProvider.Get("command.request_rights.fail", info);
       Program.botProxyRequests.Send(chatId, failMessage);
       return;
     }
     if (updateResult.ModifiedCount == 0)
     {
-      string noChangesMessage = Program.LocalizationProvider.Get("command.request_rights.already_sent", info);
+      string noChangesMessage = localizationProvider.Get("command.request_rights.already_sent", info);
       Program.botProxyRequests.Send(chatId, noChangesMessage);
       return;
     }
-    string successMessage = Program.LocalizationProvider.Get("command.request_rights.success", info);
+    string successMessage = localizationProvider.Get("command.request_rights.success", info);
     responseText = string.Format(successMessage, sid);
     Program.botProxyRequests.Send(chatId, responseText);
   }

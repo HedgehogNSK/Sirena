@@ -1,3 +1,4 @@
+using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
@@ -8,10 +9,13 @@ namespace Hedgey.Sirena.Bot;
 public class SubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
   private readonly ISubscribeToSirenaOperation subscribeOperation;
+  private readonly ILocalizationProvider localizationProvider;
 
-  public SubscribeSirenaPlanFactory(ISubscribeToSirenaOperation subscribeOperation)
+  public SubscribeSirenaPlanFactory(ISubscribeToSirenaOperation subscribeOperation
+  , ILocalizationProvider localizationProvider)
   {
     this.subscribeOperation = subscribeOperation;
+    this.localizationProvider = localizationProvider;
   }
 
   public CommandPlan Create(IRequestContext context)
@@ -19,8 +23,8 @@ public class SubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
     Container<IRequestContext> contextContainer = new(context);
     NullableContainer<ObjectId> idContainer = new();
     IObservableStep< CommandStep.Report>[] steps = [
-      new ValidateSirenaIdStep(contextContainer,idContainer),
-      new RequestSubscribeStep(contextContainer,idContainer, subscribeOperation),
+      new ValidateSirenaIdStep(contextContainer,idContainer, localizationProvider),
+      new RequestSubscribeStep(contextContainer,idContainer, subscribeOperation, localizationProvider),
     ];
     var compositeStep = new CompositeCommandStep(steps);
 
