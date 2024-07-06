@@ -10,4 +10,7 @@ public class SubscribeCommand : PlanExecutorBotCommand
   , PlanScheduler planScheduler)
   : base(NAME, DESCRIPTION, planFactory, planScheduler)
   { }
+  public class Installer(SimpleInjector.Container container)
+ : PlanBassedCommandInstaller<SubscribeCommand, SubscribeSirenaPlanFactory>(container)
+  { }
 }

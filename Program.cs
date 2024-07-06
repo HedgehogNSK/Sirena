@@ -22,17 +22,8 @@ static internal class Program
     installer.Install();
     installer = new SharedCommandServicesInstaller(container);
     installer.Install();
+    InstallCommands(container);
 
-    var installerTypes =  System.Reflection.Assembly.GetExecutingAssembly()
-      .GetTypes()
-      .Where(_type => !_type.IsGenericType && _type.HasParent(typeof(CommandInstaller<>)));
-
-    foreach(var type in installerTypes)
-    {
-      var instance = Activator.CreateInstance(type, container) as Installer;
-      instance?.Install();
-    }
-    
     container.Verify();
 
     var botProxyRequests = container.GetInstance<AbstractBotMessageSender>();
@@ -82,7 +73,7 @@ static internal class Program
 
     var callbackStream = observableCallbackPublisher.Connect();
     var planScheduler = container.GetInstance<PlanScheduler>();
-    
+
     var schedulerTrackPublisher = planScheduler.Track()
         .Catch((Exception _ex) =>
         {
@@ -93,7 +84,7 @@ static internal class Program
         .Publish();
     var planProcessingStream = schedulerTrackPublisher
         .Subscribe(requestHandler.ProcessPlanReport);
-        
+
 #pragma warning disable CS8604 // Possible null reference argument.
     var sendMessagesStream = schedulerTrackPublisher
         .Where(_report => _report.StepReport.MessageBuilder != null)
@@ -123,9 +114,22 @@ static internal class Program
 
       return Observable.FromAsync(() => bot.AnswerCallbackQuery(callbackAnswer))
         .Catch((ApiException _ex) =>
-          {
-            throw new Exception($"Error on callback answer to user {query.From.Id} on request: \"{query.Data}\"", _ex);
-          });
+        {
+          throw new Exception($"Error on callback answer to user {query.From.Id} on request: \"{query.Data}\"", _ex);
+        });
+    }
+  }
+
+  private static void InstallCommands(Container container)
+  {
+    var installerTypes = System.Reflection.Assembly.GetExecutingAssembly()
+      .GetTypes()
+      .Where(_type => !_type.IsGenericType && _type.HasParent(typeof(CommandInstaller<>)));
+
+    foreach (var type in installerTypes)
+    {
+      var instance = Activator.CreateInstance(type, container) as Installer;
+      instance?.Install();
     }
   }
 }

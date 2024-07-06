@@ -7,4 +7,7 @@ public class DeleteSirenaCommand : PlanExecutorBotCommand
   public const string DESCRIPTION = "Delete your Sirena by ID or by Serial number.";
   public DeleteSirenaCommand(IFactory<IRequestContext, CommandPlan> planFactory, PlanScheduler planScheduler)
   : base(NAME, DESCRIPTION, planFactory, planScheduler) { }
+  public class Installer(SimpleInjector.Container container)
+ : PlanBassedCommandInstaller<DeleteSirenaCommand, DeleteSirenaPlanFactory>(container)
+  { }
 }

@@ -10,7 +10,7 @@ public class UnsubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPla
   private readonly IGetUserRelatedSirenas getSubscriptions;
   private readonly IGetUserInformation getUserInformation;
   private readonly IUnsubscribeSirenaOperation unsubscribeSirenaOperation;
-  public UnsubscribeSirenaPlanFactory( IGetUserInformation getUserInformation
+  public UnsubscribeSirenaPlanFactory(IGetUserInformation getUserInformation
   , IGetUserRelatedSirenas getSubscriptions, IUnsubscribeSirenaOperation unsubscribeSirenaOperation)
   {
     this.getUserInformation = getUserInformation;
@@ -22,7 +22,7 @@ public class UnsubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPla
   {
     Container<IRequestContext> contextContainer = new(context);
     NullableContainer<ObjectId> idContainer = new();
-    IObservableStep< CommandStep.Report>[] steps = [
+    IObservableStep<CommandStep.Report>[] steps = [
       new ProcessParameterUnsubscribeStep(contextContainer,idContainer,getSubscriptions,getUserInformation),
       new TryUnsubscribeStep(contextContainer,idContainer, unsubscribeSirenaOperation),
     ];

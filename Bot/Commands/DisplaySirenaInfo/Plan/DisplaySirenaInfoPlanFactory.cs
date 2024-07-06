@@ -5,11 +5,11 @@ using MongoDB.Bson;
 
 namespace Hedgey.Sirena.Bot;
 
-public class GetSirenaInfoPlanFactory : IFactory<IRequestContext, CommandPlan>
+public class DisplaySirenaInfoPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
   private readonly IFindSirenaOperation findSirenaOperation;
 
-  public GetSirenaInfoPlanFactory(IFindSirenaOperation findSirenaOperation)
+  public DisplaySirenaInfoPlanFactory(IFindSirenaOperation findSirenaOperation)
   {
     this.findSirenaOperation = findSirenaOperation;
   }

@@ -82,4 +82,8 @@ public class RevokeRightsCommand : AbstractBotCommmand
     responseText = string.Format(successMessage, ruid, updatedSiren);
     Program.botProxyRequests.Send(chatId, responseText);
   }
+  
+  public class Installer(SimpleInjector.Container container)
+   : CommandInstaller<RevokeRightsCommand>(container)
+  { }
 }

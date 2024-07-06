@@ -28,18 +28,11 @@ public class CoreInstaller(Container container) : Installer(container)
     Container.Register<IFactory<TelegramBot>,TelegramHelpFactory>();
     Container.Register<IFactory<TelegramBotClient>,TelegramHelpFactory>();
     Container.RegisterSingleton<TelegramBot>(()=> Container.GetInstance<IFactory<TelegramBot>>().Create());//TelegramHelpFactory string token
-    
-    Container.RegisterSingleton<FacadeMongoDBRequests>();
-    Container.RegisterSingleton<MongoClient>(()=> new MongoClient());//MongoClientFactory connection settings to db
-    Container.RegisterSingleton<IMongoCollection<SirenRepresentation>>(()=> Container.GetInstance<MongoClient>().GetDatabase("siren").GetCollection<SirenRepresentation>("sirens"));
-    Container.RegisterSingleton<IMongoCollection<UserRepresentation>>(()=> Container.GetInstance<MongoClient>().GetDatabase("siren").GetCollection<UserRepresentation>("users"));
 
     Container.RegisterSingleton<IDictionary<long, CommandPlan>,PlanDictionary>();
     Container.RegisterSingleton<PlanScheduler>();
-    Container.RegisterSingleton<BotCommands>();
-    Container.Register<IFactory<string, AbstractBotCommmand>,CommandFactory>();
-    Container.Register<CommandsCollectionInitializer>();
     Container.RegisterSingleton<ActiveCommandsDictionary>();
+    Container.RegisterSingleton<IEnumerable<AbstractBotCommmand>>(()=> Container.GetInstance<ActiveCommandsDictionary>().Select(x=>x.Value));
     
     Container.Register<AbstractBotMessageSender,BotMesssageSender>(Lifestyle.Singleton);
     Container.RegisterDecorator<AbstractBotMessageSender,BotMessageSenderTimerProxy>(Lifestyle.Singleton);

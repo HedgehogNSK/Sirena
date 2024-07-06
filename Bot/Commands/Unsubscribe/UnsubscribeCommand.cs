@@ -9,6 +9,8 @@ public class UnsubscribeCommand : PlanExecutorBotCommand
 
   public UnsubscribeCommand(IFactory<IRequestContext, CommandPlan> planFactory, PlanScheduler planScheduler)
   : base(NAME, DESCRIPTION, planFactory, planScheduler)
-  {
-  }
+  { }
+  public class Installer(SimpleInjector.Container container)
+ : PlanBassedCommandInstaller<UnsubscribeCommand, UnsubscribeSirenaPlanFactory>(container)
+  { }
 }

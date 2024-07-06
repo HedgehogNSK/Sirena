@@ -47,19 +47,9 @@ public class CommandFactory : IFactory<string, AbstractBotCommmand>
     switch (commandName)
     {
       case DelegateRightsCommand.NAME: return new DelegateRightsCommand(requests);
-      case DeleteSirenaCommand.NAME:
-        {
-          var factory = new DeleteSirenaPlanFactory(sirenaOperation, sirenaOperation, sirenaOperation);
-          return new DeleteSirenaCommand(factory, planScheduler);
-        }
+
       case DisplayUsersSirenasCommand.NAME: return new DisplayUsersSirenasCommand(sirenaOperation,messageSender);
-      case DisplaySirenaInfoCommand.NAME: {
-        var factory = new GetSirenaInfoPlanFactory(sirenaOperation);
-        return new DisplaySirenaInfoCommand(factory, planScheduler);}
-      case FindSirenaCommand.NAME:
-        {
-        var factory = new FindSirenaPlanFactory(sirenaOperation,bot);
-        return new FindSirenaCommand(factory, planScheduler);}
+     
       case GetRequestsListCommand.NAME: return new GetRequestsListCommand(db, bot);
       case GetResponsiblesListCommand.NAME: return new GetResponsiblesListCommand(db, requests, bot);
       case GetSubscriptionsListCommand.NAME: 

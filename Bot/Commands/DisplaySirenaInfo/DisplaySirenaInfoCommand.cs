@@ -6,8 +6,11 @@ public class DisplaySirenaInfoCommand : PlanExecutorBotCommand
   public const string NAME = "info";
   public const string DESCRIPTION = "Display sirena detailed information and available commands for itself.";
   public DisplaySirenaInfoCommand(IFactory<IRequestContext, CommandPlan> planFactory
-  , PlanScheduler planScheduler) 
+  , PlanScheduler planScheduler)
   : base(NAME, DESCRIPTION, planFactory, planScheduler)
   {
   }
+  public class Installer(SimpleInjector.Container container)
+ : PlanBassedCommandInstaller<DisplaySirenaInfoCommand, DisplaySirenaInfoPlanFactory>(container)
+  { }
 }

@@ -48,4 +48,8 @@ public class RequestRightsCommand : AbstractBotCommmand
     responseText = string.Format(successMessage, sid);
     Program.botProxyRequests.Send(chatId, responseText);
   }
+  
+  public class Installer(SimpleInjector.Container container)
+   : CommandInstaller<RequestRightsCommand>(container)
+  { }
 }

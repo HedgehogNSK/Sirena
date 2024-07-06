@@ -35,5 +35,9 @@ namespace Hedgey.Sirena.Bot
       };
       Program.botProxyRequests.Send(response);
     }
+  public class Installer(SimpleInjector.Container container)
+   : CommandInstaller<HelpCommand>(container)
+  { }
   }
+  
 }

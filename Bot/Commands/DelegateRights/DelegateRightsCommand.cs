@@ -70,4 +70,8 @@ public class DelegateRightsCommand : AbstractBotCommmand
     responseText = string.Format(successMessage, duid, updatedSiren);
     Program.botProxyRequests.Send(chatId, responseText);
   }
+
+  public class Installer(SimpleInjector.Container container)
+ : CommandInstaller<DelegateRightsCommand>(container)
+  { }
 }

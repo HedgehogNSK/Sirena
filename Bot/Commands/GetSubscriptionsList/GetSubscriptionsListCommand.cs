@@ -4,10 +4,10 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
-public class GetSubscriptionsListCommand : AbstractBotCommmand, IBotCommand, IDisposable
+public class GetSubscriptionsListCommand : AbstractBotCommmand, IBotCommand//, IDisposable
 {
   public const string NAME = "subscriptions";
-  public const string DESCRIPTION = "Displays you current subscriptions.";
+  public const string DESCRIPTION = "Displays your current subscriptions.";
   CompositeDisposable disposables = new CompositeDisposable();
   private readonly IMessageSender messageSender;
   private readonly IGetUserRelatedSirenas findSirena;
@@ -47,5 +47,14 @@ public class GetSubscriptionsListCommand : AbstractBotCommmand, IBotCommand, IDi
   public void Dispose()
   {
     disposables?.Dispose();
+  }
+  
+  public class Installer(SimpleInjector.Container container)
+   : CommandInstaller<GetSubscriptionsListCommand>(container)
+  {
+    public override void Install()
+    {
+      base.Install();
+    }
   }
 }

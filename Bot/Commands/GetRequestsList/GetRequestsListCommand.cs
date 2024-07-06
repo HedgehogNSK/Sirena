@@ -99,4 +99,7 @@ public class GetRequestsListCommand : AbstractBotCommmand
       return "*\"" + Title + "\"* : `" + SirenId + '`';
     }
   }
+  public class Installer(SimpleInjector.Container container)
+   : CommandInstaller<GetRequestsListCommand>(container)
+  { }
 }
