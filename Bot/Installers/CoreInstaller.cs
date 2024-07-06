@@ -1,7 +1,5 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
-using MongoDB.Driver;
 using RxTelegram.Bot;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;

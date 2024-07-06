@@ -1,10 +1,9 @@
-using Hedgey.Sirena.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Globalization;
 
 namespace Hedgey.Sirena;
 
-public interface IRequestContext : IValidator<AbstractBotCommmand>
+public interface IRequestContext
 {
   string GetCommandName();
   string GetArgsString();

@@ -16,7 +16,7 @@ namespace Hedgey.Sirena.Bot
 
     public  abstract IObservable<Message> ObservableSend(SendMessage message);
 
-    public  abstract IObservable<Message> ObservableSend(MessageBuilder messageBuilder);
+    public  abstract IObservable<Message> ObservableSend(IMessageBuilder messageBuilder);
 
     public  abstract void Send(ChatId chatId, string text, IReplyMarkup? markup = null, bool silent = true);
 

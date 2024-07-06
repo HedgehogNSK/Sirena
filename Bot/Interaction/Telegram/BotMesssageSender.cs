@@ -54,9 +54,8 @@ namespace Hedgey.Sirena.Bot
         return Observable.Defer(() =>
             {
               messages.ChatId = chatId;
-              return Observable.Return(messages);
-            })
-            .SelectMany(Forward);
+              return Forward(messages);
+            });
       }
     }
     public override IObservable<MessageIdObject[]> Forward(ForwardMessages messages)
@@ -76,7 +75,7 @@ namespace Hedgey.Sirena.Bot
       .Catch((Exception _exception)
         => throw new Exception($"Exception on sending message to chat: {message.ChatId.Identifier}", _exception));
     }
-    public override IObservable<Message> ObservableSend(MessageBuilder messageBuilder)
+    public override IObservable<Message> ObservableSend(IMessageBuilder messageBuilder)
     {
       return ObservableSend(messageBuilder.Build());
     }

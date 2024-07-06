@@ -40,7 +40,7 @@ public class BotMessageSenderTimerProxy : AbstractBotMessageSender, IMessageSend
 
   public override IObservable<Message> ObservableSend(SendMessage message)
   => trafficController.Next().SelectMany(sender.ObservableSend(message));
-  public override IObservable<Message> ObservableSend(MessageBuilder messageBuilder)
+  public override IObservable<Message> ObservableSend(IMessageBuilder messageBuilder)
   => trafficController.Next().SelectMany(sender.ObservableSend(messageBuilder));
   public override IObservable<MessageIdObject> Copy(CopyMessage message)
   => trafficController.Next().SelectMany(messageCopier.Copy(message));
