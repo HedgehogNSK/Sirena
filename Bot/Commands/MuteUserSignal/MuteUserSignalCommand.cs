@@ -11,15 +11,18 @@ public class MuteUserSignalCommand : AbstractBotCommmand
   public const string NAME = "mute";
   public const string DESCRIPTION = "Mute calls from certain user for certain *sirena*. Calls of the *sirena* from other users will be active anyway";
   private readonly ILocalizationProvider localizationProvider;
+  private readonly IMessageSender messageSender;
   private TelegramBot bot;
   private FacadeMongoDBRequests requests;
 
-  public MuteUserSignalCommand(FacadeMongoDBRequests requests, TelegramBot bot, ILocalizationProvider localizationProvider)
+  public MuteUserSignalCommand(FacadeMongoDBRequests requests, TelegramBot bot
+  , ILocalizationProvider localizationProvider, IMessageSender messageSender)
 : base(NAME, DESCRIPTION)
   {
     this.bot = bot;
     this.requests = requests;
     this.localizationProvider = localizationProvider;
+    this.messageSender = messageSender;
   }
 
   public async override void Execute(IRequestContext context)
@@ -33,7 +36,7 @@ public class MuteUserSignalCommand : AbstractBotCommmand
     if (parameters.Length < 3)
     {
       string errorWrongParamters = localizationProvider.Get("command.mute_user.incorrect_parameters", info);
-      Program.botProxyRequests.Send(chatId, errorWrongParamters);
+      messageSender.Send(chatId, errorWrongParamters);
       return;
     }
     var sirenaIdString = parameters[2];
@@ -44,7 +47,7 @@ public class MuteUserSignalCommand : AbstractBotCommmand
     {
       string errorWrongSirenaID = localizationProvider.Get("command.mute_user.incorrect_id", info);
       responseText = string.Format(sirenaIdString, errorWrongSirenaID);
-      Program.botProxyRequests.Send(chatId, responseText);
+      messageSender.Send(chatId, responseText);
       return;
     }
     ChatFullInfo? chat = null;
@@ -56,7 +59,7 @@ public class MuteUserSignalCommand : AbstractBotCommmand
     {
       string errorWrongUID = localizationProvider.Get("command.mute_user.incorrect_uid", info);
       responseText = string.Format(errorWrongUID, userIdString);
-      Program.botProxyRequests.Send(chatId, responseText);
+      messageSender.Send(chatId, responseText);
       return;
     }
     _UIDtoMute = chat.Id;
@@ -65,19 +68,19 @@ public class MuteUserSignalCommand : AbstractBotCommmand
     if (!isMutable)
     {
       string errorCantMute = localizationProvider.Get("command.mute_user.impossbile_mute", info);
-      Program.botProxyRequests.Send(chatId, errorCantMute);
+      messageSender.Send(chatId, errorCantMute);
       return;
     }
     var result = await requests.SetUserMute(uid, _UIDtoMute, sirenaId);
     if (result == null)
     {
       string errorNoSirena = localizationProvider.Get("command.mute_user.no_sirena", info);
-      Program.botProxyRequests.Send(chatId, errorNoSirena);
+      messageSender.Send(chatId, errorNoSirena);
       return;
     }
     string successMessage = localizationProvider.Get("command.mute_user.success", info);
     responseText = string.Format(successMessage, _UIDtoMute, sirenaId);
-    Program.botProxyRequests.Send(chatId, responseText);
+    messageSender.Send(chatId, responseText);
   }
   public class Installer(SimpleInjector.Container container)
    : CommandInstaller<MuteUserSignalCommand>(container)

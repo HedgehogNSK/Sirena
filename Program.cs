@@ -1,5 +1,4 @@
 ﻿using Hedgey.Extensions.Types;
-using Hedgey.Localization;
 using Hedgey.Sirena.Bot;
 using MongoDB.Driver;
 using RxTelegram.Bot;
@@ -13,7 +12,7 @@ using System.Reactive.Linq;
 namespace Hedgey.Sirena;
 static internal class Program
 {
-  static public AbstractBotMessageSender botProxyRequests{get;set;}
+
   private static async Task Main(string[] args)
   {
     Container container = new Container();
@@ -26,7 +25,6 @@ static internal class Program
     container.Verify();
 
     var botProxyRequests = container.GetInstance<AbstractBotMessageSender>();
-    Program.botProxyRequests = botProxyRequests;
     var bot = container.GetInstance<TelegramBot>();
     var me = await bot.GetMe();
     Console.WriteLine($"Bot name: @{me.Username}");

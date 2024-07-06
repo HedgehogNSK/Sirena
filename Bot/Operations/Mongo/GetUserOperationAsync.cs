@@ -7,10 +7,14 @@ public class GetUserOperationAsync : IGetUserOperationAsync
 {
   private IMongoCollection<UserRepresentation> usersCollection;
   private readonly FacadeMongoDBRequests requests;
+  private readonly IMessageSender messageSender;
 
-  public GetUserOperationAsync(IMongoCollection<UserRepresentation> usersCollection, FacadeMongoDBRequests requests){
+  public GetUserOperationAsync(IMongoCollection<UserRepresentation> usersCollection
+  , FacadeMongoDBRequests requests, IMessageSender messageSender)
+  {
     this.usersCollection = usersCollection;
     this.requests = requests;
+    this.messageSender = messageSender;
   }
   public async Task<UserRepresentation?> GetAsync(long uid)
   {
@@ -20,7 +24,7 @@ public class GetUserOperationAsync : IGetUserOperationAsync
     {
       user = await requests.CreateUser(uid, uid);
       if(user==null)
-        Program.botProxyRequests.Send(uid, "Database couldn't create user. Please try latter");
+        messageSender.Send(uid, "Database couldn't create user. Please try latter");
       }
       return user;
   }

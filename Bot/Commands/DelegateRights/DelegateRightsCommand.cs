@@ -11,11 +11,13 @@ public class DelegateRightsCommand : AbstractBotCommmand
   public const string DESCRIPTION = "Delegate rights to call sirena to another user.";
   private readonly FacadeMongoDBRequests requests;
   private readonly ILocalizationProvider localizationProvider;
-
-  public DelegateRightsCommand(FacadeMongoDBRequests requests, ILocalizationProvider localizationProvider)
+  private readonly IMessageSender messageSender;
+  public DelegateRightsCommand(FacadeMongoDBRequests requests
+  , IMessageSender messageSender, ILocalizationProvider localizationProvider)
   : base(NAME, DESCRIPTION)
   {
     this.requests = requests;
+    this.messageSender = messageSender;
     this.localizationProvider = localizationProvider;
   }
 
@@ -31,7 +33,7 @@ public class DelegateRightsCommand : AbstractBotCommmand
     if (parameters.Length < 3)
     {
       string errorWrongParamters = localizationProvider.Get("command.delegate.error.incorrect_paramters", info);
-      Program.botProxyRequests.Send(chatId, errorWrongParamters);
+      messageSender.Send(chatId, errorWrongParamters);
       return;
     }
     ObjectId sirenaId = default;
@@ -40,14 +42,14 @@ public class DelegateRightsCommand : AbstractBotCommmand
     {
       string errorWrongSirenaID = localizationProvider.Get("command.delegate.error.incorrect_id", info);
       responseText = string.Format(errorWrongSirenaID, parameters[1]);
-      Program.botProxyRequests.Send(chatId, responseText);
+      messageSender.Send(chatId, responseText);
       return;
     }
     if (!long.TryParse(parameters[2], out long duid))
     {
       string errorWrongUID = localizationProvider.Get("command.delegate.error.incorrect_user_id", info);
       responseText = string.Format(errorWrongUID, parameters[2]);
-      Program.botProxyRequests.Send(chatId, responseText);
+      messageSender.Send(chatId, responseText);
       return;
     }
     if (sirenaId == default)
@@ -67,12 +69,12 @@ public class DelegateRightsCommand : AbstractBotCommmand
     {
       string errorNoSirena = localizationProvider.Get("command.delegate.error.no_sirena", info);
       responseText = string.Format(errorNoSirena, sirenaId);
-      Program.botProxyRequests.Send(chatId, responseText);
+      messageSender.Send(chatId, responseText);
       return;
     }
     string successMessage = localizationProvider.Get("command.delegate.success", info);
     responseText = string.Format(successMessage, duid, updatedSiren);
-    Program.botProxyRequests.Send(chatId, responseText);
+    messageSender.Send(chatId, responseText);
   }
 
   public class Installer(SimpleInjector.Container container)

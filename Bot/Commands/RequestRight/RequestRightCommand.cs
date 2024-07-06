@@ -12,13 +12,16 @@ public class RequestRightsCommand : AbstractBotCommmand
   public const string DESCRIPTION = "Request owner of sirena to delegate right to call sirena";
   private readonly FacadeMongoDBRequests requests;
   private readonly ILocalizationProvider localizationProvider;
+  private readonly IMessageSender messageSender;
 
   public RequestRightsCommand(FacadeMongoDBRequests requests
-  , ILocalizationProvider localizationProvider)
+  , ILocalizationProvider localizationProvider
+  , IMessageSender messageSender)
    : base(NAME, DESCRIPTION)
   {
     this.requests = requests;
     this.localizationProvider = localizationProvider;
+    this.messageSender = messageSender;
   }
 
   public override async void Execute(IRequestContext context)
@@ -33,7 +36,7 @@ public class RequestRightsCommand : AbstractBotCommmand
     if (!ObjectId.TryParse(param, out ObjectId sid))
     {
       string wrongParameter = localizationProvider.Get("command.request_rights.incorrect_parameters", info);
-      Program.botProxyRequests.Send(chatId, wrongParameter);
+      messageSender.Send(chatId, wrongParameter);
       return;
     }
     var userMessage = context.GetArgsString().SkipFirstNWords(1).BuildString();
@@ -41,18 +44,18 @@ public class RequestRightsCommand : AbstractBotCommmand
     if (updateResult.MatchedCount == 0)
     {
       string failMessage = localizationProvider.Get("command.request_rights.fail", info);
-      Program.botProxyRequests.Send(chatId, failMessage);
+      messageSender.Send(chatId, failMessage);
       return;
     }
     if (updateResult.ModifiedCount == 0)
     {
       string noChangesMessage = localizationProvider.Get("command.request_rights.already_sent", info);
-      Program.botProxyRequests.Send(chatId, noChangesMessage);
+      messageSender.Send(chatId, noChangesMessage);
       return;
     }
     string successMessage = localizationProvider.Get("command.request_rights.success", info);
     responseText = string.Format(successMessage, sid);
-    Program.botProxyRequests.Send(chatId, responseText);
+    messageSender.Send(chatId, responseText);
   }
   
   public class Installer(SimpleInjector.Container container)

@@ -9,12 +9,13 @@ public class StartCommand : AbstractBotCommmand
   public const string DESCRIPTION = "User initialization";
   private readonly FacadeMongoDBRequests requests;
   private readonly ILocalizationProvider localizationProvider;
+  private readonly IMessageSender messageSender;
 
-  public StartCommand(FacadeMongoDBRequests requests, ILocalizationProvider localizationProvider)
+  public StartCommand(ILocalizationProvider localizationProvider, IMessageSender messageSender)
      : base(NAME, DESCRIPTION)
   {
-    this.requests = requests;
     this.localizationProvider = localizationProvider;
+    this.messageSender = messageSender;
   }
   public override async void Execute(IRequestContext context)
   {
@@ -24,7 +25,7 @@ public class StartCommand : AbstractBotCommmand
     var user = await requests.CreateUser(uid, chatId);
     var message = new MenuMessageBuilder(uid, info, localizationProvider).Build();
     message.Text = localizationProvider.Get("command.start.welcome",info);
-    Program.botProxyRequests.Send(message);
+    messageSender.Send(message);
   }
   
   public class Installer(SimpleInjector.Container container)

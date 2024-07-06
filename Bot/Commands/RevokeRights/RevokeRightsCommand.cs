@@ -13,14 +13,17 @@ public class RevokeRightsCommand : AbstractBotCommmand
   private readonly FacadeMongoDBRequests requests;
   private readonly TelegramBot bot;
   private readonly ILocalizationProvider localizationProvider;
+  private readonly IMessageSender messageSender;
 
   public RevokeRightsCommand(FacadeMongoDBRequests requests, TelegramBot bot
-  , ILocalizationProvider localizationProvider)
+  , ILocalizationProvider localizationProvider
+  , IMessageSender messageSender)
   : base(NAME, DESCRIPTION)
   {
     this.bot = bot;
     this.requests = requests;
     this.localizationProvider = localizationProvider;
+    this.messageSender = messageSender;
   }
 
   public async override void Execute(IRequestContext context)
@@ -34,7 +37,7 @@ public class RevokeRightsCommand : AbstractBotCommmand
     if (parameters.Length < 3)
     {
       string errorWrongParamters = localizationProvider.Get("command.revoke_rights.incorrect_parameters", info);
-      Program.botProxyRequests.Send(chatId, errorWrongParamters);
+      messageSender.Send(chatId, errorWrongParamters);
       return;
     }
     ObjectId sirenaId = default;
@@ -44,7 +47,7 @@ public class RevokeRightsCommand : AbstractBotCommmand
     {
       string errorWrongSirenaID = localizationProvider.Get("command.revoke_rights.incorrect_sirena_param", info);
       responseText = string.Format(errorWrongSirenaID, sirenaIdString);
-      Program.botProxyRequests.Send(chatId, responseText);
+      messageSender.Send(chatId, responseText);
       return;
     }
     ChatFullInfo? chat = null;
@@ -57,7 +60,7 @@ public class RevokeRightsCommand : AbstractBotCommmand
     {
       string errorWrongUID = localizationProvider.Get("command.revoke_rights.incorrect_uid", info);
       responseText = string.Format(errorWrongUID, userIdString);
-      Program.botProxyRequests.Send(chatId, responseText);
+      messageSender.Send(chatId, responseText);
       return;
     }
     ruid = chat.Id;
@@ -79,15 +82,15 @@ public class RevokeRightsCommand : AbstractBotCommmand
     {
       string errorNoSirena = localizationProvider.Get("command.revoke_rights.fail", info);
       responseText = string.Format(errorNoSirena, sirenaId);
-      Program.botProxyRequests.Send(chatId, responseText);
+      messageSender.Send(chatId, responseText);
       return;
     }
 
     string successMessage = localizationProvider.Get("command.revoke_rights.success", info);
     responseText = string.Format(successMessage, ruid, updatedSiren);
-    Program.botProxyRequests.Send(chatId, responseText);
+    messageSender.Send(chatId, responseText);
   }
-  
+
   public class Installer(SimpleInjector.Container container)
    : CommandInstaller<RevokeRightsCommand>(container)
   { }

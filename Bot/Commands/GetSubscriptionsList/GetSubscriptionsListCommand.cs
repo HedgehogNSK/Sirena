@@ -16,7 +16,8 @@ public class GetSubscriptionsListCommand : AbstractBotCommmand, IBotCommand//, I
   private readonly ILocalizationProvider localizationProvider;
 
   public GetSubscriptionsListCommand(IMessageSender messageSender
-  , IGetUserRelatedSirenas findSirena, IGetUserInformation getUserInformation, ILocalizationProvider localizationProvider)
+  , IGetUserRelatedSirenas findSirena, IGetUserInformation getUserInformation
+  , ILocalizationProvider localizationProvider)
     : base(NAME, DESCRIPTION)
   {
     this.messageSender = messageSender;

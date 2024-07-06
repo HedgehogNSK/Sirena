@@ -22,8 +22,11 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
   private readonly TelegramBot bot;
   private readonly FacadeMongoDBRequests requests;
   private readonly ILocalizationProvider localizationProvider;
+  private readonly IMessageSender messageSender;
 
-  public GetResponsiblesListCommand(IMongoDatabase db, FacadeMongoDBRequests requests, TelegramBot bot, ILocalizationProvider localizationProvider)
+  public GetResponsiblesListCommand(IMongoDatabase db, FacadeMongoDBRequests requests
+  , TelegramBot bot, ILocalizationProvider localizationProvider
+  , IMessageSender messageSender)
   : base(NAME, DESCRIPTION)
   {
     users = db.GetCollection<UserRepresentation>("users");
@@ -31,6 +34,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
     this.bot = bot;
     this.requests = requests;
     this.localizationProvider = localizationProvider;
+    this.messageSender = messageSender;
   }
 
   public override async void Execute(IRequestContext context)
@@ -52,7 +56,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
       else
       {
         string noSirenaWithNumber = localizationProvider.Get("command.get_responsibles.no_sirena_number", info);
-        Program.botProxyRequests.Send(chatId, string.Format(noSirenaWithNumber, number));
+        messageSender.Send(chatId, string.Format(noSirenaWithNumber, number));
         return;
       }
     }
@@ -63,19 +67,19 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
       {
 
         string noSirenaMessage = localizationProvider.Get("command.get_responsibles.no_sirena_id", info);
-        Program.botProxyRequests.Send(chatId, noSirenaMessage);
+        messageSender.Send(chatId, noSirenaMessage);
         return;
       }
     }
     else
     {
       string wrongParamMessage = localizationProvider.Get("command.get_responsibles.incorrect_parameters", info);
-      Program.botProxyRequests.Send(chatId, wrongParamMessage);
+      messageSender.Send(chatId, wrongParamMessage);
       return;
     }
 
     var messageText = await CreateMessageText(sirena, info);
-    Program.botProxyRequests.Send(chatId, messageText);
+    messageSender.Send(chatId, messageText);
   }
 
   private async Task<string[]> GetResponsibleNames(SirenRepresentation sirena)

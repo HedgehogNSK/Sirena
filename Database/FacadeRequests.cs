@@ -34,23 +34,6 @@ public class FacadeMongoDBRequests
     return sirena;
   }
 
-  public async Task<ObjectId> GetSirenaId(long uid, string param)
-  {
-    if (!ObjectId.TryParse(param, out ObjectId id))
-      if (int.TryParse(param, out int number))
-      {
-        var sirena = await GetSirenaBySerialNumber(uid, number);
-        if (sirena != null)
-          id = sirena.Id;
-        else
-        {
-          const string failMessageText = "You don't have this *sirena*";
-          //ChatId for personal chat is equal to userId
-          Program.botProxyRequests.Send(uid, failMessageText);
-        }
-      }
-    return id;
-  }
   public async Task<UserRepresentation> CreateUser(long userID, long chatID)
   {
     UserRepresentation user = new UserRepresentation

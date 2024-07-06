@@ -16,12 +16,15 @@ public class UnmuteUserSignalCommand : AbstractBotCommmand
   const string errorWrongUID = "{0} parameter is incorrect. First parameter has to be *UID* of user that is already responsible for sirena. And you won't to revoke they rights.";
   const string errorDidntUnmute = "Couldn't find sirena to mute user";
   const string successMessage = "User {0} has been unmuted. You will be notified if this user will call the sirena: *{1}*";
+  private readonly IMessageSender messageSender;
 
-  public UnmuteUserSignalCommand( FacadeMongoDBRequests requests, TelegramBot bot)
+  public UnmuteUserSignalCommand(FacadeMongoDBRequests requests
+  , TelegramBot bot, IMessageSender messageSender)
 : base(NAME, DESCRIPTION)
   {
     this.bot = bot;
     this.requests = requests;
+    this.messageSender = messageSender;
   }
 
   public async override void Execute(IRequestContext context)
@@ -33,7 +36,7 @@ public class UnmuteUserSignalCommand : AbstractBotCommmand
     string[] parameters = context.GetArgsString().Split(' ', 3, StringSplitOptions.RemoveEmptyEntries);
     if (parameters.Length < 3)
     {
-      Program.botProxyRequests.Send(chatId, errorWrongParamters);
+      messageSender.Send(chatId, errorWrongParamters);
       return;
     }
     var sirenaIdString = parameters[2];
@@ -43,7 +46,7 @@ public class UnmuteUserSignalCommand : AbstractBotCommmand
         && !ObjectId.TryParse(sirenaIdString, out sirenaId))
     {
       responseText = string.Format(sirenaIdString, errorWrongSirenaID);
-      Program.botProxyRequests.Send(chatId, responseText);
+      messageSender.Send(chatId, responseText);
       return;
     }
     ChatFullInfo? chat = null;
@@ -54,7 +57,7 @@ public class UnmuteUserSignalCommand : AbstractBotCommmand
     if (chat == null)
     {
       responseText = string.Format(errorWrongUID, userIdString);
-      Program.botProxyRequests.Send(chatId, responseText);
+      messageSender.Send(chatId, responseText);
       return;
     }
     _UIDtoMute = chat.Id;
@@ -62,11 +65,11 @@ public class UnmuteUserSignalCommand : AbstractBotCommmand
     var result = await requests.UnmuteUser(uid,_UIDtoMute, sirenaId);
     if(result ==null)
     {
-      Program.botProxyRequests.Send(chatId, errorDidntUnmute);
+      messageSender.Send(chatId, errorDidntUnmute);
      return;
     }
       responseText = string.Format(successMessage, _UIDtoMute, sirenaId);
-      Program.botProxyRequests.Send(chatId, responseText);
+      messageSender.Send(chatId, responseText);
   }
   
   public class Installer(SimpleInjector.Container container)

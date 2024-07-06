@@ -18,13 +18,14 @@ public class GetRequestsListCommand : AbstractBotCommmand
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly TelegramBot bot;
   private readonly ILocalizationProvider localizationProvider;
-
-  public GetRequestsListCommand(IMongoDatabase db, TelegramBot bot, ILocalizationProvider localizationProvider)
+  private readonly IMessageSender messageSender;
+  public GetRequestsListCommand(IMongoDatabase db, TelegramBot bot, ILocalizationProvider localizationProvider, IMessageSender messageSender)
   : base(NAME, DESCRIPTION)
   {
     sirens = db.GetCollection<SirenRepresentation>("sirens");
     this.bot = bot;
     this.localizationProvider = localizationProvider;
+    this.messageSender = messageSender;
   }
 
   public override bool Equals(object? obj)
@@ -67,7 +68,7 @@ public class GetRequestsListCommand : AbstractBotCommmand
 
       messageText = await CreateMessageText(requestsList, info);
     }
-    Program.botProxyRequests.Send(chatId, messageText);
+    messageSender.Send(chatId, messageText);
   }
 
   public override int GetHashCode()
