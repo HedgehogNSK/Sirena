@@ -14,9 +14,6 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
 {
   public const string NAME = "responsible";
   public const string DESCRIPTION = "Display list of user allowed to call Sirena";
-  const string wrongParamMessage = "Please use next syntax to get list of responsible users:\n/responsible {sirena id or number}";
-  const string noSirenaMessage = "There is no sirena with id *{0}*";
-  const string noSirenaWithNumber = "You don't have sirena with number *{0}*";
   private readonly IMongoCollection<UserRepresentation> users;
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly TelegramBot bot;
