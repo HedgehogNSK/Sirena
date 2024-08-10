@@ -39,3 +39,37 @@ public abstract class CompositeStep<T> : IObservableStep<T>
 
   protected abstract bool IsStepSuccesful(T x);
 }
+
+public abstract class CompositeStep<TContext,T> : IObservableStep<TContext,T>
+{
+  public CompositeStep(params IObservableStep<TContext,T>[] steps)
+  {
+    if(steps.Length==0)
+    {
+       throw new ArgumentException("Input array has to be contains at least 1 step.", nameof(steps));
+    }
+    Steps = steps;
+  }
+
+  public IEnumerable<IObservableStep<TContext,T>> Steps { get; }
+
+  public virtual IObservable<T> Make(TContext context)
+  {
+    var enumerator = Steps.GetEnumerator();
+    if (!enumerator.MoveNext())
+      throw new ArgumentException("Steps collection is empty!");
+    return enumerator.Current.Make(context)
+      .Expand(_result =>
+      {
+        if (IsStepSuccesful(_result) && enumerator.MoveNext())
+        {
+          return enumerator.Current.Make(context);
+        }
+        return Observable.Empty(_result);
+      })
+      .Do(_report => Console.WriteLine(enumerator.Current.GetType().Name + ": " + _report))
+      .LastAsync();
+  }
+
+  protected abstract bool IsStepSuccesful(T x);
+}
