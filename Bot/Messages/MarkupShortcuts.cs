@@ -36,11 +36,11 @@ public static class MarkupShortcuts
     return inlineKeyboardRow.AddCallbackData(title, command);
   }
 
-  private static IInlineKeyboardRow AddLocalizedButton(this IInlineKeyboardRow inlineKeyboardRow
-  , string title, CultureInfo info, string commandName, string param = ""){
+  public static IInlineKeyboardRow AddLocalizedButton(this IInlineKeyboardRow inlineKeyboardRow
+  , string textKey, CultureInfo info, string commandName, string param = ""){
     if(LocalizationProvider==null)
       throw new ArgumentNullException(nameof(LocalizationProvider));
-    string localTitle = LocalizationProvider.Get(title, info);
+    string localTitle = LocalizationProvider.Get(textKey, info);
     return inlineKeyboardRow.AddButton(localTitle, commandName, param);
   }
 
