@@ -19,10 +19,10 @@ internal class ExtraInformationMessageBuilder : LocalizedMessageBuilder
 
   public override SendMessage Build()
   {
-    string notification = Localize("command.call.extra_info");;
+    string notification = Localize("command.call.extra_info");
     
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-      .AddCallSirenaButton(Info).AddMenuButton(Info).EndRow()
+      .AddCallSirenaButton(Info,sirena.Id).AddMenuButton(Info).EndRow()
       .ToReplyMarkup();
 
     return CreateDefault(notification,markup);

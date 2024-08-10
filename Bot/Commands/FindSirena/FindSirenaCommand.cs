@@ -8,9 +8,8 @@ public class FindSirenaCommand : PlanExecutorBotCommand
   public const string DESCRIPTION = "Find sirena by key string";
 
   public FindSirenaCommand(IFactory<IRequestContext, CommandPlan> planFactory
-  , PlanScheduler planScheduler) 
+  , PlanScheduler planScheduler)
   : base(NAME, DESCRIPTION, planFactory, planScheduler)
   {
   }
 }
-

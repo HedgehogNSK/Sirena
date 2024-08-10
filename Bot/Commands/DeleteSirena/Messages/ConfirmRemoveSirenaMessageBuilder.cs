@@ -19,8 +19,8 @@ public class ConfirmRemoveSirenaMessageBuilder : LocalizedMessageBuilder
   public override SendMessage Build()
   {
     string question = Localize("command.delete.notification");
+    string cancel = "command.delete.cancel";
     string confirm = Localize("command.delete.confirm");
-    string cancel = Localize("command.delete.cancel");
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
       .AddSirenaInfoButton(Info, sirena.Id, cancel)
       .AddCallbackData(confirm, true.ToString())
