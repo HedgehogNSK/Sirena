@@ -8,8 +8,8 @@ public class NullableContainer<T>
   {
     Content = newObject;
   }
-
-  internal T Get()
+  public bool IsSet() => Content != null;
+  public T Get()
   {
     return Content??
        throw new ArgumentNullException("Value were not initialized yet",typeof(T?).Name);

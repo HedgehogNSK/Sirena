@@ -29,15 +29,16 @@ public class RequestHandler{
     var uid = context.GetUser().Id;
     var commandName = context.GetCommandName();
     var cultureInfo = context.GetCultureInfo();
-    bool commandIsSet = botCommands.TryGetValue(commandName, out var command);
+    botCommands.TryGetValue(commandName, out var command);
     bool planIsSet = planDictionary.TryGetValue(uid, out CommandPlan? plan);
 
-    if (!commandIsSet)
+    if (command==null)
     {
       if (planIsSet)
       {
 #pragma warning disable CS8604 // Possible null reference argument.
-        PushPlan(plan, context);
+        CommandUpdateLog(context);
+        planScheduler.Push(plan,context);
 #pragma warning restore CS8604 // Possible null reference argument.
       }
       else
@@ -48,12 +49,12 @@ public class RequestHandler{
       return;
     }
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
     if (planIsSet)
     {
-      if (command.Command.Equals(plan.Context.GetCommandName()))
+      if (command.Command.Equals(plan.commandName))
       {
-        PushPlan(plan, context);
+        CommandUpdateLog(context);
+        planScheduler.Push(plan,context);
         return;
       }
       else
@@ -72,17 +73,17 @@ public class RequestHandler{
     }
   }
 
-    void PushPlan(CommandPlan plan, IRequestContext context)
+    void CommandUpdateLog(IRequestContext context)
     {
-      string name = plan.Context.GetCommandName();
+      string name = context.GetCommandName();
       var uid = context.GetUser().Id;
-      Console.WriteLine($"{uid}: update -> {name}");
-      plan.Update(context);
-      planScheduler.Push(plan);
+      var time = Shortucts.CurrentTimeLabel();
+
+      Console.WriteLine($"{time}{uid}: update -> {name}");
     }
    public void ProcessPlanReport(CommandPlan.Report report)
     {
-      var uid = report.Plan.Context.GetUser().Id;
+      var uid = report.Context.GetUser().Id;
       switch (report.StepReport.Result)
       {
         case CommandStep.Result.Success:
