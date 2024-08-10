@@ -24,8 +24,13 @@ static public class TextTools
 
   public static string AssembleString(this IEnumerable<char> chars)
   => new string(chars.ToArray());
-
-  public static IEnumerable<char> SkipFirstNWords(this IEnumerable<char> input, int n)
+  public static string RemoveCommandName(this string source)
+  {
+    source = source.TrimStart();
+    if (source[0] != '/') return source;
+    return source.SkipWords(1).AssembleString();
+  }
+  public static IEnumerable<char> SkipWords(this IEnumerable<char> input, int n)
   {
     if (n < 0)
       throw new ArgumentException("N has to be greater or equal to 0", "n");
@@ -39,7 +44,7 @@ static public class TextTools
     return input;
   }
   public static string GetParameterByNumber(this IEnumerable<char> commandString, int number)
-    => commandString.SkipFirstNWords(number)
+    => commandString.SkipWords(number)
         .TakeWhile(_char => !char.IsWhiteSpace(_char))
         .AssembleString();
 
@@ -55,7 +60,7 @@ static public class TextTools
       return false;
     }
     command = source.Skip(1).GetParameterByNumber(0);
-    argString = source.SkipFirstNWords(1).AssembleString();
+    argString = source.SkipWords(1).AssembleString();
     return true;
   }
 }
