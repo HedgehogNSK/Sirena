@@ -11,29 +11,28 @@ public class TryUnsubscribeStep : CommandStep
   private readonly IUnsubscribeSirenaOperation unsubscribeOperation;
   private readonly ILocalizationProvider localizationProvider;
 
-  public TryUnsubscribeStep(Container<IRequestContext> contextContainer
-  , NullableContainer<ObjectId> idContainer
+  public TryUnsubscribeStep(NullableContainer<ObjectId> idContainer
   , IUnsubscribeSirenaOperation unsubscribeOperation
   , ILocalizationProvider localizationProvider)
-  : base(contextContainer)
   {
     this.idContainer = idContainer;
     this.unsubscribeOperation = unsubscribeOperation;
     this.localizationProvider = localizationProvider;
   }
 
-  public override IObservable<Report> Make()
+  public override IObservable<Report> Make(IRequestContext context)
   {
     var id = idContainer.Get();
-    var uid = Context.GetUser().Id;
+    var uid = context.GetUser().Id;
     return unsubscribeOperation.Unsubscribe(uid, id).Select(CreateReport);
-  }
 
-  private Report CreateReport(bool isSuccess)
-  {
-    var info = Context.GetCultureInfo();
-    Result result = isSuccess ? Result.Success : Result.Canceled;
-    MessageBuilder builder = new UnsubscribeMessageBuilder(Context.GetTargetChatId(), info, localizationProvider, isSuccess);
-    return new Report(result, builder);
+    Report CreateReport(bool isSuccess)
+    {
+      var info = context.GetCultureInfo();
+      long chatId = context.GetTargetChatId();
+      Result result = isSuccess ? Result.Success : Result.Canceled;
+      MessageBuilder builder = new UnsubscribeMessageBuilder(chatId, info, localizationProvider, isSuccess);
+      return new Report(result, builder);
+    }
   }
 }

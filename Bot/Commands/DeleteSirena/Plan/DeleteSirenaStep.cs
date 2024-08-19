@@ -5,9 +5,7 @@ public abstract class DeleteSirenaStep : CommandStep
 {
   protected readonly NullableContainer<SirenRepresentation> sirenaContainer;
 
-  public DeleteSirenaStep(Container<IRequestContext> contextContainer
-  , NullableContainer<SirenRepresentation> sirenaContainer)
-    : base(contextContainer)
+  public DeleteSirenaStep(NullableContainer<SirenRepresentation> sirenaContainer)
   {
     this.sirenaContainer = sirenaContainer;
   }

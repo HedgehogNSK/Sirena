@@ -9,20 +9,18 @@ public class ValidateSirenaIdStep : CommandStep
   private readonly NullableContainer<ObjectId> sirenaIdContainter;
   private readonly ILocalizationProvider localizationProvider;
 
-  public ValidateSirenaIdStep(Container<IRequestContext> contextContainer
-  , NullableContainer<ObjectId> sirenaIdContainter,
+  public ValidateSirenaIdStep(NullableContainer<ObjectId> sirenaIdContainter,
 ILocalizationProvider localizationProvider)
-   : base(contextContainer)
   {
     this.sirenaIdContainter = sirenaIdContainter;
     this.localizationProvider = localizationProvider;
   }
 
-  public override IObservable<Report> Make()
+  public override IObservable<Report> Make(IRequestContext context)
   {
-    var key = Context.GetArgsString();
-    var info = Context.GetCultureInfo();
-    long chatId = Context.GetTargetChatId();
+    var key = context.GetArgsString();
+    var info = context.GetCultureInfo();
+    long chatId = context.GetTargetChatId();
     Result result = Result.Success;
     MessageBuilder? messageBuilder = null;
     if (string.IsNullOrEmpty(key) || !ObjectId.TryParse(key, out var id))

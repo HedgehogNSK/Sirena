@@ -2,21 +2,18 @@ using Hedgey.Structure.Plan;
 
 namespace Hedgey.Sirena.Bot;
 
-public class CommandPlan : ObservablePlan<CommandStep.Report>
+public class CommandPlan : ObservablePlan<IRequestContext, CommandStep.Report>
 {
-  public readonly Container<IRequestContext> contextContainer;
-  public CommandPlan(IEnumerable<IObservableStep< CommandStep.Report>> steps, Container<IRequestContext> context) : base(steps)
+  public readonly string commandName;
+  public CommandPlan(string commandName, IEnumerable<IObservableStep<IRequestContext, CommandStep.Report>> steps)
+   : base(steps)
   {
-    contextContainer = context;
+    this.commandName = commandName;
   }
-  public IRequestContext Context => contextContainer.Object;
 
-  protected override bool IsStepSuccesful(CommandStep.Report report)
+  protected override bool IsReadyToGoNext(CommandStep.Report report)
   {
     return report.Result == CommandStep.Result.Success;
   }
-  public void Update(IRequestContext context) => contextContainer.Set(context);
-
-  public record Report(CommandPlan Plan, CommandStep.Report StepReport);
+  public record Report(CommandPlan Plan, IRequestContext Context, CommandStep.Report StepReport);
 }
-

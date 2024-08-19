@@ -11,28 +11,28 @@ public class DeleteConcretteSirenaStep : DeleteSirenaStep
   private readonly IDeleteSirenaOperation sirenaDeleteOperation;
   private readonly ILocalizationProvider localizationProvider;
 
-  public DeleteConcretteSirenaStep(Container<IRequestContext> contextContainer
-  , NullableContainer<SirenRepresentation> sirenaContainer
+  public DeleteConcretteSirenaStep(NullableContainer<SirenRepresentation> sirenaContainer
   , IDeleteSirenaOperation sirenaDeleteOperation,
 ILocalizationProvider localizationProvider)
-   : base(contextContainer, sirenaContainer)
+   : base(sirenaContainer)
   {
     this.sirenaDeleteOperation = sirenaDeleteOperation;
     this.localizationProvider = localizationProvider;
   }
 
-  public override IObservable<Report> Make()
+  public override IObservable<Report> Make(IRequestContext context)
   {
-    var uid = Context.GetUser().Id;
+    var uid = context.GetUser().Id;
     var sirenaId = sirenaContainer.Get().Id;
     return sirenaDeleteOperation.Delete(uid, sirenaId)
     .Select(CreateReport);
-  }
 
-  private Report CreateReport(SirenRepresentation deletedSirena)
-  {
-    var info = Context.GetCultureInfo();
-    var builder = new SuccesfulDeleteMessageBuilder(Context.GetTargetChatId(), info, localizationProvider, deletedSirena);
-    return new Report(Result.Success, builder);
+    Report CreateReport(SirenRepresentation deletedSirena)
+    {
+      var info = context.GetCultureInfo();
+      var builder = new SuccesfulDeleteMessageBuilder(context.GetTargetChatId()
+      , info, localizationProvider, deletedSirena);
+      return new Report(Result.Success, builder);
+    }
   }
 }

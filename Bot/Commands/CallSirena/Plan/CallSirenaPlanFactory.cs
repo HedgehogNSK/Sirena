@@ -1,5 +1,3 @@
-using Hedgey.Localization;
-using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
@@ -10,52 +8,43 @@ namespace Hedgey.Sirena.Bot;
 
 public class CallSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
-  private readonly NullableContainer<ObjectId> objectIdContainer;
-  private readonly NullableContainer<SirenRepresentation> sirenaContainer;
-  private readonly NullableContainer<Message> messageContainer;
-  private readonly IFindSirenaOperation findSirenaOperation;
-  private readonly IUpdateSirenaOperation sirenaUpdater;
-  private readonly IMessageSender messageSender;
-  private readonly IMessageCopier messageCopier;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly IFactory<NullableContainer<ObjectId>, SirenaIdValidationStep> idValidationStepFactory;
+  private readonly IFactory<NullableContainer<Message>, AddExtraInformationStep> addExtraInfoStepFactory;
+  private readonly IFactory<NullableContainer<ObjectId>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep> isSirenaExistStepFactory;
+  private readonly IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep> callSirenaStepFactory;
+  private readonly IFactory<NullableContainer<SirenRepresentation>, SirenaStateValidationStep> sirenaStateValidationStepFactory;
 
-  public CallSirenaPlanFactory(NullableContainer<ObjectId> objectIdContainer
-  , NullableContainer<SirenRepresentation> sirenaContainer
-  , NullableContainer<Message> messageContainer
-  , IFindSirenaOperation findSirenaOperation
-  , IUpdateSirenaOperation sirenaUpdater
-  , IMessageSender messageSender
-  , IMessageCopier messageCopier
-  , ILocalizationProvider localizationProvider)
+  public CallSirenaPlanFactory(IFactory<NullableContainer<ObjectId>, SirenaIdValidationStep> idValidationStepFactory
+  , IFactory<NullableContainer<Message>, AddExtraInformationStep> addExtraInfoStepFactory
+  , IFactory<NullableContainer<ObjectId>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep> isSirenaExistStepFactory
+  , IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep> callSirenaStepFactory
+  , IFactory<NullableContainer<SirenRepresentation>, SirenaStateValidationStep> sirenaStateValidationStepFactory)
   {
-    this.objectIdContainer = objectIdContainer;
-    this.sirenaContainer = sirenaContainer;
-    this.messageContainer = messageContainer;
-    this.findSirenaOperation = findSirenaOperation;
-    this.sirenaUpdater = sirenaUpdater;
-    this.messageSender = messageSender;
-    this.messageCopier = messageCopier;
-    this.localizationProvider = localizationProvider;
+    this.idValidationStepFactory = idValidationStepFactory;
+    this.addExtraInfoStepFactory = addExtraInfoStepFactory;
+    this.isSirenaExistStepFactory = isSirenaExistStepFactory;
+    this.callSirenaStepFactory = callSirenaStepFactory;
+    this.sirenaStateValidationStepFactory = sirenaStateValidationStepFactory;
   }
-
 
   public CommandPlan Create(IRequestContext context)
   {
-    Container<IRequestContext> contextContainer = new Container<IRequestContext>(context);
-
+    NullableContainer<ObjectId> idContainer = new();
+    NullableContainer<SirenRepresentation> sirenaContainer = new();
+    NullableContainer<Message> messageContainer = new();
     //Create composition step from different validations
     //Because we have to make all validations for each itteration of input data
     CompositeCommandStep compositeStep = new(
-      new SirenaIdValidationStep(contextContainer,localizationProvider, objectIdContainer),
-      new SirenaExistensValidationStep(contextContainer, objectIdContainer, sirenaContainer, findSirenaOperation, localizationProvider),
-      new SirenaStateValidationStep(contextContainer, sirenaContainer, localizationProvider)
+      idValidationStepFactory.Create(idContainer),
+      isSirenaExistStepFactory.Create(idContainer, sirenaContainer),
+      sirenaStateValidationStepFactory.Create(sirenaContainer)
     );
-    IObservableStep<CommandStep.Report>[] steps =
+    IObservableStep<IRequestContext, CommandStep.Report>[] steps =
     [
       compositeStep,
-      new AddExtraInformationStep(contextContainer,sirenaContainer,messageContainer, localizationProvider),
-      new CallSirenaStep(contextContainer,sirenaContainer,messageContainer,messageSender, messageCopier, sirenaUpdater, localizationProvider)
+      addExtraInfoStepFactory.Create(messageContainer),
+      callSirenaStepFactory.Create(sirenaContainer,messageContainer)
       ];
-    return new(steps, contextContainer);
+    return new(CallSirenaCommand.NAME, steps);
   }
 }

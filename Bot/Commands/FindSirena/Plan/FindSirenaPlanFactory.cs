@@ -12,9 +12,8 @@ public class FindSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
   private readonly TelegramBot bot;
   private readonly ILocalizationProvider localizationProvider;
 
-  public FindSirenaPlanFactory(IFindSirenaOperation findSirenaOperation
-  , TelegramBot bot,
-ILocalizationProvider localizationProvider)
+  public FindSirenaPlanFactory(TelegramBot bot, IFindSirenaOperation findSirenaOperation
+  , ILocalizationProvider localizationProvider)
   {
     this.findSirenaOperation = findSirenaOperation;
     this.bot = bot;
@@ -23,13 +22,12 @@ ILocalizationProvider localizationProvider)
 
   public CommandPlan Create(IRequestContext context)
   {
-    Container<IRequestContext> contextContainer = new(context);
-    IObservableStep< CommandStep.Report>[] steps = [
-      new ValidateSearchParamFindSirenaStep(contextContainer, localizationProvider),
-      new RequestFindSirenaStep(contextContainer,findSirenaOperation,bot, localizationProvider),
+    IObservableStep<IRequestContext, CommandStep.Report>[] steps = [
+      new ValidateSearchParamFindSirenaStep(localizationProvider),
+      new RequestFindSirenaStep(findSirenaOperation, bot, localizationProvider)
     ];
-    var compositeStep = new CompositeCommandStep(steps);
+    CompositeCommandStep compositeStep = new CompositeCommandStep(steps);
 
-    return new([compositeStep], contextContainer);
+    return new(FindSirenaCommand.NAME, [compositeStep]);
   }
 }

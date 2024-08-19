@@ -19,4 +19,3 @@ public class WrongSearchKeyFindSirenaMessageBuilder : LocalizedMessageBuilder
       ,  MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info));
   }
 }
-

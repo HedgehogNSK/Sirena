@@ -1,7 +1,9 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
+using SimpleInjector;
 using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
@@ -16,7 +18,7 @@ public class CreateMessageBuilder : LocalizedMessageBuilder, IMessageBuilder
 
   public CreateMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, int minSymbols, int maxSymbols)
-   : base(chatId,info,localizationProvider)
+   : base(chatId, info, localizationProvider)
   {
     this.minSymbols = minSymbols;
     this.maxSymbols = maxSymbols;
@@ -67,5 +69,25 @@ public class CreateMessageBuilder : LocalizedMessageBuilder, IMessageBuilder
     }
     var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
     return CreateDefault(message, markup);
+  }
+
+  public class Factory : IFactory<IRequestContext, CreateMessageBuilder>
+  {
+    private readonly Container container;
+
+    public Factory(Container container)
+    {
+      this.container = container;
+    }
+
+    public CreateMessageBuilder Create(IRequestContext context)
+    {
+      var chatID = context.GetChat().Id;
+      var info = context.GetCultureInfo();
+      var localizationProvider = container.GetInstance<ILocalizationProvider>();
+      return new CreateMessageBuilder(chatID, info, localizationProvider
+     , ValidateTitleCommandStep.TITLE_MIN_LENGHT
+     , ValidateTitleCommandStep.TITLE_MAX_LENGHT);
+    }
   }
 }

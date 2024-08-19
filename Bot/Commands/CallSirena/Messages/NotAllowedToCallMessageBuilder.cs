@@ -1,5 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
@@ -13,8 +14,8 @@ public class NotAllowedToCallMessageBuilder : LocalizedMessageBuilder
   private long uid;
 
   public NotAllowedToCallMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider, SirenRepresentation sirena, long uid)
-  : base(chatId,info,localizationProvider)
+  , ILocalizationProvider localizationProvider, SirenRepresentation sirena, long uid)
+  : base(chatId, info, localizationProvider)
   {
     this.sirena = sirena;
     this.uid = uid;
@@ -44,7 +45,7 @@ public class NotAllowedToCallMessageBuilder : LocalizedMessageBuilder
         initiator = string.Format(initiator, uid);
 
         var timeLeftString = timeLeft.ToString(@"mm\:ss");
-        
+
         builder.AppendFormat(notNow, initiator, sirena.LastCall.Date, timeLeftString);
       }
     }
@@ -52,10 +53,23 @@ public class NotAllowedToCallMessageBuilder : LocalizedMessageBuilder
     var keyboardRow = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
       .AddDisplayUserSirenasButton(Info);
     if (cantCalled)
-      keyboardRow = keyboardRow.AddRequestButton(Info,sirena.Id).EndRow().BeginRow();
-    
+      keyboardRow = keyboardRow.AddRequestButton(Info, sirena.Id).EndRow().BeginRow();
+
     var markup = keyboardRow.AddMenuButton(Info).EndRow().ToReplyMarkup();
 
     return CreateDefault(builder.ToString(), markup);
+  }
+
+  public class Factory(ILocalizationProvider localizationProvider)
+    : IFactory<IRequestContext, SirenRepresentation, NotAllowedToCallMessageBuilder>
+  {
+
+    public NotAllowedToCallMessageBuilder Create(IRequestContext context, SirenRepresentation sirena)
+    {
+      var chatId = context.GetChat().Id;
+      var info = context.GetCultureInfo();
+      long uid = context.GetUser().Id;
+      return new NotAllowedToCallMessageBuilder(chatId, info, localizationProvider, sirena, uid);
+    }
   }
 }

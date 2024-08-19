@@ -27,13 +27,6 @@ public class GetRequestsListCommand : AbstractBotCommmand
     this.localizationProvider = localizationProvider;
     this.messageSender = messageSender;
   }
-
-  public override bool Equals(object? obj)
-  {
-    return obj is GetRequestsListCommand command &&
-           EqualityComparer<ILocalizationProvider>.Default.Equals(localizationProvider, command.localizationProvider);
-  }
-
   public override async void Execute(IRequestContext context)
   {
     User botUser = context.GetUser();

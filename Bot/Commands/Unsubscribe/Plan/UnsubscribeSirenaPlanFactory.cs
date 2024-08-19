@@ -1,38 +1,26 @@
-using Hedgey.Localization;
-using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
-using MongoDB.Bson;
+using SimpleInjector;
 
 namespace Hedgey.Sirena.Bot;
 
 public class UnsubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
-  private readonly IGetUserRelatedSirenas getSubscriptions;
-  private readonly IGetUserInformation getUserInformation;
-  private readonly IUnsubscribeSirenaOperation unsubscribeSirenaOperation;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly Container container;
 
-  public UnsubscribeSirenaPlanFactory(IGetUserInformation getUserInformation
-  , IGetUserRelatedSirenas getSubscriptions, IUnsubscribeSirenaOperation unsubscribeSirenaOperation
-  , ILocalizationProvider localizationProvider)
+  public UnsubscribeSirenaPlanFactory(Container container)
   {
-    this.getUserInformation = getUserInformation;
-    this.getSubscriptions = getSubscriptions;
-    this.unsubscribeSirenaOperation = unsubscribeSirenaOperation;
-    this.localizationProvider = localizationProvider;
+    this.container = container;
   }
 
   public CommandPlan Create(IRequestContext context)
   {
-    Container<IRequestContext> contextContainer = new(context);
-    NullableContainer<ObjectId> idContainer = new();
-    IObservableStep<CommandStep.Report>[] steps = [
-      new ProcessParameterUnsubscribeStep(contextContainer,idContainer,getSubscriptions,getUserInformation, localizationProvider),
-      new TryUnsubscribeStep(contextContainer,idContainer, unsubscribeSirenaOperation, localizationProvider),
+    IObservableStep<IRequestContext, CommandStep.Report>[] steps = [
+      container.GetInstance<ProcessParameterUnsubscribeStep>(),
+      container.GetInstance<TryUnsubscribeStep>()
     ];
     var compositeStep = new CompositeCommandStep(steps);
 
-    return new([compositeStep], contextContainer);
+    return new(UnsubscribeCommand.NAME, [compositeStep]);
   }
 }

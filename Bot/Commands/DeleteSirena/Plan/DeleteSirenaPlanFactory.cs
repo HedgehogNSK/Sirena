@@ -1,37 +1,24 @@
-using Hedgey.Localization;
-using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
+using SimpleInjector;
 
 namespace Hedgey.Sirena.Bot;
 
 public class DeleteSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
-  private readonly IFindSirenaOperation findSirenaOperation;
-  private readonly IGetUserRelatedSirenas getUserSirenasOperation;
-  private readonly IDeleteSirenaOperation deleteSirenaOperation;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly Container container;
 
-  public DeleteSirenaPlanFactory(IFindSirenaOperation findSirenaOperation
-  , IGetUserRelatedSirenas getUserSirenasOperation
-  , IDeleteSirenaOperation deleteSirenaOperation,
-ILocalizationProvider localizationProvider)
+  public DeleteSirenaPlanFactory(Container container)
   {
-    this.findSirenaOperation = findSirenaOperation;
-    this.getUserSirenasOperation = getUserSirenasOperation;
-    this.deleteSirenaOperation = deleteSirenaOperation;
-    this.localizationProvider = localizationProvider;
+    this.container = container;
   }
 
   public CommandPlan Create(IRequestContext context)
   {
-    Container<IRequestContext> contextContainer = new(context);
-    NullableContainer<SirenRepresentation> sirenaContainer = new ();
     CommandStep[] steps = [
-      new FindRemoveSirenaStep(contextContainer,sirenaContainer,findSirenaOperation, getUserSirenasOperation, localizationProvider),
-      new ConfirmationRemoveSirenaStep(contextContainer,sirenaContainer, localizationProvider),
-      new DeleteConcretteSirenaStep(contextContainer,sirenaContainer,deleteSirenaOperation, localizationProvider),
+      container.GetInstance<FindRemoveSirenaStep>(),
+      container.GetInstance<ConfirmationRemoveSirenaStep>(),
+      container.GetInstance<DeleteConcretteSirenaStep>()
     ];
-    return new(steps, contextContainer);
+    return new(DeleteSirenaCommand.NAME, steps);
   }
 }

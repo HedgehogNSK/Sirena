@@ -15,12 +15,10 @@ public class ProcessParameterUnsubscribeStep : CommandStep
   private readonly NullableContainer<ObjectId> IdContainer;
   private readonly IGetUserRelatedSirenas getSubscriptions;
   private readonly IGetUserInformation getUserInformation;
-  public ProcessParameterUnsubscribeStep(Container<IRequestContext> contextContainer
-  , NullableContainer<ObjectId> idContainer
+  public ProcessParameterUnsubscribeStep(NullableContainer<ObjectId> idContainer
   , IGetUserRelatedSirenas getSubscriptions
   , IGetUserInformation getUserInformation,
 ILocalizationProvider localizationProvider)
-   : base(contextContainer)
   {
     this.getSubscriptions = getSubscriptions;
     this.getUserInformation = getUserInformation;
@@ -28,12 +26,12 @@ ILocalizationProvider localizationProvider)
     this.localizationProvider = localizationProvider;
   }
 
-  public override IObservable<Report> Make()
+  public override IObservable<Report> Make(IRequestContext context)
   {
-    User botUser = Context.GetUser();
+    User botUser = context.GetUser();
     long uid = botUser.Id;
-    long chatId = Context.GetTargetChatId();
-    string param = Context.GetArgsString().GetParameterByNumber(0);
+    long chatId = context.GetTargetChatId();
+    string param = context.GetArgsString().GetParameterByNumber(0);
     if (string.IsNullOrEmpty(param) || !ObjectId.TryParse(param, out ObjectId id))
     {
       return getSubscriptions.GetSubscriptions(uid).SelectMany(_sirenas => _sirenas)
@@ -44,13 +42,13 @@ ILocalizationProvider localizationProvider)
     IdContainer.Set(id);
     Report report = new Report(Result.Success, null);
     return Observable.Return(report);
-  }
 
-  private Report CreateSubscriptionList(IEnumerable<(SirenRepresentation, string)> source)
-  {
-    var info = Context.GetCultureInfo();
-    long chatId = Context.GetTargetChatId();
-    MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId,info, localizationProvider, source);
-    return new Report(!source.Any() ? Result.Wait : Result.Canceled, builder);
+    Report CreateSubscriptionList(IEnumerable<(SirenRepresentation, string)> source)
+    {
+      var info = context.GetCultureInfo();
+      long chatId = context.GetTargetChatId();
+      MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId, info, localizationProvider, source);
+      return new Report(!source.Any() ? Result.Wait : Result.Canceled, builder);
+    }
   }
 }

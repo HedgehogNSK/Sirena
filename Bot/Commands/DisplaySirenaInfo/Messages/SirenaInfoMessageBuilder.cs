@@ -62,7 +62,7 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
     if (sirena.LastCall != null)
       {
       string lastCall = Localize(lastCallKey);
-      builder.AppendFormat(lastCall, sirena.LastCall.Date); 
+      builder.AppendFormat(lastCall, sirena.LastCall.Date);
       }
 
     return CreateDefault(builder.ToString(), markup);

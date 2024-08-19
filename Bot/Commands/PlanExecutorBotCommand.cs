@@ -4,11 +4,11 @@ namespace Hedgey.Sirena.Bot;
 
 public class PlanExecutorBotCommand : AbstractBotCommmand
  {
-   private readonly IFactory<IRequestContext, CommandPlan> planFactory;
+   private readonly IFactory<IRequestContext,CommandPlan> planFactory;
   private readonly PlanScheduler planScheduler;
 
   public PlanExecutorBotCommand(string name, string description
-  , IFactory<IRequestContext, CommandPlan> planFactory, PlanScheduler planScheduler)
+  , IFactory<IRequestContext,CommandPlan> planFactory, PlanScheduler planScheduler)
    : base(name, description)
   {
     this.planFactory = planFactory;
@@ -18,6 +18,6 @@ public class PlanExecutorBotCommand : AbstractBotCommmand
   public override void Execute(IRequestContext context)
   {
     var plan = planFactory.Create(context);
-    planScheduler.Push(plan);
+    planScheduler.Push(plan, context);
   }
 }

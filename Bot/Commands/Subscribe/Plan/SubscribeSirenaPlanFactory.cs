@@ -1,33 +1,26 @@
-using Hedgey.Localization;
-using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
-using MongoDB.Bson;
+using SimpleInjector;
 
 namespace Hedgey.Sirena.Bot;
 
 public class SubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
-  private readonly ISubscribeToSirenaOperation subscribeOperation;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly Container container;
 
-  public SubscribeSirenaPlanFactory(ISubscribeToSirenaOperation subscribeOperation
-  , ILocalizationProvider localizationProvider)
+  public SubscribeSirenaPlanFactory(Container container)
   {
-    this.subscribeOperation = subscribeOperation;
-    this.localizationProvider = localizationProvider;
+    this.container = container;
   }
 
   public CommandPlan Create(IRequestContext context)
   {
-    Container<IRequestContext> contextContainer = new(context);
-    NullableContainer<ObjectId> idContainer = new();
-    IObservableStep< CommandStep.Report>[] steps = [
-      new ValidateSirenaIdStep(contextContainer,idContainer, localizationProvider),
-      new RequestSubscribeStep(contextContainer,idContainer, subscribeOperation, localizationProvider),
+    IObservableStep<IRequestContext, CommandStep.Report>[] steps = [
+      container.GetInstance<ValidateSirenaIdStep>(),
+      container.GetInstance<RequestSubscribeStep>()
     ];
     var compositeStep = new CompositeCommandStep(steps);
 
-    return new([compositeStep], contextContainer);
+    return new(SubscribeCommand.NAME, [compositeStep]);
   }
 }

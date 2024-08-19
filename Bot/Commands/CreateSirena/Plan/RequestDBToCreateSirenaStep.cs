@@ -1,27 +1,44 @@
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using System.Reactive.Linq;
-using System.Reactive.Threading.Tasks;
 
 namespace Hedgey.Sirena.Bot;
 
-public class RequestDBToCreateSirenaStep(Container<IRequestContext> contextContainer, CreateSirenaStep.Buffer buffer, ICreateSirenaOperationAsync createSirenAsync)
-: CreateSirenaStep(contextContainer, buffer)
+public class RequestDBToCommandStep : CommandStep
 {
-  private readonly ICreateSirenaOperationAsync createSirenAsync = createSirenAsync;
+  private readonly ICreateSirenaOperationAsync createSirenAsync;
+  private readonly Container<CreateMessageBuilder> createMessageBuilder;
+  private readonly NullableContainer<UserRepresentation> userContainer;
+  private readonly NullableContainer<string> titleContainer;
 
-  public override IObservable<Report> Make()
+  public RequestDBToCommandStep(ICreateSirenaOperationAsync createSirenAsync
+  , Container<CreateMessageBuilder> createMessageBuilder
+  , NullableContainer<UserRepresentation> userContainer
+  , NullableContainer<string> titleContainer)
+: base()
   {
-    var user = buffer.User;
-    var sirenaTitle = buffer.SirenaTitle;
-    return Observable.Start(() => buffer)
-    .SelectMany(_buffer => createSirenAsync.CreateAsync(_buffer.GetUser().UID, _buffer.SirenaTitle).ToObservable())
+    this.createSirenAsync = createSirenAsync;
+    this.createMessageBuilder = createMessageBuilder;
+    this.userContainer = userContainer;
+    this.titleContainer = titleContainer;
+  }
+
+  public override IObservable<Report> Make(IRequestContext context)
+  {
+    return Observable.FromAsync(()
+      =>
+    {
+      var user = userContainer.Get();
+      var sirenaTitle = titleContainer.Get();
+      return createSirenAsync.CreateAsync(user.UID, sirenaTitle);
+    })
     .Select(CreateReport);
   }
 
   private Report CreateReport(SirenRepresentation sirena)
   {
-    buffer.MessageBuilder.SetSirena(sirena);
-    return new(sirena != null ? Result.Success : Result.Canceled, buffer.MessageBuilder);
+    var builder = createMessageBuilder.Object;
+    builder.SetSirena(sirena);
+    return new(sirena != null ? Result.Success : Result.Canceled, builder);
   }
 }

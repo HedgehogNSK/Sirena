@@ -1,5 +1,5 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Reactive.Linq;
 
@@ -10,30 +10,25 @@ namespace Hedgey.Sirena.Bot;
 /// </summary>
 public class AddExtraInformationStep : CommandStep
 {
-  private readonly NullableContainer<SirenRepresentation> sirenaContainer;
   private readonly NullableContainer<Message> messageContainer;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory;
   private bool userNotified = false;
-  public AddExtraInformationStep(Container<IRequestContext> contextContainer
-  , NullableContainer<SirenRepresentation> sirenaContainer, NullableContainer<Message> messageContainer
-  , ILocalizationProvider localizationProvider) : base(contextContainer)
+  public AddExtraInformationStep(NullableContainer<Message> messageContainer
+  , IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory)
   {
-    this.sirenaContainer = sirenaContainer;
     this.messageContainer = messageContainer;
-    this.localizationProvider = localizationProvider;
+    this.messageBuilderFactory = messageBuilderFactory;
   }
 
-  public override IObservable<Report> Make()
+  public override IObservable<Report> Make(IRequestContext context)
   {
-    var chatId = Context.GetTargetChatId();
-    var sirena = sirenaContainer.Get();
-    var message = Context.GetMessage();
+    var message = context.GetMessage();
     Report report;
     if (message.From.IsBot && !userNotified)
     {
-      var info = Context.GetCultureInfo();
       userNotified = true;
-      var messageBuilder = new ExtraInformationMessageBuilder(chatId, info, localizationProvider, sirena);
+      var messageBuilder = messageBuilderFactory.Create(context);
+
       report = new(Result.Wait, messageBuilder);
     }
     else
@@ -43,5 +38,23 @@ public class AddExtraInformationStep : CommandStep
       report = new(Result.Success);
     }
     return Observable.Return(report);
+  }
+
+  public class Factory(IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory)
+    : IFactory<NullableContainer<Message>, AddExtraInformationStep>
+  {
+    public AddExtraInformationStep Create(NullableContainer<Message> messageContainer)
+      => new AddExtraInformationStep(messageContainer, messageBuilderFactory);
+  }
+
+  public class MessagBuilderFactory(ILocalizationProvider localizationProvider)
+    : IFactory<IRequestContext, IMessageBuilder>
+  {
+    public IMessageBuilder Create(IRequestContext context)
+    {
+      const string messageKey = "command.call.extra_info";
+      const string skipButtonKey = messageKey + ".extra_info.skip";
+      return new OptionalDataRequireMessageBuilder(context, localizationProvider, messageKey, skipButtonKey);
+    }
   }
 }

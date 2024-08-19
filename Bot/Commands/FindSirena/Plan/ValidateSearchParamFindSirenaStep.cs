@@ -9,24 +9,22 @@ public class ValidateSearchParamFindSirenaStep : CommandStep
   public const int MAX_SIMBOLS = 200;
   private readonly ILocalizationProvider localizationProvider;
 
-  public ValidateSearchParamFindSirenaStep(Container<IRequestContext> contextContainer
-  , ILocalizationProvider localizationProvider)
-   : base(contextContainer)
+  public ValidateSearchParamFindSirenaStep(ILocalizationProvider localizationProvider)
   {
     this.localizationProvider = localizationProvider;
   }
 
-  public override IObservable<Report> Make()
+  public override IObservable<Report> Make(IRequestContext context)
   {
-    var key = Context.GetArgsString();
-    var info = Context.GetCultureInfo();
-    long chatId = Context.GetTargetChatId();
+    var key = context.GetArgsString();
+    var info = context.GetCultureInfo();
+    long chatId = context.GetTargetChatId();
     Result result = Result.Success;
     MessageBuilder? messageBuilder = null;
     if (key.Length < MIN_SIMBOLS || key.Length > MAX_SIMBOLS)
     {
       result = Result.Wait;
-      messageBuilder = new WrongSearchKeyFindSirenaMessageBuilder(chatId,info, localizationProvider);
+      messageBuilder = new WrongSearchKeyFindSirenaMessageBuilder(chatId, info, localizationProvider);
     }
     return Observable.Return(new Report(result, messageBuilder));
   }

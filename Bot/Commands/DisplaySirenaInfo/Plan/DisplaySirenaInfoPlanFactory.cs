@@ -1,30 +1,23 @@
-
-using Hedgey.Localization;
-using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Structure.Factory;
-using MongoDB.Bson;
+using SimpleInjector;
 
 namespace Hedgey.Sirena.Bot;
 
 public class DisplaySirenaInfoPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
-  private readonly IFindSirenaOperation findSirenaOperation;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly Container container;
 
-  public DisplaySirenaInfoPlanFactory(IFindSirenaOperation findSirenaOperation, ILocalizationProvider localizationProvider)
+  public DisplaySirenaInfoPlanFactory(Container container)
   {
-    this.findSirenaOperation = findSirenaOperation;
-    this.localizationProvider = localizationProvider;
+    this.container = container;
   }
 
   public CommandPlan Create(IRequestContext context)
   {
-    Container<IRequestContext> contextContainer = new(context);
-    NullableContainer<ObjectId> container = new();
     CommandStep[] steps = [
-      new ValidateSirenaIdStep(contextContainer,container, localizationProvider),
-      new GetSirenaInfoStep(contextContainer,container,findSirenaOperation, localizationProvider),
+      container.GetInstance<ValidateSirenaIdStep>(),
+      container.GetInstance<GetSirenaInfoStep>()
     ];
-    return new(steps, contextContainer);
+    return new(DisplaySirenaInfoCommand.NAME, steps);
   }
 }

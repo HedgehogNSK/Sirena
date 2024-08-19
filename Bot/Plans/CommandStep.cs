@@ -2,15 +2,9 @@ using Hedgey.Structure.Plan;
 
 namespace Hedgey.Sirena.Bot;
 
-public abstract class CommandStep : IObservableStep<CommandStep.Report>
+public abstract class CommandStep : IObservableStep<IRequestContext, CommandStep.Report>
 {
-  protected readonly Container<IRequestContext> contextContainer;
-  public IRequestContext Context => contextContainer.Object;
-  public CommandStep(Container<IRequestContext> contextContainer)
-  {
-    this.contextContainer = contextContainer;
-  }
-  public abstract IObservable<Report> Make();
+  public abstract IObservable<Report> Make(IRequestContext context);
   public enum Result
   {
     Success,
@@ -31,7 +25,7 @@ public abstract class CommandStep : IObservableStep<CommandStep.Report>
     Exception,
   }
 
-  public record class Report(Result Result, MessageBuilder? MessageBuilder = null)
+  public record class Report(Result Result, IMessageBuilder? MessageBuilder = null)
   {
     public override string ToString()
     {

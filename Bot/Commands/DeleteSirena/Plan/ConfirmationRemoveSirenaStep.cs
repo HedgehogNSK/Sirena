@@ -8,22 +8,21 @@ public class ConfirmationRemoveSirenaStep : DeleteSirenaStep
 {
   private readonly ILocalizationProvider localizationProvider;
 
-  public ConfirmationRemoveSirenaStep(Container<IRequestContext> contextContainer
-  , NullableContainer<SirenRepresentation> sirenaContainer,
+  public ConfirmationRemoveSirenaStep(NullableContainer<SirenRepresentation> sirenaContainer,
 ILocalizationProvider localizationProvider)
-   : base(contextContainer, sirenaContainer)
+   : base(sirenaContainer)
   {
     this.localizationProvider = localizationProvider;
   }
 
-  public override IObservable<Report> Make()
+  public override IObservable<Report> Make(IRequestContext context)
   {
     Report report;
-    var info = Context.GetCultureInfo();
-    var param = Context.GetArgsString();
+    var info = context.GetCultureInfo();
+    var param = context.GetArgsString();
     if (!bool.TryParse(param, out bool value))
     {
-      long chatId = Context.GetTargetChatId();
+      long chatId = context.GetTargetChatId();
       var messageBuilder = new ConfirmRemoveSirenaMessageBuilder(chatId, info, localizationProvider, sirenaContainer.Get());
       report = new Report(Result.Wait, messageBuilder);
     }

@@ -8,14 +8,14 @@ namespace Hedgey.Sirena.Bot;
 public class NoSirenaMessageBuilder : LocalizedMessageBuilder
 {
   private readonly ObjectId id;
-  string key =string.Empty;
+  string key = string.Empty;
   public NoSirenaMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider, string key) : base(chatId,info,localizationProvider)
+  , ILocalizationProvider localizationProvider, string key) : base(chatId, info, localizationProvider)
   {
     this.key = key;
   }
   public NoSirenaMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider, ObjectId id) : base(chatId,info,localizationProvider)
+  , ILocalizationProvider localizationProvider, ObjectId id) : base(chatId, info, localizationProvider)
   {
     this.id = id;
   }

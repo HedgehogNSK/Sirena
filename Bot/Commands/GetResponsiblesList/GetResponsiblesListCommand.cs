@@ -123,7 +123,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
     public string Message { get; set; } = string.Empty;
     public string Title { get; internal set; } = string.Empty;
   }
-  
+
   public class Installer(SimpleInjector.Container container)
    : CommandInstaller<GetResponsiblesListCommand>(container)
   { }

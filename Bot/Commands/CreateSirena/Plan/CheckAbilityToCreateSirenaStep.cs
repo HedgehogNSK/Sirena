@@ -1,16 +1,24 @@
 using System.Reactive.Linq;
+using Hedgey.Sirena.Database;
 
 namespace Hedgey.Sirena.Bot;
 
-public class CheckAbilityToCreateSirenaStep( Container<IRequestContext> contextContainer, CreateSirenaStep.Buffer buffer)
- : CreateSirenaStep(contextContainer,buffer)
+public class CheckAbilityToCreateSirenaStep : CommandStep
 {
   private const int SIGNAL_LIMIT = 5;
+  private readonly NullableContainer<UserRepresentation> userContainer;
+  private readonly Container<CreateMessageBuilder> messageBuilderContainer;
 
-  public override IObservable<Report> Make()
+  public CheckAbilityToCreateSirenaStep(NullableContainer<UserRepresentation> userContainer, Container<CreateMessageBuilder> messageBuilderContainer) : base()
   {
-    var ownedSignalsCount = buffer.GetUser().Owner.Length;
-    var builder = buffer.MessageBuilder;
+    this.userContainer = userContainer;
+    this.messageBuilderContainer = messageBuilderContainer;
+  }
+
+  public override IObservable<Report> Make(IRequestContext context)
+  {
+    var ownedSignalsCount = userContainer.Get().Owner.Length;
+    var builder = messageBuilderContainer.Object;
 
     Report report;
     if (ownedSignalsCount < SIGNAL_LIMIT)

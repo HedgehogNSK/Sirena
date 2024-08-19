@@ -40,10 +40,9 @@ internal class SubscriptionsMesssageBuilder : LocalizedMessageBuilder
           keyboardBuilder.EndRow().BeginRow();
         }
         keyboardBuilder.AddSirenaInfoButton(Info,tuple.sirena.Id,number.ToString());
-        
+
         builder.Append(number)
           .AppendFormat(sirenaInfo, tuple.sirena.Title, tuple.nickname, tuple.sirena.Id);
-
       }
       return CreateDefault(builder.ToString(), keyboardBuilder.EndRow().ToReplyMarkup());
     }

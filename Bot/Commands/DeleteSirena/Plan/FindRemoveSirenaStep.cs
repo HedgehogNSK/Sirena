@@ -14,25 +14,24 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
   private readonly IGetUserRelatedSirenas getUserSirenasOperation;
   private readonly ILocalizationProvider localizationProvider;
 
-  public FindRemoveSirenaStep(Container<IRequestContext> contextContainer
-  , NullableContainer<SirenRepresentation> sirenaContainer
+  public FindRemoveSirenaStep(NullableContainer<SirenRepresentation> sirenaContainer
   , IFindSirenaOperation findSirenaOperation
   , IGetUserRelatedSirenas getUserSirenasOperation,
 ILocalizationProvider localizationProvider)
-  : base(contextContainer, sirenaContainer)
+  : base(sirenaContainer)
   {
     this.findSirenaOperation = findSirenaOperation;
     this.getUserSirenasOperation = getUserSirenasOperation;
     this.localizationProvider = localizationProvider;
   }
 
-  public override IObservable<Report> Make()
+  public override IObservable<Report> Make(IRequestContext context)
   {
-    User botUser = Context.GetUser();
+    User botUser = context.GetUser();
     long uid = botUser.Id;
-    long chatId = Context.GetTargetChatId();
-    var info = Context.GetCultureInfo();
-    string param = Context.GetArgsString().GetParameterByNumber(0);
+    long chatId = context.GetTargetChatId();
+    var info = context.GetCultureInfo();
+    string param = context.GetArgsString().GetParameterByNumber(0);
     IObservable<SirenRepresentation?> observableSirena;
     int number = 0;
     if (string.IsNullOrEmpty(param))
@@ -56,14 +55,14 @@ ILocalizationProvider localizationProvider)
       return Observable.Return(report);
     }
 
-    return observableSirena.Select((_sirena) => ProcessRequestById(_sirena, Context));
+    return observableSirena.Select((_sirena) => ProcessRequestById(_sirena, context));
   }
 
   private Report ProcessRequestById(SirenRepresentation? sirena, IRequestContext context)
   {
     if (sirena == null || sirena.OwnerId != context.GetUser().Id)
     {
-      var info = Context.GetCultureInfo();
+      var info = context.GetCultureInfo();
       var builder = new IncorrectParameterMessageBuilder(context.GetTargetChatId(), info, localizationProvider);
       var report = new Report(Result.Wait, builder);
       return report;

@@ -2,27 +2,35 @@ using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class ValidateTitleCreateSirenaStep(Container<IRequestContext> contextContainer
-  , CreateSirenaStep.Buffer buffer)
-: CreateSirenaStep(contextContainer, buffer)
+public class ValidateTitleCommandStep : CommandStep
 {
   public const int TITLE_MAX_LENGHT = 256;
   public const int TITLE_MIN_LENGHT = 3;
+  private readonly Container<CreateMessageBuilder> createMessageBuilder;
+  private readonly NullableContainer<string> titleContainer;
 
-  public override IObservable<Report> Make()
+  public ValidateTitleCommandStep(
+     Container<CreateMessageBuilder> createMessageBuilder
+  , NullableContainer<string> titleContainer) : base()
   {
-    string sirenaTitle = Context.GetArgsString().Trim();
+    this.createMessageBuilder = createMessageBuilder;
+    this.titleContainer = titleContainer;
+  }
 
+  public override IObservable<Report> Make(IRequestContext context)
+  {
+    string sirenaTitle = context.GetArgsString().Trim();
+    var builder = createMessageBuilder.Object;
     Report report;
     if (string.IsNullOrEmpty(sirenaTitle) || sirenaTitle.Length < TITLE_MIN_LENGHT)
     {
-      buffer.MessageBuilder.IsTitleValid(false);
-      report = new Report(Result.Wait, buffer.MessageBuilder);
+      builder.IsTitleValid(false);
+      report = new Report(Result.Wait, builder);
     }
     else
     {
-      buffer.SirenaTitle = sirenaTitle;
-      buffer.MessageBuilder.IsTitleValid(true);
+      titleContainer.Set(sirenaTitle);
+      builder.IsTitleValid(true);
       report = new(Result.Success, null);
     }
     return Observable.Return(report);

@@ -1,6 +1,7 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using MongoDB.Bson;
 using System.Reactive.Linq;
 
@@ -11,34 +12,48 @@ public class SirenaExistensValidationStep : CommandStep
   private readonly NullableContainer<ObjectId> idContainer;
   private readonly NullableContainer<SirenRepresentation> sirenaContainer;
   private readonly IFindSirenaOperation findSirenaOperation;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly IFactory<IRequestContext, ObjectId, IMessageBuilder> noSirenaMessageBuilderFactory;
 
-  public SirenaExistensValidationStep(Container<IRequestContext> contextContainer
-  , NullableContainer<ObjectId> idContainer, NullableContainer<SirenRepresentation> sirenaContainer
-  , IFindSirenaOperation findSirenaOperation, ILocalizationProvider localizationProvider)
-  : base(contextContainer)
+  public SirenaExistensValidationStep(NullableContainer<ObjectId> idContainer, NullableContainer<SirenRepresentation> sirenaContainer, IFindSirenaOperation findSirenaOperation, IFactory<IRequestContext, ObjectId, IMessageBuilder> messageBuilderFactory)
   {
     this.idContainer = idContainer;
     this.sirenaContainer = sirenaContainer;
     this.findSirenaOperation = findSirenaOperation;
-    this.localizationProvider = localizationProvider;
+    this.noSirenaMessageBuilderFactory = messageBuilderFactory;
   }
 
-  public override IObservable<Report> Make()
+  public override IObservable<Report> Make(IRequestContext context)
   {
     var sirenaId = idContainer.Get();
     return findSirenaOperation.Find(sirenaId).Select(CreateReport);
 
+    Report CreateReport(SirenRepresentation representation)
+    {
+      var sirenaId = idContainer.Get();
+      if (representation == null)
+        return new Report(Result.Wait, noSirenaMessageBuilderFactory.Create(context, sirenaId));
+      sirenaContainer.Set(representation);
+      return new Report(Result.Success);
+    }
   }
 
-  private Report CreateReport(SirenRepresentation representation)
+  public class Factory(IFactory<IRequestContext, ObjectId, IMessageBuilder> messageBuilderFactory
+  , IFindSirenaOperation findSirenaOperation)
+    : IFactory<NullableContainer<ObjectId>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep>
   {
-    var chatId = Context.GetTargetChatId();
-    var info = Context.GetCultureInfo();
-    var sirenaId = idContainer.Get();
-    if (representation==null)
-      return new Report(Result.Wait, new NoSirenaMessageBuilder(chatId,info, localizationProvider, sirenaId));
-    sirenaContainer.Set(representation);
-    return new Report(Result.Success);
+    public SirenaExistensValidationStep Create(NullableContainer<ObjectId> idContainer
+      , NullableContainer<SirenRepresentation> sirenaContainer)
+      => new SirenaExistensValidationStep(idContainer, sirenaContainer, findSirenaOperation, messageBuilderFactory);
+  }
+
+  public class MessagBuilderFactory(ILocalizationProvider localizationProvider)
+    : IFactory<IRequestContext, ObjectId, NoSirenaMessageBuilder>
+  {
+    public NoSirenaMessageBuilder Create(IRequestContext context, ObjectId sirenaId)
+    {
+      var chatId = context.GetChat().Id;
+      var info = context.GetCultureInfo();
+      return new NoSirenaMessageBuilder(chatId, info, localizationProvider, sirenaId);
+    }
   }
 }

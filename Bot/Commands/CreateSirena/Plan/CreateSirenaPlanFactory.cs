@@ -1,38 +1,44 @@
-using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
+using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
+using Hedgey.Structure.Plan;
 
 namespace Hedgey.Sirena.Bot;
 
 public class CreateSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
+  private readonly IFactory<IRequestContext, CreateMessageBuilder> messageBuilderFactory;
   private readonly IGetUserOperationAsync getUserOperationAsync;
-  private readonly ICreateSirenaOperationAsync createSirenAsync;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly ICreateSirenaOperationAsync createSirenaAsync;
 
-  public CreateSirenaPlanFactory(IGetUserOperationAsync getUserOperationAsync
-  , ICreateSirenaOperationAsync createSirenAsync
-  , ILocalizationProvider localizationProvider)
+  public CreateSirenaPlanFactory(
+   IFactory<IRequestContext, CreateMessageBuilder> messageBuilderFactory
+   , IGetUserOperationAsync getUserOperationAsync
+   , ICreateSirenaOperationAsync createSirenaAsync)
   {
+    this.messageBuilderFactory = messageBuilderFactory;
     this.getUserOperationAsync = getUserOperationAsync;
-    this.createSirenAsync = createSirenAsync;
-    this.localizationProvider = localizationProvider;
+    this.createSirenaAsync = createSirenaAsync;
   }
 
   public CommandPlan Create(IRequestContext context)
   {
-    Container<IRequestContext> contextContainer = new(context);
-    CreateMessageBuilder messageBuilder = new(context.GetChat().Id
-    , context.GetCultureInfo(), localizationProvider
-    , ValidateTitleCreateSirenaStep.TITLE_MIN_LENGHT
-    , ValidateTitleCreateSirenaStep.TITLE_MAX_LENGHT);
-    CreateSirenaStep.Buffer buffer = new(messageBuilder);
-    CommandStep[] steps = [
-      new GetUserCreateSirenaStep(contextContainer,buffer, getUserOperationAsync),
-      new CheckAbilityToCreateSirenaStep(contextContainer, buffer),
-      new ValidateTitleCreateSirenaStep(contextContainer,buffer),
-      new RequestDBToCreateSirenaStep(contextContainer,buffer,createSirenAsync)
+    CreateMessageBuilder messageBuilder = messageBuilderFactory.Create(context);
+    Container<CreateMessageBuilder> messageBuilderContainer = new(messageBuilder);
+
+    NullableContainer<string> titleContainer = new();
+    NullableContainer<UserRepresentation> userContainer = new();
+
+    var validation = new CompositeCommandStep([
+      new CheckAbilityToCreateSirenaStep(userContainer,messageBuilderContainer),
+      new ValidateTitleCommandStep(messageBuilderContainer,titleContainer),
+    ]);
+
+    IObservableStep<IRequestContext, CommandStep.Report>[] steps = [
+      new GetUserCommandStep(getUserOperationAsync,messageBuilderContainer,userContainer),
+      validation,
+      new RequestDBToCommandStep(createSirenaAsync,messageBuilderContainer,userContainer, titleContainer),
     ];
-    return new(steps, contextContainer);
+    return new(CreateSirenaCommand.NAME, steps);
   }
 }

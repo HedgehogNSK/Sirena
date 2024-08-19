@@ -12,29 +12,29 @@ public class GetSirenaInfoStep : CommandStep
   private readonly IFindSirenaOperation findSirena;
   private readonly ILocalizationProvider localizationProvider;
 
-  public GetSirenaInfoStep(Container<IRequestContext> contextContainer
-  , NullableContainer<ObjectId> sirenaIdContainter, IFindSirenaOperation findSirena, ILocalizationProvider localizationProvider)
-   : base(contextContainer)
+  public GetSirenaInfoStep(NullableContainer<ObjectId> sirenaIdContainter, IFindSirenaOperation findSirena, ILocalizationProvider localizationProvider)
   {
     this.sirenaIdContainter = sirenaIdContainter;
     this.findSirena = findSirena;
     this.localizationProvider = localizationProvider;
   }
 
-  public override IObservable<Report> Make()
-  => findSirena.Find(sirenaIdContainter.Get()).Select(CreateReport);
-
-  private Report CreateReport(SirenRepresentation representation)
+  public override IObservable<Report> Make(IRequestContext context)
   {
-    var chatId = Context.GetTargetChatId();
-    var uid = Context.GetUser().Id;
-    var info = Context.GetCultureInfo();
+    return findSirena.Find(sirenaIdContainter.Get()).Select(CreateReport);
 
-    Result result = representation == null ? Result.Canceled : Result.Success;
-    MessageBuilder builder = representation == null ?
-        new SirenaNotFoundMessageBuilder(chatId, info, localizationProvider, sirenaIdContainter.Get())
-        : new SirenaInfoMessageBuilder(chatId, info, localizationProvider, uid, representation);
+    Report CreateReport(SirenRepresentation representation)
+    {
+      var chatId = context.GetTargetChatId();
+      var uid = context.GetUser().Id;
+      var info = context.GetCultureInfo();
 
-    return new Report(result, builder);
+      Result result = representation == null ? Result.Canceled : Result.Success;
+      MessageBuilder builder = representation == null ?
+          new SirenaNotFoundMessageBuilder(chatId, info, localizationProvider, sirenaIdContainter.Get())
+          : new SirenaInfoMessageBuilder(chatId, info, localizationProvider, uid, representation);
+
+      return new Report(result, builder);
+    }
   }
 }
