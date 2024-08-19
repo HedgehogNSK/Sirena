@@ -14,7 +14,7 @@
     <value>You can call Sirenas that were created by you or those Sirenas, that the owner gave you the rights to call</value>
   </data>
   <data name="command.call.extra_info">
-    <value>You can send extra information for subscribers or just click the *Call* button.</value>
+    <value>ℹ️You can send extra information for subscribers or just click the *Call* button.</value>
   </data>
   <data name="command.call.last_call">
     <value>⚠️Last call was made recently by *{0}* at {1} UTC. Please wait {2} until next try.</value>
@@ -263,10 +263,15 @@ Subscribers: {2}
 </value>
   </data>
   <data name="command.start.welcome">
-    <value>Welcome!
-*Sirena BOT* proivdes a mechanism for quick notifications. You can create notifications (*Sirena*). People subscribes to your notification. When time comes just call the Sirena and all of the subscribers will get your message.
+    <value>*Welcome!*
 
-You can use *Menu* (/menu) to manage the bot. You can call commands directly either. To find out full list of the commands please use /help command.</value>
+_Sirena BOT_ offers a convenient mechanism for instant notifications. The primary goal of the bot is to create a notification system where the focus is on the event, not the message author.
+
+You can create notifications (_Sirens_) and invite people to subscribe to alerts for meetings, gatherings, or any other events. Whether it’s a work meeting, a parent-teacher conference, a meetup with friends, or a clan raid, you can easily notify all subscribers about the time and place of the event.
+
+Use the Menu (/menu) to manage the bot or directly call commands. To see a list of available commands, type /help.
+
+This bot is especially useful in work chats, parent groups, or community chats, where it&apos;s important to avoid unnecessary discussions while still staying informed about urgent messages.</value>
   </data>
   <data name="command.subscribe.askSirenaId">
     <value>*Please input Sirena ID*.
@@ -348,7 +353,7 @@ ID: `{2}`
     <value>🧾 Menu</value>
   </data>
   <data name="menu.buttons.request_rights.title">
-    <value>🙏 Ask rights</value>
+    <value>🙏 Request rights</value>
   </data>
   <data name="menu.buttons.subscribe.title">
     <value>🔔 Subscribe</value>
@@ -372,12 +377,21 @@ ID: `{2}`
     <value>⚠️{0} parameter is incorrect. First parameter has to be *UID* of user that is already responsible for sirena.</value>
   </data>
   <data name="command.unmute.error.wrong_parameter">
-    <value>To unmute user please input: /unmute {user id to mute} {sirena id}</value>
+    <value>To unmute user please input command with parameters: /unmute {user id to mute} {sirena id}</value>
   </data>
   <data name="command.unmute.success">
     <value>User {0} has been unmuted. You will be notified if this user will call the sirena: *{1}*</value>
   </data>
   <data name="command.unmute.error.not_found">
     <value>⚠️Couldn&apos;t find sirena to mute user</value>
+  </data>
+  <data name="command.request_rights.extra_info">
+    <value>ℹ️You are about to ask rights to call sirena: `{0}`.You can write extra infromation for the owner of the Sirena or you can send request as is by click on the button down bellow.</value>
+  </data>
+  <data name="command.request_rights.extra_info.skip">
+    <value>🙏 Request only</value>
+  </data>
+  <data name="command.call.extra_info.skip">
+    <value>🔊 Launch only</value>
   </data>
 </root>
