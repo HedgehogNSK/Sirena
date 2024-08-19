@@ -11,7 +11,7 @@ public class PresetLocalizedMessageBuilder : LocalizedMessageBuilder
 
   public PresetLocalizedMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, string localizationKey
-  , object[] args) 
+  , object[] args)
     : base(chatId, info, localizationProvider)
   {
     key = localizationKey;

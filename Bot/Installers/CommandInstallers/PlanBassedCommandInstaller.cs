@@ -11,8 +11,8 @@ public class PlanBassedCommandInstaller<TCommand, TPlanFactory>(Container contai
   public override void Install()
   {
     base.Install();
-    
-    Container.RegisterConditional<IFactory<IRequestContext, CommandPlan>,TPlanFactory>((_predicate) 
+
+    Container.RegisterConditional<IFactory<IRequestContext, CommandPlan>, TPlanFactory>((_predicate)
       => _predicate.Consumer.ImplementationType == typeof(TCommand));
   }
 }

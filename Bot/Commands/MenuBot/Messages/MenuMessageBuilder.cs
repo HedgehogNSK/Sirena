@@ -14,7 +14,7 @@ public class MenuMessageBuilder : LocalizedMessageBuilder
   private UserStatistics? result = null;
 
   public MenuMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider) 
+  , ILocalizationProvider  localizationProvider)
   : base(chatId, info,localizationProvider)
   { }
 

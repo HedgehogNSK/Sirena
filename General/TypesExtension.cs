@@ -15,9 +15,9 @@ static public class TypesExtension{
 
   static public bool HasParent(this Type type, Type parent){
     var baseTypes =  type.GetBaseTypes();
-    if(!parent.IsGenericType) 
+    if(!parent.IsGenericType)
       return baseTypes.Any(_type => _type == parent);
-    
+
     return baseTypes.Any(_type => _type.IsGenericType &&  _type.GetGenericTypeDefinition() == parent);
   }
 }

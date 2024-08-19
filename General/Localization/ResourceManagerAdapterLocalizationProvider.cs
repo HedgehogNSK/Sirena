@@ -6,10 +6,9 @@ namespace Hedgey.Localization;
 public class ResourceManagerAdapterLocalizationProvider : ILocalizationProvider{
   public readonly ResourceManager rm;
   public CultureInfo? CurrentCulture { get; private set; } =null;
-  public ResourceManagerAdapterLocalizationProvider(ResourceManager rm) { 
+  public ResourceManagerAdapterLocalizationProvider(ResourceManager rm) {
     this.rm = rm;
   }
-
 
   public string Get(string key, CultureInfo info) => rm.GetString(key, info) ?? key;
 

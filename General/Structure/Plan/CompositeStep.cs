@@ -2,7 +2,7 @@ using System.Reactive.Linq;
 
 namespace Hedgey.Structure.Plan;
 /// <summary>
-/// Execute enumeration of steps. If one of internal steps is failed, 
+/// Execute enumeration of steps. If one of internal steps is failed,
 /// then all step are failed. And on next execution all steps will be repeated again
 /// </summary>
 /// <typeparam name="T"></typeparam>

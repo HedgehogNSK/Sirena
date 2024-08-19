@@ -10,5 +10,4 @@ static public class ContainerExtension{
     => container.GetInstance<IFactory<T1, T2, TResult>>().Create(param1, param2);
   static public TResult GetInstanceFrom<T1, T2, T3, TResult>(this Container container, T1 param1, T2 param2, T3 param3)
     => container.GetInstance<IFactory<T1, T2, T3, TResult>>().Create(param1, param2, param3);
-
 }

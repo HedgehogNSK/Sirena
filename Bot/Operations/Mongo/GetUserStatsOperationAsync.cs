@@ -30,7 +30,6 @@ public class GetUserStatsOperationAsync : IGetUserOverviewAsync
   }
 }
 
-
 public struct UserStatistics
 {
   public int SirenasCount { get; set; }

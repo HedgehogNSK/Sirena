@@ -12,7 +12,7 @@ public class MenuBotCommand : AbstractBotCommmand
   private readonly IMessageSender messageSender;
 
   public MenuBotCommand(IGetUserOverviewAsync getOverview
-  , ILocalizationProvider localizationProvider, IMessageSender messageSender) 
+  , ILocalizationProvider localizationProvider, IMessageSender messageSender)
   : base(NAME, DESCRIPTION)
   {
     this.getOverview = getOverview;

@@ -35,6 +35,5 @@ public class CreateSirenaOperationAsync : ICreateSirenaOperationAsync
       update: update,
       options: updateOptions);
     return siren;
-
   }
 }

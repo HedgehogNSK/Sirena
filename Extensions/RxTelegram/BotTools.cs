@@ -22,7 +22,7 @@ public static class BotTools
       return default;
     }
   }
-  
+
   private static string GetDisplayName(string Username, string FirstName, string LastName)
   {
     return !string.IsNullOrEmpty(Username) ? '@' + Username :

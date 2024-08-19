@@ -28,7 +28,7 @@ internal class UnsubscribeMessageBuilder : LocalizedMessageBuilder
       .BeginRow().AddMenuButton(Info)
       .AddCallbackData(unsubscribeTitle, '/'+ UnsubscribeCommand.NAME).EndRow()
       .ToReplyMarkup();
-      return CreateDefault(failMessage, replyMarkup);  
+      return CreateDefault(failMessage, replyMarkup);
     }
   }
 }
