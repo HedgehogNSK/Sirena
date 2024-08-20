@@ -7,18 +7,18 @@ namespace Hedgey.Sirena.Bot;
 public class RequestDBToCommandStep : CommandStep
 {
   private readonly ICreateSirenaOperationAsync createSirenAsync;
-  private readonly Container<CreateMessageBuilder> createMessageBuilder;
+  private readonly CreateMessageBuilder messageBuilder;
   private readonly NullableContainer<UserRepresentation> userContainer;
   private readonly NullableContainer<string> titleContainer;
 
   public RequestDBToCommandStep(ICreateSirenaOperationAsync createSirenAsync
-  , Container<CreateMessageBuilder> createMessageBuilder
+  , CreateMessageBuilder messageBuilder
   , NullableContainer<UserRepresentation> userContainer
   , NullableContainer<string> titleContainer)
 : base()
   {
     this.createSirenAsync = createSirenAsync;
-    this.createMessageBuilder = createMessageBuilder;
+    this.messageBuilder = messageBuilder;
     this.userContainer = userContainer;
     this.titleContainer = titleContainer;
   }
@@ -37,8 +37,7 @@ public class RequestDBToCommandStep : CommandStep
 
   private Report CreateReport(SirenRepresentation sirena)
   {
-    var builder = createMessageBuilder.Object;
-    builder.SetSirena(sirena);
-    return new(sirena != null ? Result.Success : Result.Canceled, builder);
+    messageBuilder.SetSirena(sirena);
+    return new(sirena != null ? Result.Success : Result.Canceled, messageBuilder);
   }
 }

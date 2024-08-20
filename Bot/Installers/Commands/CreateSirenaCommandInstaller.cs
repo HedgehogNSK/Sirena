@@ -15,9 +15,8 @@ namespace Hedgey.Sirena.Bot.DI
       Container.Register<IGetUserOperationAsync, GetUserOperationAsync>();
       Container.Register<ICreateSirenaOperationAsync, CreateSirenaOperationAsync>();
 
-      Container.Register<IFactory<IRequestContext, CreateMessageBuilder>, CreateMessageBuilder.Factory>();
+      Container.RegisterSingleton<IFactory<IRequestContext, CreateMessageBuilder>, CreateMessageBuilder.Factory>();
 
-      Container.Register<NullableContainer<CreateMessageBuilder>>();
       Container.Register<NullableContainer<string>>();
       Container.Register<NullableContainer<UserRepresentation>>();
     }

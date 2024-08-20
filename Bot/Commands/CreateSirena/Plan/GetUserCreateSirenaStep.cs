@@ -8,16 +8,16 @@ namespace Hedgey.Sirena.Bot;
 public class GetUserCommandStep : CommandStep
 {
   private readonly IGetUserOperationAsync getUserOperationAsync;
-  private readonly Container<CreateMessageBuilder> createMessageBuilder;
+  private readonly CreateMessageBuilder messageBuilder;
   private readonly NullableContainer<UserRepresentation> userContainer;
 
   public GetUserCommandStep(IGetUserOperationAsync getUserOperationAsync
-  , Container<CreateMessageBuilder> createMessageBuilder
+  , CreateMessageBuilder messageBuilder
   , NullableContainer<UserRepresentation> userContainer)
   : base()
   {
     this.getUserOperationAsync = getUserOperationAsync;
-    this.createMessageBuilder = createMessageBuilder;
+    this.messageBuilder = messageBuilder;
     this.userContainer = userContainer;
   }
 
@@ -33,7 +33,6 @@ public class GetUserCommandStep : CommandStep
   {
     if (representation == null)
     {
-      var messageBuilder = createMessageBuilder.Object;
       messageBuilder.SetUser(representation);
       return new Report(Result.Wait, messageBuilder);
     }

@@ -24,20 +24,19 @@ public class CreateSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
   public CommandPlan Create(IRequestContext context)
   {
     CreateMessageBuilder messageBuilder = messageBuilderFactory.Create(context);
-    Container<CreateMessageBuilder> messageBuilderContainer = new(messageBuilder);
 
     NullableContainer<string> titleContainer = new();
     NullableContainer<UserRepresentation> userContainer = new();
 
     var validation = new CompositeCommandStep([
-      new CheckAbilityToCreateSirenaStep(userContainer,messageBuilderContainer),
-      new ValidateTitleCommandStep(messageBuilderContainer,titleContainer),
+      new CheckAbilityToCreateSirenaStep(userContainer,messageBuilder),
+      new ValidateTitleCommandStep(messageBuilder,titleContainer),
     ]);
 
     IObservableStep<IRequestContext, CommandStep.Report>[] steps = [
-      new GetUserCommandStep(getUserOperationAsync,messageBuilderContainer,userContainer),
+      new GetUserCommandStep(getUserOperationAsync,messageBuilder,userContainer),
       validation,
-      new RequestDBToCommandStep(createSirenaAsync,messageBuilderContainer,userContainer, titleContainer),
+      new RequestDBToCommandStep(createSirenaAsync,messageBuilder,userContainer, titleContainer),
     ];
     return new(CreateSirenaCommand.NAME, steps);
   }

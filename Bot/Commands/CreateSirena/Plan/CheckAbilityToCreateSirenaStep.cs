@@ -7,29 +7,28 @@ public class CheckAbilityToCreateSirenaStep : CommandStep
 {
   private const int SIGNAL_LIMIT = 5;
   private readonly NullableContainer<UserRepresentation> userContainer;
-  private readonly Container<CreateMessageBuilder> messageBuilderContainer;
+  private readonly CreateMessageBuilder messageBuilder;
 
-  public CheckAbilityToCreateSirenaStep(NullableContainer<UserRepresentation> userContainer, Container<CreateMessageBuilder> messageBuilderContainer) : base()
+  public CheckAbilityToCreateSirenaStep(NullableContainer<UserRepresentation> userContainer, CreateMessageBuilder messageBuilder) : base()
   {
     this.userContainer = userContainer;
-    this.messageBuilderContainer = messageBuilderContainer;
+    this.messageBuilder = messageBuilder;
   }
 
   public override IObservable<Report> Make(IRequestContext context)
   {
     var ownedSignalsCount = userContainer.Get().Owner.Length;
-    var builder = messageBuilderContainer.Object;
 
     Report report;
     if (ownedSignalsCount < SIGNAL_LIMIT)
     {
-      builder.IsUserAllowedToCreateSirena(true);
+      messageBuilder.IsUserAllowedToCreateSirena(true);
       report = new Report(Result.Success, null);
     }
     else
     {
-      builder.IsUserAllowedToCreateSirena(false);
-      report = new Report(Result.Canceled, builder);
+      messageBuilder.IsUserAllowedToCreateSirena(false);
+      report = new Report(Result.Canceled, messageBuilder);
     }
     return Observable.Return(report);
   }
