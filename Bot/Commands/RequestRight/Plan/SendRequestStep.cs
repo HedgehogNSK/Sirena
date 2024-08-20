@@ -1,7 +1,7 @@
-using System.Reactive.Linq;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
+using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 

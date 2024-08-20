@@ -1,5 +1,5 @@
-using System.Reactive.Linq;
 using Hedgey.Localization;
+using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
