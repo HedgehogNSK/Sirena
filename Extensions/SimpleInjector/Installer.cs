@@ -1,6 +1,6 @@
 using SimpleInjector;
 
-namespace Hedgey.Sirena.Bot;
+namespace Hedgey.Extensions.SimpleInjector;
 
 public abstract class Installer
 {

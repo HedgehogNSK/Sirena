@@ -77,7 +77,5 @@ public class DelegateRightsCommand : AbstractBotCommmand
     messageSender.Send(chatId, responseText);
   }
 
-  public class Installer(SimpleInjector.Container container)
- : CommandInstaller<DelegateRightsCommand>(container)
-  { }
+  
 }

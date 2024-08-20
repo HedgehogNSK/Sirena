@@ -29,7 +29,4 @@ public class MenuBotCommand : AbstractBotCommmand
     var message = messageBuilder.Build();
     messageSender.Send(message);
   }
-  public class Installer(SimpleInjector.Container container)
-   : CommandInstaller<MenuBotCommand>(container)
-  { }
 }

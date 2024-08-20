@@ -23,8 +23,4 @@ public class StartCommand : AbstractBotCommmand
     message.Text = localizationProvider.Get("command.start.welcome",info);
     messageSender.Send(message);
   }
-
-  public class Installer(SimpleInjector.Container container)
-   : CommandInstaller<StartCommand>(container)
-  { }
 }

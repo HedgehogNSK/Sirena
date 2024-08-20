@@ -1,6 +1,7 @@
+using Hedgey.Extensions.SimpleInjector;
 using SimpleInjector;
 
-namespace Hedgey.Sirena.Bot;
+namespace Hedgey.Sirena.Bot.DI;
 
 public class CommandInstaller<T>(Container container) : Installer(container)
  where T : AbstractBotCommmand

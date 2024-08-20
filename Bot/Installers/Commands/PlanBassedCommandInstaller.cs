@@ -1,7 +1,7 @@
 using Hedgey.Structure.Factory;
 using SimpleInjector;
 
-namespace Hedgey.Sirena.Bot;
+namespace Hedgey.Sirena.Bot.DI;
 
 public class PlanBassedCommandInstaller<TCommand, TPlanFactory>(Container container)
  : CommandInstaller<TCommand>(container)

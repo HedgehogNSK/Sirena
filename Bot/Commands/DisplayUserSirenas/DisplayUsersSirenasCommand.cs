@@ -46,7 +46,4 @@ public class DisplayUsersSirenasCommand : AbstractBotCommmand, IBotCommand
       : new SirenaInfoMessageBuilder(chatId, info, localizationProvider, uid, sirena);
     messageSender.Send(message.Build());
   }
-  public class Installer(SimpleInjector.Container container)
-   : CommandInstaller<DisplayUsersSirenasCommand>(container)
-  { }
 }

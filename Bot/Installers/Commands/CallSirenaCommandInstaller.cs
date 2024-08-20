@@ -4,7 +4,7 @@ using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes;
 using SimpleInjector;
 
-namespace Hedgey.Sirena.Bot;
+namespace Hedgey.Sirena.Bot.DI;
 
 public class CallSirenaCommandInstaller : PlanBassedCommandInstaller<CallSirenaCommand, CallSirenaPlanFactory>
 {
@@ -13,20 +13,20 @@ public class CallSirenaCommandInstaller : PlanBassedCommandInstaller<CallSirenaC
   {
     base.Install();
 
-    Container.Register<IFactory<NullableContainer<Message>, AddExtraInformationStep>, AddExtraInformationStep.Factory>();
+    Container.RegisterSingleton<IFactory<NullableContainer<Message>, AddExtraInformationStep>, AddExtraInformationStep.Factory>();
     RegisterMessageBuilderFactoryForStepFactory<IFactory<IRequestContext, IMessageBuilder>, AddExtraInformationStep.MessagBuilderFactory, AddExtraInformationStep.Factory>(Container);
 
-    Container.Register<IFactory<NullableContainer<ObjectId>, SirenaIdValidationStep>, SirenaIdValidationStep.Factory>();
+    Container.RegisterSingleton<IFactory<NullableContainer<ObjectId>, SirenaIdValidationStep>, SirenaIdValidationStep.Factory>();
     RegisterMessageBuilderFactoryForStepFactory<IFactory<IRequestContext, string, IMessageBuilder>, StringNotIdMessageBuilder.Factory, SirenaIdValidationStep.Factory>(Container);
 
-    Container.Register<IFactory<NullableContainer<ObjectId>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep>, SirenaExistensValidationStep.Factory>();
+    Container.RegisterSingleton<IFactory<NullableContainer<ObjectId>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep>, SirenaExistensValidationStep.Factory>();
     RegisterMessageBuilderFactoryForStepFactory<IFactory<IRequestContext, ObjectId, IMessageBuilder>, SirenaExistensValidationStep.MessagBuilderFactory, SirenaExistensValidationStep.Factory>(Container);
 
-    Container.Register<IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep>, CallSirenaStep.Factory>();
+    Container.RegisterSingleton<IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep>, CallSirenaStep.Factory>();
     RegisterMessageBuilderFactoryForStepFactory<IFactory<IRequestContext, int, SirenRepresentation, IMessageBuilder>, SirenaCallReportMessageBuilder.Factory, CallSirenaStep.Factory>(Container);
     RegisterMessageBuilderFactoryForStepFactory<IFactory<IRequestContext, SirenRepresentation, IMessageBuilder>, SirenaCallServiceMessageBuilder.Factory, CallSirenaStep.Factory>(Container);
 
-    Container.Register<IFactory<NullableContainer<SirenRepresentation>, SirenaStateValidationStep>, SirenaStateValidationStep.Factory>();
+    Container.RegisterSingleton<IFactory<NullableContainer<SirenRepresentation>, SirenaStateValidationStep>, SirenaStateValidationStep.Factory>();
     RegisterMessageBuilderFactoryForStepFactory<IFactory<IRequestContext, SirenRepresentation, IMessageBuilder>, NotAllowedToCallMessageBuilder.Factory, SirenaStateValidationStep.Factory>(Container);
   }
 
@@ -41,6 +41,6 @@ public class CallSirenaCommandInstaller : PlanBassedCommandInstaller<CallSirenaC
     where IMBFactory : class
     where MBFactory : class, IMBFactory
   {
-    container.RegisterConditional<IMBFactory, MBFactory>(c => c.Consumer.ImplementationType == typeof(StepFactory));
+    container.RegisterConditional<IMBFactory, MBFactory>(Lifestyle.Singleton, c => c.Consumer.ImplementationType == typeof(StepFactory));
   }
 }

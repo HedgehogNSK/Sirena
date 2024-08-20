@@ -82,7 +82,4 @@ public class MuteUserSignalCommand : AbstractBotCommmand
     responseText = string.Format(successMessage, _UIDtoMute, sirenaId);
     messageSender.Send(chatId, responseText);
   }
-  public class Installer(SimpleInjector.Container container)
-   : CommandInstaller<MuteUserSignalCommand>(container)
-  { }
 }

@@ -1,5 +1,7 @@
-﻿using Hedgey.Extensions.Types;
+﻿using Hedgey.Extensions.SimpleInjector;
+using Hedgey.Extensions.Types;
 using Hedgey.Sirena.Bot;
+using Hedgey.Sirena.Bot.DI;
 using MongoDB.Driver;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Exceptions;

@@ -1,6 +1,3 @@
-using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Bot.Operations.Mongo;
-using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 
 namespace Hedgey.Sirena.Bot;
@@ -14,21 +11,4 @@ public class CreateSirenaCommand : PlanExecutorBotCommand
     , PlanScheduler planScheduler)
    : base(NAME, DESCRIPTION, planFactory, planScheduler)
   { }
-  public class Installer(SimpleInjector.Container container)
-   : PlanBassedCommandInstaller<CreateSirenaCommand, CreateSirenaPlanFactory>(container)
-  {
-    public override void Install()
-    {
-      base.Install();
-
-      Container.Register<IGetUserOperationAsync, GetUserOperationAsync>();
-      Container.Register<ICreateSirenaOperationAsync, CreateSirenaOperationAsync>();
-
-      Container.Register<IFactory<IRequestContext, CreateMessageBuilder>, CreateMessageBuilder.Factory>();
-
-      Container.Register<NullableContainer<CreateMessageBuilder>>();
-      Container.Register<NullableContainer<string>>();
-      Container.Register<NullableContainer<UserRepresentation>>();
-    }
-  }
 }

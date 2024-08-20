@@ -1,3 +1,4 @@
+using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Localization;
 using Hedgey.Structure.Factory;
 using RxTelegram.Bot;
@@ -6,7 +7,7 @@ using SimpleInjector.Lifestyles;
 using System.Resources;
 using Telegram.Bot;
 
-namespace Hedgey.Sirena.Bot;
+namespace Hedgey.Sirena.Bot.DI;
 
 public class CoreInstaller(Container container) : Installer(container)
 {

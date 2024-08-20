@@ -52,13 +52,4 @@ public class GetSubscriptionsListCommand : AbstractBotCommmand, IBotCommand//, I
   {
     disposables?.Dispose();
   }
-
-  public class Installer(SimpleInjector.Container container)
-   : CommandInstaller<GetSubscriptionsListCommand>(container)
-  {
-    public override void Install()
-    {
-      base.Install();
-    }
-  }
 }

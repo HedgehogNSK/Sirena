@@ -1,23 +1,24 @@
+using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Bot.Operations.Mongo;
 using Hedgey.Sirena.Database;
 using MongoDB.Driver;
 using SimpleInjector;
 
-namespace Hedgey.Sirena.Bot;
+namespace Hedgey.Sirena.Bot.DI;
 
 public class SharedCommandServicesInstaller(Container container) : Installer(container)
 {
   public override void Install()
   {
-    Container.Register<IDeleteSirenaOperation, SirenaOperations>();
-    Container.Register<IFindSirenaOperation, SirenaOperations>();
-    Container.Register<IGetUserRelatedSirenas, SirenaOperations>();
-    Container.Register<ISubscribeToSirenaOperation, SirenaOperations>();
-    Container.Register<IUpdateSirenaOperation, SirenaOperations>();
-    Container.Register<IUnsubscribeSirenaOperation, SirenaOperations>();
-    Container.Register<IGetUserInformation, GetUserInformation>();
-    Container.Register<IGetUserOverviewAsync, GetUserStatsOperationAsync>();
+    Container.RegisterSingleton<IDeleteSirenaOperation, SirenaOperations>();
+    Container.RegisterSingleton<IFindSirenaOperation, SirenaOperations>();
+    Container.RegisterSingleton<IGetUserRelatedSirenas, SirenaOperations>();
+    Container.RegisterSingleton<ISubscribeToSirenaOperation, SirenaOperations>();
+    Container.RegisterSingleton<IUpdateSirenaOperation, SirenaOperations>();
+    Container.RegisterSingleton<IUnsubscribeSirenaOperation, SirenaOperations>();
+    Container.RegisterSingleton<IGetUserInformation, GetUserInformation>();
+    Container.RegisterSingleton<IGetUserOverviewAsync, GetUserStatsOperationAsync>();
 
     Container.RegisterSingleton<FacadeMongoDBRequests>();
     Container.RegisterSingleton<MongoClient>(()=> new MongoClient());//MongoClientFactory connection settings to db

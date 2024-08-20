@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-class HelpCommand : AbstractBotCommmand, IBotCommand
+public class HelpCommand : AbstractBotCommmand, IBotCommand
 {
   public const string NAME = "help";
   public const string DESCRIPTION = "";
@@ -42,7 +42,4 @@ class HelpCommand : AbstractBotCommmand, IBotCommand
     };
     messageSender.Send(response);
   }
-  public class Installer(SimpleInjector.Container container)
-   : CommandInstaller<HelpCommand>(container)
-  { }
 }

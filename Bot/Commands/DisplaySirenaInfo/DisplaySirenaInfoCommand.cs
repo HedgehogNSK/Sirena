@@ -10,7 +10,4 @@ public class DisplaySirenaInfoCommand : PlanExecutorBotCommand
   : base(NAME, DESCRIPTION, planFactory, planScheduler)
   {
   }
-  public class Installer(SimpleInjector.Container container)
- : PlanBassedCommandInstaller<DisplaySirenaInfoCommand, DisplaySirenaInfoPlanFactory>(container)
-  { }
 }
