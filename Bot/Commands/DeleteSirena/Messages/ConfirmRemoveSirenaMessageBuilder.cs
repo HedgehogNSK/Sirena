@@ -1,5 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
@@ -28,5 +29,16 @@ public class ConfirmRemoveSirenaMessageBuilder : LocalizedMessageBuilder
 
     var message = string.Format(question, sirena.Title, sirena.Id);
     return CreateDefault(message, markup);
+  }
+  public class Factory(ILocalizationProvider localizationProvider)
+  : IFactory<IRequestContext, SirenRepresentation, ConfirmRemoveSirenaMessageBuilder>
+  {
+
+    public ConfirmRemoveSirenaMessageBuilder Create(IRequestContext context, SirenRepresentation sirena)
+    {
+      var chatId = context.GetChat().Id;
+      var info = context.GetCultureInfo();
+      return new ConfirmRemoveSirenaMessageBuilder(chatId, info, localizationProvider, sirena);
+    }
   }
 }

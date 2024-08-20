@@ -1,5 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
@@ -15,7 +16,8 @@ public class RemoveSirenaMenuMessageBuilder : LocalizedMessageBuilder
   private readonly IEnumerable<SirenRepresentation> userSirenas;
 
   public RemoveSirenaMenuMessageBuilder(long chatId, CultureInfo info
-, ILocalizationProvider localizationProvider, IEnumerable<SirenRepresentation> userSirenas) : base(chatId, info, localizationProvider)
+, ILocalizationProvider localizationProvider, IEnumerable<SirenRepresentation> userSirenas)
+  : base(chatId, info, localizationProvider)
   {
     this.userSirenas = userSirenas;
   }
@@ -51,6 +53,17 @@ public class RemoveSirenaMenuMessageBuilder : LocalizedMessageBuilder
     {
       string noCreatedSirens = Localize("command.delete.no_sirenas");
       return CreateDefault(noCreatedSirens);
+    }
+  }
+  public class Factory(ILocalizationProvider localizationProvider)
+  : IFactory<IRequestContext, IEnumerable<SirenRepresentation>, RemoveSirenaMenuMessageBuilder>
+  {
+
+    public RemoveSirenaMenuMessageBuilder Create(IRequestContext context, IEnumerable<SirenRepresentation> sirena)
+    {
+      var chatId = context.GetChat().Id;
+      var info = context.GetCultureInfo();
+      return new RemoveSirenaMenuMessageBuilder(chatId, info, localizationProvider, sirena);
     }
   }
 }

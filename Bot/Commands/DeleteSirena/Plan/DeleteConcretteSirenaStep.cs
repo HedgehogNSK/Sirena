@@ -1,6 +1,6 @@
-using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using System.Data;
 using System.Reactive.Linq;
 
@@ -8,16 +8,23 @@ namespace Hedgey.Sirena.Bot;
 
 public class DeleteConcretteSirenaStep : DeleteSirenaStep
 {
+  public class Factory(IFactory<IRequestContext, SirenRepresentation, SuccesfulDeleteMessageBuilder> messageBuilderFactory
+  , IDeleteSirenaOperation sirenaOperations)
+    : IFactory<NullableContainer<SirenRepresentation>, DeleteConcretteSirenaStep>
+  {
+    public DeleteConcretteSirenaStep Create(NullableContainer<SirenRepresentation> sirenaContainer)
+      => new DeleteConcretteSirenaStep(sirenaContainer, sirenaOperations, messageBuilderFactory);
+  }
   private readonly IDeleteSirenaOperation sirenaDeleteOperation;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly IFactory<IRequestContext, SirenRepresentation, SuccesfulDeleteMessageBuilder> messageBuilderFactory;
 
   public DeleteConcretteSirenaStep(NullableContainer<SirenRepresentation> sirenaContainer
-  , IDeleteSirenaOperation sirenaDeleteOperation,
-ILocalizationProvider localizationProvider)
-   : base(sirenaContainer)
+  , IDeleteSirenaOperation sirenaDeleteOperation
+  , IFactory<IRequestContext, SirenRepresentation, SuccesfulDeleteMessageBuilder> messageBuilderFactory)
+    : base(sirenaContainer)
   {
     this.sirenaDeleteOperation = sirenaDeleteOperation;
-    this.localizationProvider = localizationProvider;
+    this.messageBuilderFactory = messageBuilderFactory;
   }
 
   public override IObservable<Report> Make(IRequestContext context)
@@ -30,8 +37,7 @@ ILocalizationProvider localizationProvider)
     Report CreateReport(SirenRepresentation deletedSirena)
     {
       var info = context.GetCultureInfo();
-      var builder = new SuccesfulDeleteMessageBuilder(context.GetTargetChatId()
-      , info, localizationProvider, deletedSirena);
+      var builder = messageBuilderFactory.Create(context, deletedSirena);
       return new Report(Result.Success, builder);
     }
   }
