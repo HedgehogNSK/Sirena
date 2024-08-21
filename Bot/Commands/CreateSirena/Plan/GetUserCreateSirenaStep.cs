@@ -31,9 +31,9 @@ public class GetUserCommandStep : CommandStep
 
   private Report CreateReport(UserRepresentation? representation)
   {
+    messageBuilder.SetUser(representation);
     if (representation == null)
     {
-      messageBuilder.SetUser(representation);
       return new Report(Result.Wait, messageBuilder);
     }
     userContainer.Set(representation);

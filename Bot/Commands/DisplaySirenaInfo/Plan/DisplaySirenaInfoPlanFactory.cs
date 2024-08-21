@@ -1,22 +1,20 @@
 using Hedgey.Structure.Factory;
-using SimpleInjector;
+using MongoDB.Bson;
 
 namespace Hedgey.Sirena.Bot;
 
-public class DisplaySirenaInfoPlanFactory : IFactory<IRequestContext, CommandPlan>
+public class DisplaySirenaInfoPlanFactory(
+   IFactory<NullableContainer<ObjectId>, ValidateSirenaIdStep> idValidationStepFactory
+    , IFactory<NullableContainer<ObjectId>, GetSirenaInfoStep> getSirenaInfoStepFactory)
+    : IFactory<IRequestContext, CommandPlan>
 {
-  private readonly Container container;
-
-  public DisplaySirenaInfoPlanFactory(Container container)
-  {
-    this.container = container;
-  }
-
   public CommandPlan Create(IRequestContext context)
   {
+
+    NullableContainer<ObjectId> idContainer = new();
     CommandStep[] steps = [
-      container.GetInstance<ValidateSirenaIdStep>(),
-      container.GetInstance<GetSirenaInfoStep>()
+     idValidationStepFactory.Create(idContainer),
+    getSirenaInfoStepFactory.Create(idContainer)
     ];
     return new(DisplaySirenaInfoCommand.NAME, steps);
   }

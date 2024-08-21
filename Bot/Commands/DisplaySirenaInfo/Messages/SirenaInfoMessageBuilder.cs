@@ -1,5 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
@@ -14,8 +15,8 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
   private SirenRepresentation sirena;
 
   public SirenaInfoMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider, long uid, SirenRepresentation sirena)
-  : base(chatId,info,localizationProvider)
+  , ILocalizationProvider localizationProvider, long uid, SirenRepresentation sirena)
+  : base(chatId, info, localizationProvider)
   {
     this.uid = uid;
     this.sirena = sirena;
@@ -35,23 +36,23 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
       if (sirena.Listener.Length != 0)
         keyboardBuilder.AddCallSirenaButton(Info, sirena.Id).EndRow().BeginRow();
       if (sirena.Requests.Length != 0)
-        keyboardBuilder.AddDisplayRequestsButton(Info,sirena.Id, sirena.Requests.Length);
+        keyboardBuilder.AddDisplayRequestsButton(Info, sirena.Id, sirena.Requests.Length);
       if (sirena.Responsible.Length != 0)
-        keyboardBuilder.AddDisplayResponsiblesButton(Info,sirena.Id, sirena.Responsible.Length);
+        keyboardBuilder.AddDisplayResponsiblesButton(Info, sirena.Id, sirena.Responsible.Length);
       if (sirena.Requests.Length != 0 || sirena.Responsible.Length != 0)
         keyboardBuilder.EndRow().BeginRow();
-      keyboardBuilder.AddDeleteButton(Info,sirena.Id);
+      keyboardBuilder.AddDeleteButton(Info, sirena.Id);
     }
     else
     {
       bool isSubscribed = sirena.Listener.Contains(uid);
       if (isSubscribed)
       {
-        keyboardBuilder.AddUnsubscribeButton(Info,sirena.Id);
+        keyboardBuilder.AddUnsubscribeButton(Info, sirena.Id);
       }
       else
       {
-        keyboardBuilder.AddSubscribeButton(Info,sirena.Id);
+        keyboardBuilder.AddSubscribeButton(Info, sirena.Id);
       }
     }
     var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
@@ -60,11 +61,22 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
     .AppendFormat(generalInfo, sirena.Title, sirena.Id, sirena.Listener.Length);
 
     if (sirena.LastCall != null)
-      {
+    {
       string lastCall = Localize(lastCallKey);
       builder.AppendFormat(lastCall, sirena.LastCall.Date);
-      }
+    }
 
     return CreateDefault(builder.ToString(), markup);
+  }
+  public class Factory(ILocalizationProvider localizationProvider)
+   : IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder>
+  {
+    public SirenaInfoMessageBuilder Create(IRequestContext context, long uid, SirenRepresentation sirena)
+    {
+
+      long chatId = context.GetTargetChatId();
+      CultureInfo info = context.GetCultureInfo();
+      return new SirenaInfoMessageBuilder(chatId, info, localizationProvider, uid, sirena);
+    }
   }
 }

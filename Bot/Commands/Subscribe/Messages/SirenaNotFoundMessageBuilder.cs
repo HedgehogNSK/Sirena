@@ -1,4 +1,5 @@
 using Hedgey.Localization;
+using Hedgey.Structure.Factory;
 using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
@@ -25,5 +26,17 @@ public class SirenaNotFoundMessageBuilder : LocalizedMessageBuilder
     string noSirenaError = Localize("command.subscribe.notExists");
     var message = string.Format(noSirenaError, id);
     return CreateDefault(message, markup);
+  }
+  
+  public class Factory(ILocalizationProvider localizationProvider)
+   : IFactory<IRequestContext, ObjectId, SirenaNotFoundMessageBuilder>
+  {
+    public SirenaNotFoundMessageBuilder Create(IRequestContext context, ObjectId id)
+    {
+
+      long chatId = context.GetTargetChatId();
+      CultureInfo info = context.GetCultureInfo();
+      return new SirenaNotFoundMessageBuilder(chatId, info, localizationProvider, id);
+    }
   }
 }

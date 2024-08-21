@@ -1,4 +1,5 @@
 using Hedgey.Localization;
+using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
@@ -20,5 +21,17 @@ public class AskSirenaIdMessageBuilder : LocalizedMessageBuilder
         .ToReplyMarkup();
 
     return CreateDefault(askSirenaId, markup);
+  }
+  
+  public class Factory(ILocalizationProvider localizationProvider)
+  : IFactory<IRequestContext, AskSirenaIdMessageBuilder>
+  {
+
+    public AskSirenaIdMessageBuilder Create(IRequestContext context)
+    {
+      var chatId = context.GetTargetChatId();
+      var info = context.GetCultureInfo();
+      return new AskSirenaIdMessageBuilder(chatId, info, localizationProvider);
+    }
   }
 }
