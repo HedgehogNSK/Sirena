@@ -11,7 +11,7 @@ public class CommandPlan : ObservablePlan<IRequestContext, CommandStep.Report>
     this.commandName = commandName;
   }
 
-  protected override bool IsReadyToGoNext(CommandStep.Report report)
+  protected override bool IsSuccess(CommandStep.Report report)
   {
     return report.Result == CommandStep.Result.Success;
   }

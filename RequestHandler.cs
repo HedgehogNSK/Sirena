@@ -33,6 +33,11 @@ public class RequestHandler
     botCommands.TryGetValue(commandName, out var command);
     bool planIsSet = planDictionary.TryGetValue(uid, out CommandPlan? plan);
 
+    if (planIsSet && plan.IsComplete)
+    {
+      Console.WriteLine($"{uid} -> {command.Command} . Complete plan stil in the dictionary");
+      return;
+    }
     if (command == null)
     {
       if (planIsSet)
@@ -52,6 +57,7 @@ public class RequestHandler
 
     if (planIsSet)
     {
+      
       if (command.Command.Equals(plan?.commandName))
       {
         CommandUpdateLog(context);
@@ -61,7 +67,7 @@ public class RequestHandler
       else
         planDictionary.Remove(uid);
     }
-
+    
     try
     {
       var time = Shortucts.CurrentTimeLabel();

@@ -98,18 +98,15 @@ public abstract class ObservablePlan<TContext, TReport>
     return CurrentStep.Make(context)
       .Expand(_report =>
       {
-        if (IsReadyToGoNext(_report))
+        if (IsSuccess(_report) && !IsComplete)
         {
-          IsComplete = !enumerator.MoveNext();
-          if (!IsComplete)
-          {
-            CurrentStep = enumerator.Current;
-            return CurrentStep.Make(context);
-          }
+          CurrentStep = enumerator.Current;
+          return CurrentStep.Make(context);
         }
         return Observable.Empty<TReport>();
       })
+      .Do(_report => { if (IsSuccess(_report)) IsComplete = !enumerator.MoveNext(); })
       .Do(_report => Console.WriteLine(CurrentStep.GetType().Name + ": " + _report));
   }
-  protected abstract bool IsReadyToGoNext(TReport report);
+  protected abstract bool IsSuccess(TReport report);
 }
