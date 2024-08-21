@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 namespace Hedgey.Sirena.Bot;
 
 public class ValidateSirenaIdStep(NullableContainer<ObjectId> sirenaIdContainter
-  , IFactory<IRequestContext, AskSirenaIdMessageBuilder> messageBuilderFactory) : CommandStep
+  , IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory) : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
   {
@@ -18,7 +18,7 @@ public class ValidateSirenaIdStep(NullableContainer<ObjectId> sirenaIdContainter
     return Observable.Return(new Report(Result.Success));
   }
 
-  public class Factory(IFactory<IRequestContext, AskSirenaIdMessageBuilder> messageBuilderFactory)
+  public class Factory(IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory)
     : IFactory<NullableContainer<ObjectId>, ValidateSirenaIdStep>
   {
     public ValidateSirenaIdStep Create(NullableContainer<ObjectId> sirenaContainer)

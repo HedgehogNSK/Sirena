@@ -12,7 +12,7 @@ public class DisplaySirenaInfoInstaller(SimpleInjector.Container container)
     base.Install();
 
     Container.RegisterSingleton<IFactory<NullableContainer<ObjectId>, ValidateSirenaIdStep>, ValidateSirenaIdStep.Factory>();
-    Container.RegisterConditional<IFactory<IRequestContext, AskSirenaIdMessageBuilder>
+    Container.RegisterConditional<IFactory<IRequestContext, IMessageBuilder>
     , AskSirenaIdMessageBuilder.Factory, ValidateSirenaIdStep.Factory>();
 
     Container.RegisterSingleton<IFactory<NullableContainer<ObjectId>, GetSirenaInfoStep>, GetSirenaInfoStep.Factory>();
