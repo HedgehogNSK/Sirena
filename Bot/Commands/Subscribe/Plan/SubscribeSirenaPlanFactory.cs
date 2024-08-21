@@ -1,23 +1,19 @@
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
-using SimpleInjector;
+using MongoDB.Bson;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SubscribeSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
+public class SubscribeSirenaPlanFactory(IFactory<NullableContainer<ObjectId>, ValidateSirenaIdStep> idValidationStepFactory
+, IFactory<NullableContainer<ObjectId>, RequestSubscribeStep> requestSubscribeStepFactory)
+ : IFactory<IRequestContext, CommandPlan>
 {
-  private readonly Container container;
-
-  public SubscribeSirenaPlanFactory(Container container)
-  {
-    this.container = container;
-  }
-
   public CommandPlan Create(IRequestContext context)
   {
+    NullableContainer<ObjectId> idContainer = new();
     IObservableStep<IRequestContext, CommandStep.Report>[] steps = [
-      container.GetInstance<ValidateSirenaIdStep>(),
-      container.GetInstance<RequestSubscribeStep>()
+      idValidationStepFactory.Create(idContainer),
+      requestSubscribeStepFactory.Create(idContainer),
     ];
     var compositeStep = new CompositeCommandStep(steps);
 

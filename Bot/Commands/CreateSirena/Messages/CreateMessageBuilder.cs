@@ -71,20 +71,13 @@ public class CreateMessageBuilder : LocalizedMessageBuilder, IMessageBuilder
     return CreateDefault(message, markup);
   }
 
-  public class Factory : IFactory<IRequestContext, CreateMessageBuilder>
+  public class Factory(ILocalizationProvider localizationProvider) 
+  : IFactory<IRequestContext, CreateMessageBuilder>
   {
-    private readonly Container container;
-
-    public Factory(Container container)
-    {
-      this.container = container;
-    }
-
     public CreateMessageBuilder Create(IRequestContext context)
     {
       var chatID = context.GetChat().Id;
       var info = context.GetCultureInfo();
-      var localizationProvider = container.GetInstance<ILocalizationProvider>();
       return new CreateMessageBuilder(chatID, info, localizationProvider
      , ValidateTitleCommandStep.TITLE_MIN_LENGHT
      , ValidateTitleCommandStep.TITLE_MAX_LENGHT);

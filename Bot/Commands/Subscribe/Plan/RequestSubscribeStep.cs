@@ -1,26 +1,18 @@
-using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class RequestSubscribeStep : CommandStep
+public class RequestSubscribeStep(NullableContainer<ObjectId> sirenaIdContainter
+  , ISubscribeToSirenaOperation subscribeOperation
+  , IFactory<IRequestContext, SirenRepresentation, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
+  , IFactory<IRequestContext, ObjectId, SirenaNotFoundMessageBuilder> sirenaNotFoundMessageBuilderFactory)
+  : CommandStep
 {
-  private readonly NullableContainer<ObjectId> sirenaIdContainter;
-  private readonly ISubscribeToSirenaOperation subscribeOperation;
-  private readonly ILocalizationProvider localizationProvider;
-
-  public RequestSubscribeStep(NullableContainer<ObjectId> sirenaIdContainter
-  , ISubscribeToSirenaOperation subscribeOperation, ILocalizationProvider localizationProvider)
-  {
-    this.sirenaIdContainter = sirenaIdContainter;
-    this.subscribeOperation = subscribeOperation;
-    this.localizationProvider = localizationProvider;
-  }
-
   public override IObservable<Report> Make(IRequestContext context)
   {
     var id = sirenaIdContainter.Get();
@@ -35,7 +27,7 @@ public class RequestSubscribeStep : CommandStep
     {
       var chatId = context.GetTargetChatId();
       var info = context.GetCultureInfo();
-      MessageBuilder meesage = new SuccesfulSubscriptionMessageBuilder(chatId, info, localizationProvider, representation);
+      MessageBuilder meesage = successMessagBuilderFactory.Create(context, representation);
       return new Report(Result.Success, meesage);
     }
     Report CreateReportNotFound()
@@ -43,7 +35,14 @@ public class RequestSubscribeStep : CommandStep
       var id = sirenaIdContainter.Get();
       var info = context.GetCultureInfo();
       var chatId = context.GetTargetChatId();
-      return new(Result.Wait, new SirenaNotFoundMessageBuilder(chatId, info, localizationProvider, id));
+      return new(Result.Wait, sirenaNotFoundMessageBuilderFactory.Create(context, id));
     }
+  }
+  public class Factory(ISubscribeToSirenaOperation subscribeOperation
+  , IFactory<IRequestContext, SirenRepresentation, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
+  , IFactory<IRequestContext, ObjectId, SirenaNotFoundMessageBuilder> sirenaNotFoundMessageBuilderFactory)
+  : IFactory<NullableContainer<ObjectId>, RequestSubscribeStep>
+  {
+    public RequestSubscribeStep Create(NullableContainer<ObjectId> idContainer) => new RequestSubscribeStep(idContainer, subscribeOperation, successMessagBuilderFactory, sirenaNotFoundMessageBuilderFactory);
   }
 }

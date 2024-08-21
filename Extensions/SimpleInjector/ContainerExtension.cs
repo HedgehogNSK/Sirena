@@ -26,29 +26,31 @@ static public class ContainerExtension
     container.RegisterConditional<TInterface, TImpl>(Lifestyle.Singleton, c => c.Consumer.ImplementationType == typeof(TTarget));
   }
 
-  static public void RegisterStepFactoryWithBuilderFactories(this Container container, Type stepFactory, Type[] builderFactories){
-    var interfaces  = stepFactory.GetInterfaces();
+  static public void RegisterStepFactoryWithBuilderFactories(this Container container, Type stepFactory, Type[] builderFactories)
+  {
+    var interfaces = stepFactory.GetInterfaces();
     var factories = interfaces.Where(_i => _i.IsGenericType && IsFactoryInterface(_i.GetGenericTypeDefinition()));
-    if(!factories.Any())
-      throw new TypeInitializationException(stepFactory.FullName, new Exception( $"{stepFactory.Name} must implements 1 IFactory interface"));
+    if (!factories.Any())
+      throw new TypeInitializationException(stepFactory.FullName, new Exception($"{stepFactory.Name} must implements 1 IFactory interface"));
     var factory = factories.First();
-    foreach(var builderFactory in builderFactories)
+    foreach (var builderFactory in builderFactories)
     {
-      var builderInterfaces =  interfaces.Where(_i => _i.IsGenericType && IsFactoryInterface(_i.GetGenericTypeDefinition()));
-       if(!builderInterfaces.Any())
-      throw new TypeInitializationException(builderFactory.FullName, new Exception( $"{builderFactory.Name} must implements 1 IFactory interface"));
+      interfaces = builderFactory.GetInterfaces();
+      var builderInterfaces = interfaces.Where(_i => _i.IsGenericType && IsFactoryInterface(_i.GetGenericTypeDefinition()));
+      if (!builderInterfaces.Any())
+        throw new TypeInitializationException(builderFactory.FullName, new Exception($"{builderFactory.Name} must implements 1 IFactory interface"));
       var builderInterface = builderInterfaces.First();
-      container.RegisterConditional(builderInterface, builderFactory, x => x.Consumer.ImplementationType == factory);
+      container.RegisterConditional(builderInterface, builderFactory, Lifestyle.Singleton, x => x.Consumer.ImplementationType == stepFactory);
     }
     container.RegisterSingleton(factory, stepFactory);
-    
+
     static bool IsFactoryInterface(Type genericInterface)
     {
-        // Сравниваем generic type с известными вариантами IFactory<>, IFactory<,>, IFactory<,,>, IFactory<,,,>
-        return genericInterface == typeof(IFactory<>) ||
-               genericInterface == typeof(IFactory<,>) ||
-               genericInterface == typeof(IFactory<,,>) ||
-               genericInterface == typeof(IFactory<,,,>);
+      // Сравниваем generic type с известными вариантами IFactory<>, IFactory<,>, IFactory<,,>, IFactory<,,,>
+      return genericInterface == typeof(IFactory<>) ||
+             genericInterface == typeof(IFactory<,>) ||
+             genericInterface == typeof(IFactory<,,>) ||
+             genericInterface == typeof(IFactory<,,,>);
     }
-}
   }
+}
