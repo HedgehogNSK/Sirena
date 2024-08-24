@@ -1,22 +1,17 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
+using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-sealed public class RightRequestResultMessageBuilder : LocalizedMessageBuilder
+sealed public class RightRequestResultMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider localizationProvider, IRightsRequestOperation.Result result
+  , SirenRepresentation sirena) 
+    : LocalizedMessageBuilder(chatId, info, localizationProvider)
 {
-  private readonly IRightsRequestOperation.Result result;
-
-  public RightRequestResultMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider localizationProvider, IRightsRequestOperation.Result result)
-   : base(chatId, info, localizationProvider)
-  {
-    this.result = result;
-  }
-
   public override SendMessage Build()
   {
     const string failMessage = "command.request_rights.fail";
@@ -25,19 +20,20 @@ sealed public class RightRequestResultMessageBuilder : LocalizedMessageBuilder
 
     string message = Localize(!result.isSirenaFound ? failMessage :
       !result.isSuccess ? noChangesMessage : successMessage);
-
+    message = string.Format(message, sirena.Id);
     var markup = MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info);
     return CreateDefault(message, markup);
   }
 
   public class Factory(ILocalizationProvider localizationProvider)
-  : IFactory<IRequestContext, IRightsRequestOperation.Result, RightRequestResultMessageBuilder>
+  : IFactory<IRequestContext, IRightsRequestOperation.Result, SirenRepresentation, IMessageBuilder>
   {
-    public RightRequestResultMessageBuilder Create(IRequestContext context, IRightsRequestOperation.Result requestResult)
+    public IMessageBuilder Create(IRequestContext context
+    , IRightsRequestOperation.Result requestResult, SirenRepresentation sirena)
     {
       var chatId = context.GetChat().Id;
       var info = context.GetCultureInfo();
-      return new RightRequestResultMessageBuilder(chatId, info, localizationProvider, requestResult);
+      return new RightRequestResultMessageBuilder(chatId, info, localizationProvider, requestResult, sirena);
     }
   }
 }

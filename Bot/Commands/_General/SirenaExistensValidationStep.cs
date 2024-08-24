@@ -7,21 +7,12 @@ using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SirenaExistensValidationStep : CommandStep
+public class SirenaExistensValidationStep(NullableContainer<ObjectId> idContainer
+, NullableContainer<SirenRepresentation> sirenaContainer
+, IFindSirenaOperation findSirenaOperation
+, IFactory<IRequestContext, ObjectId, IMessageBuilder> noSirenaMessageBuilderFactory)
+ : CommandStep
 {
-  private readonly NullableContainer<ObjectId> idContainer;
-  private readonly NullableContainer<SirenRepresentation> sirenaContainer;
-  private readonly IFindSirenaOperation findSirenaOperation;
-  private readonly IFactory<IRequestContext, ObjectId, IMessageBuilder> noSirenaMessageBuilderFactory;
-
-  public SirenaExistensValidationStep(NullableContainer<ObjectId> idContainer, NullableContainer<SirenRepresentation> sirenaContainer, IFindSirenaOperation findSirenaOperation, IFactory<IRequestContext, ObjectId, IMessageBuilder> messageBuilderFactory)
-  {
-    this.idContainer = idContainer;
-    this.sirenaContainer = sirenaContainer;
-    this.findSirenaOperation = findSirenaOperation;
-    this.noSirenaMessageBuilderFactory = messageBuilderFactory;
-  }
-
   public override IObservable<Report> Make(IRequestContext context)
   {
     var sirenaId = idContainer.Get();
@@ -43,7 +34,8 @@ public class SirenaExistensValidationStep : CommandStep
   {
     public SirenaExistensValidationStep Create(NullableContainer<ObjectId> idContainer
       , NullableContainer<SirenRepresentation> sirenaContainer)
-      => new SirenaExistensValidationStep(idContainer, sirenaContainer, findSirenaOperation, messageBuilderFactory);
+      => new SirenaExistensValidationStep(idContainer, sirenaContainer
+      , findSirenaOperation, messageBuilderFactory);
   }
 
   public class MessagBuilderFactory(ILocalizationProvider localizationProvider)

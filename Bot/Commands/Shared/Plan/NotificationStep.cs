@@ -11,9 +11,8 @@ public abstract class NotificationStep : CommandStep
   public override IObservable<Report> Make(IRequestContext context)
   {
     var message = context.GetMessage();
-
     Report report;
-    if (message.From.IsBot && !userNotified)
+    if ((string.IsNullOrEmpty(context.GetCommandName()) || message.From.IsBot) && !userNotified)
     {
       userNotified = true;
       report = new(Result.Wait, CreateNotification(context));

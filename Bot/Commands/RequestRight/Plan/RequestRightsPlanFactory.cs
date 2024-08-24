@@ -1,31 +1,32 @@
+using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
-using SimpleInjector;
+using MongoDB.Bson;
 
 namespace Hedgey.Sirena.Bot;
 
-public class RequestRightsPlanFactory : IFactory<IRequestContext,CommandPlan>
+public class RequestRightsPlanFactory(IFactory<NullableContainer<ObjectId>, ValidateSirenaIdStep> validateIdStepFactory
+  , IFactory<NullableContainer<ObjectId>, NullableContainer<SirenRepresentation>
+  , SirenaExistensValidationStep> sirenExistensValidationStepFactory
+  , IFactory<NullableContainer<SirenRepresentation>, AddRequestMessageStep> addRequestMessageStepFactory
+  , IFactory<NullableContainer<SirenRepresentation>, SendRequestStep> sendRequestStepFactory) 
+  : IFactory<IRequestContext, CommandPlan>
 {
-  private readonly Container container;
-
-  public RequestRightsPlanFactory(Container container)
-  {
-    this.container = container;
-  }
 
   public CommandPlan Create(IRequestContext context)
   {
-
-     CompositeCommandStep validationStep = new(
-      container.GetInstance<SirenaIdValidationStep>(),
-      container.GetInstance<SirenaExistensValidationStep>()
+    NullableContainer<ObjectId> idContainer = new();
+    NullableContainer<SirenRepresentation> sirenaContainer = new();
+    CompositeCommandStep validationStep = new(
+      validateIdStepFactory.Create(idContainer),
+      sirenExistensValidationStepFactory.Create(idContainer, sirenaContainer)
     );
 
-    IObservableStep<IRequestContext,CommandStep.Report>[] steps =[
+    IObservableStep<IRequestContext, CommandStep.Report>[] steps = [
       validationStep,
-      container.GetInstance<AddRequestMessageStep>(),
-      container.GetInstance<SendRequestStep>(),
+      addRequestMessageStepFactory.Create(sirenaContainer),
+      sendRequestStepFactory.Create(sirenaContainer)
     ];
-    return new(RequestRightsCommand.NAME,steps);
+    return new(RequestRightsCommand.NAME, steps);
   }
 }

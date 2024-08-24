@@ -1,3 +1,4 @@
+using Hedgey.Extensions;
 using Hedgey.Structure.Factory;
 using MongoDB.Bson;
 using System.Reactive.Linq;
@@ -9,7 +10,7 @@ public class ValidateSirenaIdStep(NullableContainer<ObjectId> sirenaIdContainter
 {
   public override IObservable<Report> Make(IRequestContext context)
   {
-    var key = context.GetArgsString();
+    var key = context.GetArgsString().GetParameterByNumber(0);
 
     if (string.IsNullOrEmpty(key) || !ObjectId.TryParse(key, out var id))
       return Observable.Return(new Report(Result.Wait, messageBuilderFactory.Create(context)));

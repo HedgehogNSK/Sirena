@@ -9,8 +9,8 @@ namespace Hedgey.Sirena.Bot;
 public class AskSirenaIdMessageBuilder : LocalizedMessageBuilder
 {
   public AskSirenaIdMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider)
-: base(chatId,info,localizationProvider) { }
+  , ILocalizationProvider localizationProvider)
+: base(chatId, info, localizationProvider) { }
 
   public override SendMessage Build()
   {
@@ -22,12 +22,12 @@ public class AskSirenaIdMessageBuilder : LocalizedMessageBuilder
 
     return CreateDefault(askSirenaId, markup);
   }
-  
+
   public class Factory(ILocalizationProvider localizationProvider)
-  : IFactory<IRequestContext, AskSirenaIdMessageBuilder>
+  : IFactory<IRequestContext, IMessageBuilder>
   {
 
-    public AskSirenaIdMessageBuilder Create(IRequestContext context)
+    public IMessageBuilder Create(IRequestContext context)
     {
       var chatId = context.GetTargetChatId();
       var info = context.GetCultureInfo();
