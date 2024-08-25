@@ -1,7 +1,7 @@
 using Hedgey.Extensions;
-using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using RxTelegram.Bot.Interface.BaseTypes;
@@ -9,23 +9,12 @@ using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class ProcessParameterUnsubscribeStep : CommandStep
-{
-  private readonly ILocalizationProvider localizationProvider;
-  private readonly NullableContainer<ObjectId> IdContainer;
-  private readonly IGetUserRelatedSirenas getSubscriptions;
-  private readonly IGetUserInformation getUserInformation;
-  public ProcessParameterUnsubscribeStep(NullableContainer<ObjectId> idContainer
+public class ProcessParameterUnsubscribeStep(NullableContainer<ObjectId> idContainer
   , IGetUserRelatedSirenas getSubscriptions
-  , IGetUserInformation getUserInformation,
-ILocalizationProvider localizationProvider)
-  {
-    this.getSubscriptions = getSubscriptions;
-    this.getUserInformation = getUserInformation;
-    IdContainer = idContainer;
-    this.localizationProvider = localizationProvider;
-  }
-
+  , IGetUserInformation getUserInformation
+  , IFactory<IRequestContext, IEnumerable<(SirenRepresentation, string)>, IMessageBuilder> messageBuilderFactory)
+   : CommandStep
+{
   public override IObservable<Report> Make(IRequestContext context)
   {
     User botUser = context.GetUser();
@@ -39,7 +28,7 @@ ILocalizationProvider localizationProvider)
         .ToArray()
         .Select(CreateSubscriptionList);
     }
-    IdContainer.Set(id);
+    idContainer.Set(id);
     Report report = new Report(Result.Success, null);
     return Observable.Return(report);
 
@@ -47,8 +36,17 @@ ILocalizationProvider localizationProvider)
     {
       var info = context.GetCultureInfo();
       long chatId = context.GetTargetChatId();
-      MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId, info, localizationProvider, source);
+      IMessageBuilder builder = messageBuilderFactory.Create(context,source);
       return new Report(!source.Any() ? Result.Wait : Result.Canceled, builder);
     }
+  }
+
+  public class Factory(
+  IGetUserRelatedSirenas getSubscriptions, IGetUserInformation getUserInformation
+  , IFactory<IRequestContext, IEnumerable<(SirenRepresentation, string)>, IMessageBuilder> messageBuilderFactory)
+    : IFactory<NullableContainer<ObjectId>, ProcessParameterUnsubscribeStep>
+  {
+    public ProcessParameterUnsubscribeStep Create(NullableContainer<ObjectId> idContainer)
+    => new ProcessParameterUnsubscribeStep(idContainer, getSubscriptions, getUserInformation, messageBuilderFactory);
   }
 }

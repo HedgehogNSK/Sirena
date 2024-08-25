@@ -1,5 +1,5 @@
-using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
+using Hedgey.Structure.Factory;
 using MongoDB.Bson;
 using System.Reactive.Linq;
 
@@ -9,15 +9,15 @@ public class TryUnsubscribeStep : CommandStep
 {
   private readonly NullableContainer<ObjectId> idContainer;
   private readonly IUnsubscribeSirenaOperation unsubscribeOperation;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly IFactory<IRequestContext, ObjectId,bool, IMessageBuilder> messageBuilderFactory;
 
   public TryUnsubscribeStep(NullableContainer<ObjectId> idContainer
   , IUnsubscribeSirenaOperation unsubscribeOperation
-  , ILocalizationProvider localizationProvider)
+  , IFactory<IRequestContext, ObjectId, bool, IMessageBuilder> messageBuilderFactory)
   {
     this.idContainer = idContainer;
     this.unsubscribeOperation = unsubscribeOperation;
-    this.localizationProvider = localizationProvider;
+    this.messageBuilderFactory = messageBuilderFactory;
   }
 
   public override IObservable<Report> Make(IRequestContext context)
@@ -31,8 +31,14 @@ public class TryUnsubscribeStep : CommandStep
       var info = context.GetCultureInfo();
       long chatId = context.GetTargetChatId();
       Result result = isSuccess ? Result.Success : Result.Canceled;
-      MessageBuilder builder = new UnsubscribeMessageBuilder(chatId, info, localizationProvider, isSuccess);
+      IMessageBuilder builder = messageBuilderFactory.Create(context,id, isSuccess);
       return new Report(result, builder);
     }
+  }
+  
+  public class Factory(IUnsubscribeSirenaOperation unsubscribeOperation, IFactory<IRequestContext, ObjectId, bool, IMessageBuilder> messageBuilderFactory) : IFactory<NullableContainer<ObjectId>, TryUnsubscribeStep>
+  {
+    public TryUnsubscribeStep Create(NullableContainer<ObjectId> idContainer)
+    => new TryUnsubscribeStep(idContainer,unsubscribeOperation, messageBuilderFactory);
   }
 }

@@ -43,6 +43,13 @@ public class SirenRepresentation
     public long UID { get; set; }
     [BsonElement("message")]
     public string Message { get; set; } = string.Empty;
+    public override int GetHashCode() => UID.GetHashCode();
+    public override bool Equals(object? obj)
+    {
+      if(obj is Request other)
+       return  other.UID == this.UID;
+       return false;
+    }
   }
   public class CallInfo{
     public CallInfo(long uid, DateTimeOffset now)

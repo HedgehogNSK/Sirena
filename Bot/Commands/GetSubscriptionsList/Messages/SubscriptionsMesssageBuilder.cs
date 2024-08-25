@@ -1,5 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using MongoDB.Driver;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
@@ -55,6 +56,16 @@ internal class SubscriptionsMesssageBuilder : LocalizedMessageBuilder
       string noSubs = Localize("command.subscriptions.noSubscriptions");
       builder.Append(noSubs);
       return CreateDefault(builder.ToString(),  MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info));
+    }
+  }
+  public class Factory(ILocalizationProvider localizationProvider)
+   : IFactory<IRequestContext, IEnumerable<(SirenRepresentation, string)>, IMessageBuilder>
+  {
+    public IMessageBuilder Create(IRequestContext context, IEnumerable<(SirenRepresentation, string)> source)
+    {
+      var chatId = context.GetTargetChatId();
+      var info = context.GetCultureInfo();
+      return new SubscriptionsMesssageBuilder(chatId, info, localizationProvider, source);
     }
   }
 }

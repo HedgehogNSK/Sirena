@@ -103,7 +103,8 @@ public class SirenaOperations : IDeleteSirenaOperation
     FilterDefinitionBuilder<SirenRepresentation> filterBuilder = Builders<SirenRepresentation>.Filter;
     var filter = filterBuilder.Eq(x => x.Id, sirenaId)
               & filterBuilder.Ne(x => x.OwnerId, requesterId)
-              & !filterBuilder.AnyEq(x => x.Responsible, requesterId);
+              & !filterBuilder.AnyEq(x => x.Responsible, requesterId)
+              & !filterBuilder.ElemMatch(x => x.Requests, r => r.UID == requesterId);
     var update = Builders<SirenRepresentation>.Update
               .AddToSet(x => x.Requests, request)
               .AddToSet(x => x.Listener, requesterId);
