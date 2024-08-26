@@ -49,7 +49,9 @@ public class SirenaOperations : IDeleteSirenaOperation
   public IObservable<bool> Unsubscribe(long uid, ObjectId id)
   {
     var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.Id, id);
-    var update = Builders<SirenRepresentation>.Update.Pull(x => x.Listener, uid);
+    var update = Builders<SirenRepresentation>.Update.Pull(x => x.Listener, uid)
+        .Pull(x => x.Responsible, uid) // Удаление из Responsible
+        .PullFilter(x => x.Requests, r => r.UID == uid);;
     return Observable.FromAsync(() => sirens.UpdateOneAsync(filter, update)).Select(x => x.ModifiedCount != 0);
   }
   public IObservable<SirenRepresentation> Find(ObjectId id)
