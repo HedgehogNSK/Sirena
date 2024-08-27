@@ -4,28 +4,18 @@ using RxTelegram.Bot.Utils.Keyboard;
 
 namespace Hedgey.Sirena.Bot;
 
-public class OptionalDataRequireMessageBuilder : LocalizedMessageBuilder
-{
-  private readonly IRequestContext context;
-  private readonly string messageKey;
-  private readonly string skipKey;
-
-  public OptionalDataRequireMessageBuilder(IRequestContext context
+public class OptionalDataRequireMessageBuilder(IRequestContext context
   , ILocalizationProvider localizationProvider
   , string notificationLocalizationKey
   , string skipButtonLocalizationKey)
-  : base(context.GetChat().Id, context.GetCultureInfo(), localizationProvider)
-  {
-    this.messageKey = notificationLocalizationKey;
-    this.skipKey = skipButtonLocalizationKey;
-    this.context = context;
-  }
-  protected string SkipButtonCallback => context.GetMessage().Text;
+   : LocalizedMessageBuilder(context.GetChat().Id, context.GetCultureInfo(), localizationProvider)
+{
+  protected string SkipButtonCallback => '/'+context.GetCommandName();
 
   public override SendMessage Build()
   {
-    string notification = Localize(messageKey);
-    string skipTitle = Localize(skipKey);
+    string notification = Localize(notificationLocalizationKey);
+    string skipTitle = Localize(skipButtonLocalizationKey);
 
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
         .AddCallbackData(skipTitle, SkipButtonCallback)
