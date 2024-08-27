@@ -28,7 +28,6 @@ public class AddExtraInformationStep : CommandStep
     {
       userNotified = true;
       var messageBuilder = messageBuilderFactory.Create(context);
-
       report = new(Result.Wait, messageBuilder);
     }
     else
@@ -53,7 +52,7 @@ public class AddExtraInformationStep : CommandStep
     public IMessageBuilder Create(IRequestContext context)
     {
       const string messageKey = "command.call.extra_info";
-      const string skipButtonKey = messageKey + ".extra_info.skip";
+      const string skipButtonKey = messageKey + ".skip";
       return new OptionalDataRequireMessageBuilder(context, localizationProvider, messageKey, skipButtonKey);
     }
   }
