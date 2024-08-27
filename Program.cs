@@ -86,7 +86,14 @@ static internal class Program
 #pragma warning disable CS8604 // Possible null reference argument.
     var sendMessagesStream = schedulerTrackPublisher
         .Where(_report => _report.StepReport.MessageBuilder != null)
-        .SelectMany(_report => botProxyRequests.ObservableSend(_report.StepReport.MessageBuilder))
+        .SelectMany(_report => botProxyRequests.ObservableSend(_report.StepReport.MessageBuilder)
+          .Catch((Exception _ex) =>
+            {
+              Console.WriteLine("On Send Report exception: {0}", _ex);
+
+              ExceptionHandler.OnError(_ex);
+              return Observable.Empty<Message>().Delay(TimeSpan.FromSeconds(1));
+            }))
         .Subscribe();
 #pragma warning restore CS8604 // Possible null reference argument.
     var schedulerTrackStream = schedulerTrackPublisher.Connect();

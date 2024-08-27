@@ -77,7 +77,8 @@ namespace Hedgey.Sirena.Bot
     }
     public override IObservable<Message> ObservableSend(IMessageBuilder messageBuilder)
     {
-      return ObservableSend(messageBuilder.Build());
+      return ObservableSend(messageBuilder.Build()).Catch((Exception _exception)
+        => throw new Exception($"Exception on sending message made by builder {messageBuilder.GetType().Name}", _exception));
     }
 
     public override void Send(ChatId chatId, string text, IReplyMarkup? markup, bool silent)
