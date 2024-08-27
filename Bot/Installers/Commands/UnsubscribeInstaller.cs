@@ -9,7 +9,7 @@ public class UnsubscribeInstaller(SimpleInjector.Container container)
   {
     base.Install();
 
-    Container.RegisterStepFactoryWithBuilderFactory(typeof(ProcessParameterUnsubscribeStep.Factory), typeof(SubscriptionsMesssageBuilder.Factory));
+    Container.RegisterStepFactoryWithBuilderFactory(typeof(ProcessParameterUnsubscribeStep.Factory), typeof(SubscriptionsMessageBuilderFactory));
     Container.RegisterStepFactoryWithBuilderFactory(typeof(TryUnsubscribeStep.Factory), typeof(UnsubscribeMessageBuilder.Factory));
   }
 }

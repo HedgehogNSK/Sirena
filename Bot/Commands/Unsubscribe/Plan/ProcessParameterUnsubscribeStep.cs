@@ -12,7 +12,7 @@ namespace Hedgey.Sirena.Bot;
 public class ProcessParameterUnsubscribeStep(NullableContainer<ObjectId> idContainer
   , IGetUserRelatedSirenas getSubscriptions
   , IGetUserInformation getUserInformation
-  , IFactory<IRequestContext, IEnumerable<(SirenRepresentation, string)>, IMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> messageBuilderFactory)
    : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -24,7 +24,9 @@ public class ProcessParameterUnsubscribeStep(NullableContainer<ObjectId> idConta
     if (string.IsNullOrEmpty(param) || !ObjectId.TryParse(param, out ObjectId id))
     {
       return getSubscriptions.GetSubscriptions(uid).SelectMany(_sirenas => _sirenas)
-        .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId).Select(_nick => (_sirena, _nick)))
+        .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId)
+            .Do(_nick => _sirena.OwnerNickname = _nick)
+            .Select(_ => _sirena))
         .ToArray()
         .Select(CreateSubscriptionList);
     }
@@ -32,18 +34,18 @@ public class ProcessParameterUnsubscribeStep(NullableContainer<ObjectId> idConta
     Report report = new Report(Result.Success, null);
     return Observable.Return(report);
 
-    Report CreateSubscriptionList(IEnumerable<(SirenRepresentation, string)> source)
+    Report CreateSubscriptionList(IEnumerable<SirenRepresentation> subscriptions)
     {
       var info = context.GetCultureInfo();
       long chatId = context.GetTargetChatId();
-      IMessageBuilder builder = messageBuilderFactory.Create(context,source);
-      return new Report(!source.Any() ? Result.Wait : Result.Canceled, builder);
+      IMessageBuilder builder = messageBuilderFactory.Create(context,subscriptions);
+      return new Report(!subscriptions.Any() ? Result.Wait : Result.Canceled, builder);
     }
   }
 
   public class Factory(
   IGetUserRelatedSirenas getSubscriptions, IGetUserInformation getUserInformation
-  , IFactory<IRequestContext, IEnumerable<(SirenRepresentation, string)>, IMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> messageBuilderFactory)
     : IFactory<NullableContainer<ObjectId>, ProcessParameterUnsubscribeStep>
   {
     public ProcessParameterUnsubscribeStep Create(NullableContainer<ObjectId> idContainer)
