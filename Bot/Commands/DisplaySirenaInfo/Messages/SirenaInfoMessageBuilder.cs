@@ -48,7 +48,15 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
       bool isSubscribed = sirena.Listener.Contains(uid);
       if (isSubscribed)
       {
+        bool canRequest = !sirena.CanBeCalledBy(uid)
+           && !sirena.Requests.Any(_request => _request.UID == uid);
+        if (canRequest)
+          keyboardBuilder.AddRequestButton(Info, sirena.Id);
+
         keyboardBuilder.AddUnsubscribeButton(Info, sirena.Id);
+
+        if (canRequest)
+          keyboardBuilder.EndRow().BeginRow();
       }
       else
       {
@@ -73,7 +81,6 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
   {
     public SirenaInfoMessageBuilder Create(IRequestContext context, long uid, SirenRepresentation sirena)
     {
-
       long chatId = context.GetTargetChatId();
       CultureInfo info = context.GetCultureInfo();
       return new SirenaInfoMessageBuilder(chatId, info, localizationProvider, uid, sirena);

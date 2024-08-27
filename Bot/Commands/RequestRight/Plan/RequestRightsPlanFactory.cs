@@ -9,7 +9,8 @@ public class RequestRightsPlanFactory(IFactory<NullableContainer<ObjectId>, Vali
   , IFactory<NullableContainer<ObjectId>, NullableContainer<SirenRepresentation>
   , SirenaExistensValidationStep> sirenExistensValidationStepFactory
   , IFactory<NullableContainer<SirenRepresentation>, AddRequestMessageStep> addRequestMessageStepFactory
-  , IFactory<NullableContainer<SirenRepresentation>, SendRequestStep> sendRequestStepFactory) 
+  , IFactory<NullableContainer<SirenRepresentation>, SendRequestStep> sendRequestStepFactory
+  ,  IFactory<DisplayCommandMenuStep> displayCommandMenuStepFactory) 
   : IFactory<IRequestContext, CommandPlan>
 {
 
@@ -17,13 +18,14 @@ public class RequestRightsPlanFactory(IFactory<NullableContainer<ObjectId>, Vali
   {
     NullableContainer<ObjectId> idContainer = new();
     NullableContainer<SirenRepresentation> sirenaContainer = new();
-    CompositeCommandStep validationStep = new(
+    CompositeCommandStep validationBulkStep = new(
       validateIdStepFactory.Create(idContainer),
       sirenExistensValidationStepFactory.Create(idContainer, sirenaContainer)
     );
 
     IObservableStep<IRequestContext, CommandStep.Report>[] steps = [
-      validationStep,
+      displayCommandMenuStepFactory.Create(),
+      validationBulkStep,
       addRequestMessageStepFactory.Create(sirenaContainer),
       sendRequestStepFactory.Create(sirenaContainer)
     ];

@@ -11,6 +11,7 @@ public class RequestRightsInstaller(SimpleInjector.Container container)
   {
     base.Install();
 
+    Container.RegisterStepFactoryWithBuilderFactory(typeof(DisplayCommandMenuStep.Factory), typeof(RequestListMessageBuilderFactory));
     Container.RegisterStepFactoryWithBuilderFactory(typeof(SendRequestStep.Factory), typeof(RightRequestResultMessageBuilder.Factory));
     Container.RegisterStepFactoryWithBuilderFactory(typeof(AddRequestMessageStep.Factory), typeof(RequestRightsOptionInfoMessageBuilderFactory));
 
