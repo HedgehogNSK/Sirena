@@ -105,7 +105,7 @@ Please remove one of your sirenas and try again.</value>
 *Are your sure?* This action can&apos;t be canceled.</value>
   </data>
   <data name="command.delete.success">
-    <value>Sirena *\&quot;{0}\&quot;* has been deleted</value>
+    <value>Sirena *&quot;{0}&quot;* has been deleted</value>
   </data>
   <data name="command.display_sirenas.no_created">
     <value>⚠️You haven&apos;t created any Sirena yet.</value>
@@ -212,9 +212,9 @@ Please try another key phrase.</value>
   </data>
   <data name="command.request_rights.fail">
     <value>⚠️Request failed. Possible reasons: 
-1.There is no *sirena* with this id: *{0}*;
-2.You are *owner* of the sirena;
-3. You are already responsible for the sirena.</value>
+1. There is no *sirena* with ID: `{0}`
+2. You are the *owner* of the sirena
+3. You are *already responsible* for the sirena.</value>
   </data>
   <data name="command.request_rights.incorrect_parameters">
     <value>⚠️Incorrect parameters. Please use syntax:
@@ -223,6 +223,14 @@ You can send request message or skip it. But you have to set correc sirena id</v
   </data>
   <data name="command.request_rights.success">
     <value>You have successfuly sent a a permission request for the sirena: {0}</value>
+  </data>
+  <data name="command.request_rights.available.header">
+    <value>*Your are able to request rights to call:*
+
+</value>
+  </data>
+  <data name="command.request_rights.available.empty">
+    <value>You don&apos;t have any Sirena for which you could request call rights.</value>
   </data>
   <data name="command.request.description">
     <value>Request owner of Sirena to delegate right to call Sirena</value>
@@ -320,7 +328,7 @@ ID: `{2}`
     <value>⚠️*Unsubscription failed.* Possible reasons: you&apos;re not listener of the Sirena or this sirena doens&apos;t exist.</value>
   </data>
   <data name="command.unsubscribe.success">
-    <value>You successfully unsubsribed from the &quot;{0}&quot; Sirena.</value>
+    <value>You have successfully unsubsribed from the Sirena `{0}`</value>
   </data>
   <data name="menu.buttons.anotherTry.title">
     <value>🔄 Retry</value>
@@ -386,7 +394,7 @@ ID: `{2}`
     <value>⚠️Couldn&apos;t find sirena to mute user</value>
   </data>
   <data name="command.request_rights.extra_info">
-    <value>ℹ️You are about to ask rights to call sirena: `{0}`.You can write extra infromation for the owner of the Sirena or you can send request as is by click on the button down bellow.</value>
+    <value>ℹ️You are about to ask rights to call sirena: {0}.You can write extra infromation for the owner of the Sirena or you can send request as is by click on the button down bellow.</value>
   </data>
   <data name="command.request_rights.extra_info.skip">
     <value>🙏 Request only</value>
