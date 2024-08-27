@@ -1,30 +1,18 @@
-using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
-public class GetSubscriptionsListCommand : AbstractBotCommmand, IBotCommand//, IDisposable
+public class GetSubscriptionsListCommand(IMessageSender messageSender
+  , IGetUserRelatedSirenas findSirena, IGetUserInformation getUserInformation
+  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> messageBuilderFactory) 
+  : AbstractBotCommmand(NAME, DESCRIPTION), IBotCommand//, IDisposable
 {
   public const string NAME = "subscriptions";
   public const string DESCRIPTION = "Displays your current subscriptions.";
   CompositeDisposable disposables = new CompositeDisposable();
-  private readonly IMessageSender messageSender;
-  private readonly IGetUserRelatedSirenas findSirena;
-  private readonly IGetUserInformation getUserInformation;
-  private readonly ILocalizationProvider localizationProvider;
-
-  public GetSubscriptionsListCommand(IMessageSender messageSender
-  , IGetUserRelatedSirenas findSirena, IGetUserInformation getUserInformation
-  , ILocalizationProvider localizationProvider)
-    : base(NAME, DESCRIPTION)
-  {
-    this.messageSender = messageSender;
-    this.findSirena = findSirena;
-    this.getUserInformation = getUserInformation;
-    this.localizationProvider = localizationProvider;
-  }
 
   public override void Execute(IRequestContext context)
   {
@@ -33,19 +21,14 @@ public class GetSubscriptionsListCommand : AbstractBotCommmand, IBotCommand//, I
     IDisposable userSubscriptionsStream = findSirena.GetSubscriptions(uid)
       .SelectMany(_sirenas => _sirenas)
       .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId)
-          .Select(_nick => (_sirena, _nick)))
+          .Do(_nick => _sirena.OwnerNickname = _nick)
+          .Select(_ => _sirena))
       .ToArray()
-      .Subscribe(_subscriptions => ProcessResult(_subscriptions, context));
+      .Select(_subscriptions => messageBuilderFactory.Create(context,_subscriptions))
+      .SelectMany(messageSender.ObservableSend)
+      .Subscribe();
 
     disposables.Add(userSubscriptionsStream);
-  }
-
-  private void ProcessResult((SirenRepresentation _sirena, string _nick)[] subscriptions, IRequestContext context)
-  {
-    long chatId = context.GetChat().Id;
-    var info = context.GetCultureInfo();
-    MessageBuilder builder = new SubscriptionsMesssageBuilder(chatId, info, localizationProvider, subscriptions);
-    messageSender.Send(builder.Build());
   }
 
   public void Dispose()
