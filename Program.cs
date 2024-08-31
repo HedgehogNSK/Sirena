@@ -1,4 +1,5 @@
-﻿using Hedgey.Extensions.SimpleInjector;
+﻿using Hedgey.Extensions;
+using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Extensions.Types;
 using Hedgey.Sirena.Bot;
 using Hedgey.Sirena.Bot.DI;
@@ -8,13 +9,23 @@ using RxTelegram.Bot.Exceptions;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Callbacks;
 using SimpleInjector;
+using System.Collections;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Text;
 
 namespace Hedgey.Sirena;
 static internal class Program
 {
-
+  private static void TestDisplay(ulong id)
+  {
+    StringBuilder builder = new StringBuilder();
+    Bit.Write(id);
+    string result = Converter.ToBase64URL(id);
+    Console.WriteLine(id + " " + builder.ToString() + " " + result);
+    long number = Converter.FromBase64(result);
+    Console.WriteLine("Opposite: " + number);
+  }
   private static async Task Main(string[] args)
   {
     Container container = new Container();
@@ -25,6 +36,25 @@ static internal class Program
     InstallCommands(container);
 
     container.Verify();
+    // Bit.Write(294669217524142L);
+    // TestDisplay(294669217524142L);
+    var idGen = container.GetInstance<IIDGenerator>();
+    int i = 0;
+    while (i != 2)
+    {
+      for (int jd = 0; jd != 110; ++jd)
+      {
+        var id = idGen.Get();
+        var bytes = BitConverter.GetBytes(id);
+        BitArray bits = new BitArray(bytes);
+        StringBuilder builder = new StringBuilder();
+        foreach (bool each in bits)
+          builder.Append(each == false ? '0' : '1');
+        TestDisplay(id);
+      }
+      Thread.Sleep(5);
+      ++i;
+    }
 
     var botProxyRequests = container.GetInstance<AbstractBotMessageSender>();
     var bot = container.GetInstance<TelegramBot>();
