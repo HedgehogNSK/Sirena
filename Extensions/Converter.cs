@@ -1,20 +1,20 @@
 namespace Hedgey.Extensions;
 
 static public class Converter{
- static public string ToBase64(ulong id)
+ static public string ToBase64URL(ulong id)
   {
     var bytes = BitConverter.GetBytes(id);
 
     if (!BitConverter.IsLittleEndian)
       Array.Reverse(bytes);
 
-    string block = ToBase64(bytes);
+    string block = ToBase64URL(bytes);
     return block;
   }
- public static string ToBase64(byte[] bytes)
+ public static string ToBase64URL(byte[] bytes)
   {
     const string Base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-
+    //Each 3 bytes translates into 4 letters from the list
     int length = bytes.Length;
     int padding = length % 3;
     if(padding!=0)

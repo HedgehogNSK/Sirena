@@ -14,7 +14,7 @@ public class CoreInstaller(Container container) : Installer(container)
 {
   const string resourcePath = "Sirena.Resources.Commands";
   const int MACHINE_ID = 0;
-  const long EPOCH_TIMESTAMP = 1725100000000; //2024-08-29T10:00:00.000Z
+  const long EPOCH_TIMESTAMP = 1725182332000; //2024-08-29T10:00:00.000Z
 
   public override void Install()
   {

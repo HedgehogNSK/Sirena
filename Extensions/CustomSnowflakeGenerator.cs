@@ -3,17 +3,16 @@ namespace Hedgey.Extensions;
 public class CustomSnowflakeGenerator : IIDGenerator
 {
   private readonly ulong _epoch;
-  private readonly ulong _machineID;
-  private ulong _sequence;
+  private readonly ushort _machineID;
+  private uint _sequence;
   private long _lastTimestamp;
   private const int ID_BITS = 10;
   private const int SEQUENCE_BITS = 12;
   private const int DATE_BITS = 42;
-  private const int SEQUENCE_SHIFT = DATE_BITS;
   private const int MAX_ID = (1 << ID_BITS) - 1; // 1023
   private const uint MAX_SEQUENCE_LENGTH = (1 << SEQUENCE_BITS) - 1; // 4095
 
-  public CustomSnowflakeGenerator(long epoch, uint machineID)
+  public CustomSnowflakeGenerator(long epoch, ushort machineID)
   {
     if (machineID < 0 || machineID > MAX_ID)
       throw new ArgumentOutOfRangeException(nameof(machineID), $"Machine ID must be between 0 and {MAX_ID}");
@@ -43,14 +42,24 @@ public class CustomSnowflakeGenerator : IIDGenerator
         if (_sequence == 0)
           _lastTimestamp = WaitForNextMillisecond(_lastTimestamp);
       }
-      ulong temp = (ulong)_lastTimestamp - _epoch;
-      temp &= 0x3FFFFFFFFFF;
-      temp |= _sequence << SEQUENCE_SHIFT;
-      temp |= Bit.ReverseBits(_machineID);
-      return temp;
+      if (_sequence >= 3)
+        Console.WriteLine(_sequence);
+      ulong result = _sequence >> 3;
+      result <<= ID_BITS;
+      result |= _machineID;
+      result <<= 3;
+      result |= _sequence & 0x7;
+      result <<= DATE_BITS;
+      result |= ((ulong)_lastTimestamp - _epoch) & 0x3FFFFFFFFFF; // mask 0x3FFFFFFFFFF = 1<<DATE_BITS -1
+      return result;
+      // ulong temp = (ulong)_lastTimestamp - _epoch;
+      // temp &= 0x3FFFFFFFFFF;
+      // temp |= _sequence << SEQUENCE_SHIFT;
+      // temp |= _machineID << ID_SHIFT;
+      //return temp;
     }
   }
-  
+
   private long GetCurrentTimestamp()
     => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
@@ -69,21 +78,4 @@ public class CustomSnowflakeGenerator : IIDGenerator
       return timestamp;
     }
   }
-  ///Uncomment when there will be a lot of request per milisecond
-  // static SnowflakeGenerator()
-  // {
-  //   StartTimer();
-  // }
-  // static void StartTimer()
-  // {
-  //   Task.Run(Monitoring);
-  //   async void Monitoring()
-  //   {
-  //     while (true)
-  //     {
-  //       _timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-  //       await Task.Delay(1);
-  //     }
-  //   }
-  // }
 }

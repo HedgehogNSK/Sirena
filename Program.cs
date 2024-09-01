@@ -21,7 +21,7 @@ static internal class Program
   {
     StringBuilder builder = new StringBuilder();
     Bit.Write(id);
-    string result = Converter.ToBase64(id);
+    string result = Converter.ToBase64URL(id);
     Console.WriteLine(id + " " + builder.ToString() + " " + result);
     long number = Converter.FromBase64(result);
     Console.WriteLine("Opposite: " + number);
@@ -36,13 +36,13 @@ static internal class Program
     InstallCommands(container);
 
     container.Verify();
-    Bit.Write(294669217524142L);
-    TestDisplay(294669217524142L);
+    // Bit.Write(294669217524142L);
+    // TestDisplay(294669217524142L);
     var idGen = container.GetInstance<IIDGenerator>();
     int i = 0;
-    while (i != 1000)
+    while (i != 2)
     {
-      for (int jd = 0; jd != 3; ++jd)
+      for (int jd = 0; jd != 110; ++jd)
       {
         var id = idGen.Get();
         var bytes = BitConverter.GetBytes(id);
