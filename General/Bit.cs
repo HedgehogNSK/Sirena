@@ -1,7 +1,48 @@
 namespace Hedgey.Extensions;
 
 static public class Bit{
+
   
+  static public int ReverseBits(int n,int count){
+    int start = 0;
+    
+    for(int i=0; i!=count; ++i)
+    {
+      start = (start << 1) | n & 1;
+      n >>= 1;
+    }
+    return start;
+  }  
+  static public uint ReverseBits(uint n,int count){
+    uint start = 0;
+    
+    for(int i=0; i!=count; ++i)
+    {
+      start = (start << 1) | n & 1;
+      n >>= 1;
+    }
+    return start;
+  }  
+  static public long ReverseBits(long n,int count){
+    long start = 0;
+    
+    for(int i=0; i!=count; ++i)
+    {
+      start = (start << 1) | n & 1;
+      n >>= 1;
+    }
+    return start;
+  }  
+  static public ulong ReverseBits(ulong n,int count){
+    ulong start = 0;
+    
+    for(int i=0; i!=count; ++i)
+    {
+      start = (start << 1) | n & 1;
+      n >>= 1;
+    }
+    return start;
+  }  
   static public uint ReverseBits(uint n)
   {
     n = (n << 16) | (n >> 16);
