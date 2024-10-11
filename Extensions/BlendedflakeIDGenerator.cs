@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Hedgey.Extensions;
 
-public class CustomSnowflakeGenerator : IIDGenerator
+public class BlendedflakeIDGenerator : IIDGenerator
 {
   private readonly ulong _epoch;
   private readonly ushort _machineID;
@@ -14,7 +14,7 @@ public class CustomSnowflakeGenerator : IIDGenerator
   private const int DATE_BITS = 42;
   private const int MAX_ID = (1 << ID_BITS) - 1; // 1023
   private const uint MAX_SEQUENCE_LENGTH = (1 << SEQUENCE_BITS) - 1; // 4095
-  public CustomSnowflakeGenerator(long epoch, ushort machineID)
+  public BlendedflakeIDGenerator(long epoch, ushort machineID)
   {
     if (machineID < 0 || machineID > MAX_ID)
       throw new ArgumentOutOfRangeException(nameof(machineID), $"Machine ID must be between 0 and {MAX_ID}");
