@@ -1,3 +1,6 @@
+using System.Text;
+using System.Text.RegularExpressions;
+
 namespace Hedgey.Extensions;
 
 public class CustomSnowflakeGenerator : IIDGenerator
@@ -11,7 +14,6 @@ public class CustomSnowflakeGenerator : IIDGenerator
   private const int DATE_BITS = 42;
   private const int MAX_ID = (1 << ID_BITS) - 1; // 1023
   private const uint MAX_SEQUENCE_LENGTH = (1 << SEQUENCE_BITS) - 1; // 4095
-
   public CustomSnowflakeGenerator(long epoch, ushort machineID)
   {
     if (machineID < 0 || machineID > MAX_ID)
@@ -22,7 +24,6 @@ public class CustomSnowflakeGenerator : IIDGenerator
     _sequence = 0;
     _lastTimestamp = -1L;
   }
-
   public ulong Get()
   {
     lock (this)
@@ -44,25 +45,49 @@ public class CustomSnowflakeGenerator : IIDGenerator
       }
       if (_sequence >= 3)
         Console.WriteLine(_sequence);
-      ulong result = _sequence >> 3;
-      result <<= ID_BITS;
+
+      const int seqSlitBit = 4;  
+      ulong result =  _sequence >> seqSlitBit << ID_BITS;
       result |= _machineID;
-      result <<= 3;
-      result |= _sequence & 0x7;
+      result <<= seqSlitBit;
+      result |= _sequence & 0xF;
       result <<= DATE_BITS;
-      result |= ((ulong)_lastTimestamp - _epoch) & 0x3FFFFFFFFFF; // mask 0x3FFFFFFFFFF = 1<<DATE_BITS -1
+      result |= ((ulong)_lastTimestamp - _epoch) & 0x3FFFFFFFFFF;
       return result;
-      // ulong temp = (ulong)_lastTimestamp - _epoch;
-      // temp &= 0x3FFFFFFFFFF;
-      // temp |= _sequence << SEQUENCE_SHIFT;
-      // temp |= _machineID << ID_SHIFT;
-      //return temp;
     }
   }
-
   private long GetCurrentTimestamp()
     => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
+  static Regex regex = new Regex("-*=");
+  /// <summary>
+  /// Remove last consequent 'A' symbols and '='. 
+  /// </summary>
+  /// <param name="base64hash"></param>
+  /// <returns></returns>
+  static public string ShortifyHash(string base64hash)
+  {
+    base64hash = regex.Replace(base64hash, string.Empty);
+    return base64hash;
+  }
+  /// <summary>
+  /// Each base64 of Snowflake ID has 11 symbols. And each of them has 1 '=' at the end.
+  /// 
+  /// </summary>
+  /// <param name="shortSnowlakeHash"></param>
+  /// <returns></returns>
+  static public string RestoreHash(string shortSnowlakeHash)
+  {
+    const int max = 11; // Hash length is 11 = 10 symbols + 1 symbol '='
+    int hashLenght = shortSnowlakeHash.Length;
+    StringBuilder builder = new StringBuilder(shortSnowlakeHash);
+    for (int i = 0; i != max - hashLenght; ++i)
+    {
+      builder.Append('-');
+    }
+    builder.Append('=');
+    return builder.ToString();
+  }
   private long WaitForNextMillisecond(long lastTimestamp)
   {
     return Task.Run(Wait4NextMillisecondAsync).GetAwaiter().GetResult();
