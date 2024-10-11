@@ -40,8 +40,8 @@ public class RemoveSirenaMenuMessageBuilder : LocalizedMessageBuilder
         if (number % optionsPerLine == 0)
           keyboardBuilder = keyboardBuilder.EndRow().BeginRow();
 
-        builder.Append(number).AppendFormat(template, sirena.Title, sirena.Id);
-        keyboardBuilder = keyboardBuilder.AddDeleteButton(Info, sirena.Id, number.ToString());
+        builder.Append(number).AppendFormat(template, sirena.Title, sirena.ShortHash);
+        keyboardBuilder = keyboardBuilder.AddDeleteButton(Info, sirena.Sid, number.ToString());
       }
       IReplyMarkup markup = new InlineKeyboardMarkup()
       {

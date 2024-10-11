@@ -1,18 +1,17 @@
 using Hedgey.Extensions;
 using Hedgey.Structure.Factory;
-using MongoDB.Bson;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class ValidateSirenaIdStep(NullableContainer<ObjectId> sirenaIdContainter
+public class ValidateSirenaIdStep(NullableContainer<ulong> sirenaIdContainter
   , IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory) : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
   {
     var key = context.GetArgsString().GetParameterByNumber(0);
 
-    if (string.IsNullOrEmpty(key) || !ObjectId.TryParse(key, out var id))
+    if (string.IsNullOrEmpty(key) || !BlendedflakeIDGenerator.TryParse(key, out var id))
       return Observable.Return(new Report(Result.Wait, messageBuilderFactory.Create(context)));
 
     sirenaIdContainter.Set(id);
@@ -20,9 +19,9 @@ public class ValidateSirenaIdStep(NullableContainer<ObjectId> sirenaIdContainter
   }
 
   public class Factory(IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory)
-    : IFactory<NullableContainer<ObjectId>, ValidateSirenaIdStep>
+    : IFactory<NullableContainer<ulong>, ValidateSirenaIdStep>
   {
-    public ValidateSirenaIdStep Create(NullableContainer<ObjectId> sirenaContainer)
+    public ValidateSirenaIdStep Create(NullableContainer<ulong> sirenaContainer)
       => new ValidateSirenaIdStep(sirenaContainer, messageBuilderFactory);
   }
 }

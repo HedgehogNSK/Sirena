@@ -41,14 +41,13 @@ public class SirenaCallServiceMessageBuilder : LocalizedMessageBuilder
     return message;
   }
   public class Factory(ILocalizationProvider localizationProvider)
-    : IFactory<IRequestContext, SirenRepresentation, IMessageBuilder>
+    : IFactory<long,IRequestContext, SirenRepresentation, IMessageBuilder>
   {
-    public IMessageBuilder Create(IRequestContext context, SirenRepresentation sirena)
+    public IMessageBuilder Create(long targetUID,IRequestContext context, SirenRepresentation sirena)
     {
-      var chatId = context.GetChat().Id;
       var info = context.GetCultureInfo();
       var user = context.GetUser();
-      return new SirenaCallServiceMessageBuilder(chatId, info, localizationProvider, user, sirena);
+      return new SirenaCallServiceMessageBuilder(targetUID, info, localizationProvider, user, sirena);
     }
   }
 }

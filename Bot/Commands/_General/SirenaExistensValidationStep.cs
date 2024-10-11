@@ -2,15 +2,14 @@ using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
-using MongoDB.Bson;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SirenaExistensValidationStep(NullableContainer<ObjectId> idContainer
+public class SirenaExistensValidationStep(NullableContainer<ulong> idContainer
 , NullableContainer<SirenRepresentation> sirenaContainer
 , IFindSirenaOperation findSirenaOperation
-, IFactory<IRequestContext, ObjectId, IMessageBuilder> noSirenaMessageBuilderFactory)
+, IFactory<IRequestContext, ulong, IMessageBuilder> noSirenaMessageBuilderFactory)
  : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -28,20 +27,20 @@ public class SirenaExistensValidationStep(NullableContainer<ObjectId> idContaine
     }
   }
 
-  public class Factory(IFactory<IRequestContext, ObjectId, IMessageBuilder> messageBuilderFactory
+  public class Factory(IFactory<IRequestContext, ulong, IMessageBuilder> messageBuilderFactory
   , IFindSirenaOperation findSirenaOperation)
-    : IFactory<NullableContainer<ObjectId>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep>
+    : IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep>
   {
-    public SirenaExistensValidationStep Create(NullableContainer<ObjectId> idContainer
+    public SirenaExistensValidationStep Create(NullableContainer<ulong> idContainer
       , NullableContainer<SirenRepresentation> sirenaContainer)
       => new SirenaExistensValidationStep(idContainer, sirenaContainer
       , findSirenaOperation, messageBuilderFactory);
   }
 
   public class MessagBuilderFactory(ILocalizationProvider localizationProvider)
-    : IFactory<IRequestContext, ObjectId, NoSirenaMessageBuilder>
+    : IFactory<IRequestContext, ulong, NoSirenaMessageBuilder>
   {
-    public NoSirenaMessageBuilder Create(IRequestContext context, ObjectId sirenaId)
+    public NoSirenaMessageBuilder Create(IRequestContext context, ulong sirenaId)
     {
       var chatId = context.GetChat().Id;
       var info = context.GetCultureInfo();

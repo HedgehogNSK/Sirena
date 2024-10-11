@@ -1,24 +1,23 @@
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class RequestSubscribeStep(NullableContainer<ObjectId> sirenaIdContainter
+public class RequestSubscribeStep(NullableContainer<ulong> sirenaIdContainter
   , ISubscribeToSirenaOperation subscribeOperation
   , IFactory<IRequestContext, SirenRepresentation, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
-  , IFactory<IRequestContext, ObjectId, SirenaNotFoundMessageBuilder> sirenaNotFoundMessageBuilderFactory)
+  , IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder> sirenaNotFoundMessageBuilderFactory)
   : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
   {
-    var id = sirenaIdContainter.Get();
+    var sid = sirenaIdContainter.Get();
     var uid = context.GetUser().Id;
 
-    var request = subscribeOperation.Subscribe(uid, id).Publish().RefCount();
+    var request = subscribeOperation.Subscribe(uid, sid).Publish().RefCount();
     var fail = request.Where(x => x == null).Select(_ => CreateReportNotFound());
     var success = request.Where(x => x != null).Select(CreateSuccesfulReport);
     return success.Merge(fail);
@@ -40,9 +39,9 @@ public class RequestSubscribeStep(NullableContainer<ObjectId> sirenaIdContainter
   }
   public class Factory(ISubscribeToSirenaOperation subscribeOperation
   , IFactory<IRequestContext, SirenRepresentation, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
-  , IFactory<IRequestContext, ObjectId, SirenaNotFoundMessageBuilder> sirenaNotFoundMessageBuilderFactory)
-  : IFactory<NullableContainer<ObjectId>, RequestSubscribeStep>
+  , IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder> sirenaNotFoundMessageBuilderFactory)
+  : IFactory<NullableContainer<ulong>, RequestSubscribeStep>
   {
-    public RequestSubscribeStep Create(NullableContainer<ObjectId> idContainer) => new RequestSubscribeStep(idContainer, subscribeOperation, successMessagBuilderFactory, sirenaNotFoundMessageBuilderFactory);
+    public RequestSubscribeStep Create(NullableContainer<ulong> idContainer) => new RequestSubscribeStep(idContainer, subscribeOperation, successMessagBuilderFactory, sirenaNotFoundMessageBuilderFactory);
   }
 }

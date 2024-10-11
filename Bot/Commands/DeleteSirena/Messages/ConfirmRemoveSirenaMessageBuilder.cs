@@ -23,11 +23,11 @@ public class ConfirmRemoveSirenaMessageBuilder : LocalizedMessageBuilder
     string cancel = "command.delete.cancel";
     string confirm = Localize("command.delete.confirm");
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-      .AddSirenaInfoButton(Info, sirena.Id, cancel)
+      .AddSirenaInfoButton(Info, sirena.Sid, cancel)
       .AddCallbackData(confirm, true.ToString())
       .EndRow().ToReplyMarkup();
 
-    var message = string.Format(question, sirena.Title, sirena.Id);
+    var message = string.Format(question, sirena.Title, sirena.ShortHash);
     return CreateDefault(message, markup);
   }
   public class Factory(ILocalizationProvider localizationProvider)

@@ -30,7 +30,7 @@ public class DeleteConcretteSirenaStep : DeleteSirenaStep
   public override IObservable<Report> Make(IRequestContext context)
   {
     var uid = context.GetUser().Id;
-    var sirenaId = sirenaContainer.Get().Id;
+    var sirenaId = sirenaContainer.Get().Sid;
     return sirenaDeleteOperation.Delete(uid, sirenaId)
     .Select(CreateReport);
 

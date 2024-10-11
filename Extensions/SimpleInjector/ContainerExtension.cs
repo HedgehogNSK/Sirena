@@ -13,7 +13,7 @@ static public class ContainerExtension
     => container.GetInstance<IFactory<T1, T2, T3, TResult>>().Create(param1, param2, param3);
 
   /// <summary>
-  /// Shortcut for conditional registration of interface target type
+  /// Shortcut for conditional interface registration into target type
   /// </summary>
   /// <typeparam name="TInterface">Interface of entity</typeparam>
   /// <typeparam name="TImpl">exact implementation of the interface that we are going to inject inside target class</typeparam>

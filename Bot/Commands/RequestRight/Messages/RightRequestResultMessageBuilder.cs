@@ -21,7 +21,7 @@ sealed public class RightRequestResultMessageBuilder(long chatId, CultureInfo in
     string message = Localize(!result.isSirenaFound ? failMessage :
       !result.isSuccess ? noChangesMessage : successMessage);
     message = result.isSirenaFound? string.Format(message, sirena) 
-      :string.Format(message, sirena.Id)  ;
+      :string.Format(message, sirena.ShortHash)  ;
     var markup = MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info);
     return CreateDefault(message, markup);
   }

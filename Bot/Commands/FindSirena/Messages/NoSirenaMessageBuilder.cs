@@ -1,5 +1,4 @@
 using Hedgey.Localization;
-using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using System.Globalization;
 
@@ -7,7 +6,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class NoSirenaMessageBuilder : LocalizedMessageBuilder
 {
-  private readonly ObjectId id;
+  private readonly ulong id;
   string key = string.Empty;
   public NoSirenaMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, string key) : base(chatId, info, localizationProvider)
@@ -15,7 +14,7 @@ public class NoSirenaMessageBuilder : LocalizedMessageBuilder
     this.key = key;
   }
   public NoSirenaMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider localizationProvider, ObjectId id) : base(chatId, info, localizationProvider)
+  , ILocalizationProvider localizationProvider, ulong id) : base(chatId, info, localizationProvider)
   {
     this.id = id;
   }

@@ -10,7 +10,7 @@ public abstract class CompositeStep<T> : IObservableStep<T>
 {
   public CompositeStep(params IObservableStep<T>[] steps)
   {
-    if(steps.Length==0)
+    if (steps.Length == 0)
     {
        throw new ArgumentException("Input array has to be contains at least 1 step.", nameof(steps));
     }

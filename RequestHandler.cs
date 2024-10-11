@@ -33,11 +33,13 @@ public class RequestHandler
     botCommands.TryGetValue(commandName, out var command);
     bool planIsSet = planDictionary.TryGetValue(uid, out CommandPlan? plan);
 
+#pragma warning disable CS8602 // Possible null reference argument.
     if (planIsSet && plan.IsComplete)
     {
       Console.WriteLine($"{uid} -> {command.Command} . Complete plan stil in the dictionary");
       return;
     }
+#pragma warning restore CS8602 // Possible null reference argument.
     if (command == null)
     {
       if (planIsSet)

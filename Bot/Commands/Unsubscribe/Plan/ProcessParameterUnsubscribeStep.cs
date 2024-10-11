@@ -2,14 +2,13 @@ using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class ProcessParameterUnsubscribeStep(NullableContainer<ObjectId> idContainer
+public class ProcessParameterUnsubscribeStep(NullableContainer<ulong> idContainer
   , IGetUserRelatedSirenas getSubscriptions
   , IGetUserInformation getUserInformation
   , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> messageBuilderFactory)
@@ -21,7 +20,7 @@ public class ProcessParameterUnsubscribeStep(NullableContainer<ObjectId> idConta
     long uid = botUser.Id;
     long chatId = context.GetTargetChatId();
     string param = context.GetArgsString().GetParameterByNumber(0);
-    if (string.IsNullOrEmpty(param) || !ObjectId.TryParse(param, out ObjectId id))
+    if (string.IsNullOrEmpty(param) || ! BlendedflakeIDGenerator.TryParse(param, out var id))
     {
       return getSubscriptions.GetSubscriptions(uid).SelectMany(_sirenas => _sirenas)
         .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId)
@@ -46,9 +45,9 @@ public class ProcessParameterUnsubscribeStep(NullableContainer<ObjectId> idConta
   public class Factory(
   IGetUserRelatedSirenas getSubscriptions, IGetUserInformation getUserInformation
   , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> messageBuilderFactory)
-    : IFactory<NullableContainer<ObjectId>, ProcessParameterUnsubscribeStep>
+    : IFactory<NullableContainer<ulong>, ProcessParameterUnsubscribeStep>
   {
-    public ProcessParameterUnsubscribeStep Create(NullableContainer<ObjectId> idContainer)
+    public ProcessParameterUnsubscribeStep Create(NullableContainer<ulong> idContainer)
     => new ProcessParameterUnsubscribeStep(idContainer, getSubscriptions, getUserInformation, messageBuilderFactory);
   }
 }

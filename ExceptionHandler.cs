@@ -18,7 +18,7 @@ static public class ExceptionHandler
             Console.WriteLine(message);
           }
           break;
-        default: Console.WriteLine(time + exception.Message); break;
+        default: Console.WriteLine(time + exception); break;
       }
       ex = ex.InnerException;
     }

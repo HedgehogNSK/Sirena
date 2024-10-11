@@ -2,7 +2,6 @@ using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
-using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Data;
 using System.Reactive.Linq;
@@ -42,7 +41,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
         .Select(_sireans => removeMenuMessageBuilderFactory.Create(context, _sireans))
         .Select(_removeMenuBuilder => new Report(Result.Wait, _removeMenuBuilder));
     }
-    else if (ObjectId.TryParse(param, out var id))
+    else if (BlendedflakeIDGenerator.TryParse(param, out var id))
     {
       observableSirena = findSirenaOperation.Find(id);
     }

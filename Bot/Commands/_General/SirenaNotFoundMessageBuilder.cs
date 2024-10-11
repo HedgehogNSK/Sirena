@@ -1,6 +1,5 @@
 using Hedgey.Localization;
 using Hedgey.Structure.Factory;
-using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
@@ -9,9 +8,9 @@ namespace Hedgey.Sirena.Bot;
 
 public class SirenaNotFoundMessageBuilder : LocalizedMessageBuilder
 {
-  private readonly ObjectId id;
+  private readonly ulong id;
   public SirenaNotFoundMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider, ObjectId id)
+  , ILocalizationProvider  localizationProvider, ulong id)
   : base(chatId,info,localizationProvider)
   {
     this.id = id;
@@ -29,9 +28,9 @@ public class SirenaNotFoundMessageBuilder : LocalizedMessageBuilder
   }
   
   public class Factory(ILocalizationProvider localizationProvider)
-   : IFactory<IRequestContext, ObjectId, SirenaNotFoundMessageBuilder>
+   : IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder>
   {
-    public SirenaNotFoundMessageBuilder Create(IRequestContext context, ObjectId id)
+    public SirenaNotFoundMessageBuilder Create(IRequestContext context, ulong id)
     {
 
       long chatId = context.GetTargetChatId();

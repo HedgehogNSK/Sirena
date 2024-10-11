@@ -36,10 +36,10 @@ public class ListSirenaMessageBuilder : LocalizedMessageBuilder
       {
         keyboardBuilder.EndRow().BeginRow();
       }
-      keyboardBuilder.AddSirenaInfoButton(Info,tuple.sirena.Id, number.ToString());
+      keyboardBuilder.AddSirenaInfoButton(Info,tuple.sirena.Sid, number.ToString());
 
       builder.Append(number)
-      .AppendFormat(template, sirena.Title, owner, sirena.Id);
+      .AppendFormat(template, sirena.Title, owner, sirena.ShortHash);
     }
 
     var markup = keyboardBuilder.EndRow().BeginRow()

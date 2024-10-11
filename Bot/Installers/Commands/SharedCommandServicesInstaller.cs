@@ -2,6 +2,7 @@ using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Bot.Operations.Mongo;
 using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using MongoDB.Driver;
 using SimpleInjector;
 
@@ -21,8 +22,9 @@ public class SharedCommandServicesInstaller(Container container) : Installer(con
     Container.RegisterSingleton<IGetUserOverviewAsync, GetUserStatsOperationAsync>();
 
     Container.RegisterSingleton<FacadeMongoDBRequests>();
-    Container.RegisterSingleton<MongoClient>(()=> new MongoClient());//MongoClientFactory connection settings to db
-    Container.RegisterSingleton<IMongoDatabase>(() => Container.GetInstance<MongoClient>().GetDatabase("siren"));//MongoClientFactory connection settings to db
+    Container.Register<IFactory<IMongoClient>, MongoClientFactory>(Lifestyle.Transient);
+    Container.RegisterSingleton<IMongoClient>(() => Container.GetInstance<IFactory<IMongoClient>>().Create());
+    Container.RegisterSingleton<IMongoDatabase>(() => Container.GetInstance<IMongoClient>().GetDatabase("siren"));
     Container.RegisterSingleton<IMongoCollection<SirenRepresentation>>(()
       => Container.GetInstance<IMongoDatabase>().GetCollection<SirenRepresentation>("sirens"));
     Container.RegisterSingleton<IMongoCollection<UserRepresentation>>(()

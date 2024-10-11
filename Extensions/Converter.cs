@@ -3,7 +3,7 @@ namespace Hedgey.Extensions;
 static public class Converter
 {
   const string Base64Chars = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
-  static public string ToBase64URL(ulong id)
+  static public string UlongToBase64URLHM(ulong id)
   {
     var bytes = BitConverter.GetBytes(id);
 
@@ -38,11 +38,11 @@ static public class Converter
       byte b2 = bytes[index++];
       byte b3 = bytes[index++];
 
-      //0x3F 1111 1100
+      //0x3F: 1111 1100
       result[resultIndex++] = Base64Chars[(b1 >> 2) & 0x3F];
-      //0x30 0000 1100 //0x0F 1111 0000
+      //0x30: 0000 1100 //0x0F: 1111 0000
       result[resultIndex++] = Base64Chars[((b1 << 4) & 0x30) | ((b2 >> 4) & 0x0F)];
-      //0x3C 0011 1100
+      //0x3C: 0011 1100
       result[resultIndex++] = Base64Chars[((b2 << 2) & 0x3C) | ((b3 >> 6) & 0x03)];
       result[resultIndex++] = Base64Chars[b3 & 0x3F];
     }
@@ -84,19 +84,13 @@ static public class Converter
     int resultIndex = 0;
     int index = 0;
 
-    // TimeStamp(42 bits)							            Sequence(12) Machine ID(10)
-    // 10000010111010011110100 1010100010000000 00 0000000000000 1111111111
-    // 											                          v            v
-    // 10100110 10010010 01110100 00000000 00000000 00010010 10000000 00000000
-    // 													                             ^7
-
     while (index < length - 2)
     {
       byte b1 = bytes[index++];
       byte b2 = bytes[index++];
       byte b3 = bytes[index++];
 
-      result[resultIndex++] = Base64Chars[b1 & 0x3F]; //0x3F 1111 1100
+      result[resultIndex++] = Base64Chars[b1 & 0x3F]; //0x3F = 1111 1100 (Big Ending)
       result[resultIndex++] = Base64Chars[(b1 >> 6) | ((b2 << 2) & 0x3C)]; //0x3C 0011 1100
       result[resultIndex++] = Base64Chars[(b2 >> 4) | ((b3 << 4) & 0x30)]; //0x30 0000 1100
       result[resultIndex++] = Base64Chars[(b3 >> 2) & 0x3F]; //0x0F 1111 0000
@@ -125,6 +119,8 @@ static public class Converter
   static public long FromBase64URLHMToLong(string hash)
   {
     var bytes = FromBase64URLHM(hash);
+      if (bytes.Length != 8)
+        Array.Resize(ref bytes, 8);
     return BitConverter.ToInt64(bytes, 0);
   }
 
@@ -151,9 +147,7 @@ static public class Converter
 
         char* endPtr = charPtr + hash.Length;
         for (char* ptr = charPtr; ptr != endPtr; ++ptr)
-        // for (int id = 0; id != hash.Length; ++id)
         {
-          // char c = hash[id];
           uint currCode = *ptr;
 
           // Determine current char code:

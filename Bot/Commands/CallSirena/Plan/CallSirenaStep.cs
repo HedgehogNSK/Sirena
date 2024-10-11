@@ -14,7 +14,7 @@ public class CallSirenaStep : CommandStep
   private readonly IMessageCopier messageCopier;
   private readonly IUpdateSirenaOperation updateSirenaOperation;
   private readonly IFactory<IRequestContext, int, SirenRepresentation, IMessageBuilder> callReportMessageBuilderFactory;
-  private readonly IFactory<IRequestContext, SirenRepresentation, IMessageBuilder> callServiceMessageBuilderFactory;
+  private readonly IFactory<long, IRequestContext, SirenRepresentation, IMessageBuilder> callServiceMessageBuilderFactory;
 
   /// <summary>
   ///
@@ -32,7 +32,7 @@ public class CallSirenaStep : CommandStep
   , IMessageCopier messageCopier
   , IUpdateSirenaOperation updateSirenaOperation
   , IFactory<IRequestContext, int, SirenRepresentation, IMessageBuilder> callReportMessageBuilderFactory
-  , IFactory<IRequestContext, SirenRepresentation, IMessageBuilder> callServiceMessageBuilderFactory)
+  , IFactory<long, IRequestContext, SirenRepresentation, IMessageBuilder> callServiceMessageBuilderFactory)
   {
     this.sirenaContainer = sirenaContainer;
     this.messageSender = messageSender;
@@ -52,7 +52,7 @@ public class CallSirenaStep : CommandStep
     Stack<long> receiversStack = GetReceiversStack(sirena, uid);
     SirenRepresentation.CallInfo callInfo = new(uid, DateTimeOffset.Now);
 
-    var observableNotification = updateSirenaOperation.UpdateLastCall(sirena.Id, callInfo)
+    var observableNotification = updateSirenaOperation.UpdateLastCall(sirena.Sid, callInfo)
       .SelectMany(NotifySubscriber(context, receiversStack, sirena)).Publish().RefCount();
 
     return observableNotification
@@ -108,7 +108,7 @@ public class CallSirenaStep : CommandStep
       if (!receivers.TryPop(out var uid))
         return Observable.Empty<CopyParams>();
 
-      IMessageBuilder sirenaMessage = callServiceMessageBuilderFactory.Create(context, sirena);
+      IMessageBuilder sirenaMessage = callServiceMessageBuilderFactory.Create(uid,context, sirena);
 
       var observableSendMessage = messageSender.ObservableSend(sirenaMessage)
             .Select(x => (long)x.MessageId);
@@ -160,8 +160,8 @@ public class CallSirenaStep : CommandStep
     => new(GetReceiversArray(sirena, uid).Reverse());
   public record CopySettings(CopyMessages copyMessages, long[] recieverIds);
 
-  public class Factory(IMessageSender messageSender, IMessageCopier messageCopier, IUpdateSirenaOperation updateSirenaOperation, IFactory<IRequestContext, int, SirenRepresentation, IMessageBuilder> callReportMessageBuilderFactory, IFactory<IRequestContext, SirenRepresentation, IMessageBuilder> callServiceMessageBuilderFactory) : IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep>
+  public class Factory(IMessageSender messageSender, IMessageCopier messageCopier, IUpdateSirenaOperation updateSirenaOperation, IFactory<IRequestContext, int, SirenRepresentation, IMessageBuilder> callReportMessageBuilderFactory, IFactory<long,IRequestContext, SirenRepresentation, IMessageBuilder> callServiceMessageBuilderFactory) : IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep>
   {
-    public CallSirenaStep Create(NullableContainer<SirenRepresentation> sirenaContainer, NullableContainer<Message> idContainer) => new CallSirenaStep(sirenaContainer, idContainer, messageSender, messageCopier, updateSirenaOperation, callReportMessageBuilderFactory, callServiceMessageBuilderFactory);
+    public CallSirenaStep Create(NullableContainer<SirenRepresentation> sirenaContainer, NullableContainer<Message> messageContainer) => new CallSirenaStep(sirenaContainer, messageContainer, messageSender, messageCopier, updateSirenaOperation, callReportMessageBuilderFactory, callServiceMessageBuilderFactory);
   }
 }

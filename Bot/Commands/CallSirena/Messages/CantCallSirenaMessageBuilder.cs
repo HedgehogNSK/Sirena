@@ -21,7 +21,7 @@ public class NotAllowedToCallSirenaMessageBuilder : LocalizedMessageBuilder
   public override SendMessage Build()
   {
     string notification = Localize("command.call.not_allowed"); ;
-    string message = string.Format(notification, sirena.Title, sirena.Id);
+    string message = string.Format(notification, sirena.Title, sirena.Hash);
 
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
     .AddDisplayUserSirenasButton(Info)

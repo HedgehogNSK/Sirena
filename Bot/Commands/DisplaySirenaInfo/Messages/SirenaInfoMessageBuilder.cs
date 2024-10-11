@@ -34,14 +34,14 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
     if (userIsOwner)
     {
       if (sirena.Listener.Length != 0)
-        keyboardBuilder.AddCallSirenaButton(Info, sirena.Id).EndRow().BeginRow();
+        keyboardBuilder.AddCallSirenaButton(Info, sirena.Sid).EndRow().BeginRow();
       if (sirena.Requests.Length != 0)
-        keyboardBuilder.AddDisplayRequestsButton(Info, sirena.Id, sirena.Requests.Length);
+        keyboardBuilder.AddDisplayRequestsButton(Info, sirena.Sid, sirena.Requests.Length);
       if (sirena.Responsible.Length != 0)
-        keyboardBuilder.AddDisplayResponsiblesButton(Info, sirena.Id, sirena.Responsible.Length);
+        keyboardBuilder.AddDisplayResponsiblesButton(Info, sirena.Sid, sirena.Responsible.Length);
       if (sirena.Requests.Length != 0 || sirena.Responsible.Length != 0)
         keyboardBuilder.EndRow().BeginRow();
-      keyboardBuilder.AddDeleteButton(Info, sirena.Id);
+      keyboardBuilder.AddDeleteButton(Info, sirena.Sid);
     }
     else
     {
@@ -51,22 +51,22 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
         bool canRequest = !sirena.CanBeCalledBy(uid)
            && !sirena.Requests.Any(_request => _request.UID == uid);
         if (canRequest)
-          keyboardBuilder.AddRequestButton(Info, sirena.Id);
+          keyboardBuilder.AddRequestButton(Info, sirena.Sid);
 
-        keyboardBuilder.AddUnsubscribeButton(Info, sirena.Id);
+        keyboardBuilder.AddUnsubscribeButton(Info, sirena.Sid);
 
         if (canRequest)
           keyboardBuilder.EndRow().BeginRow();
       }
       else
       {
-        keyboardBuilder.AddSubscribeButton(Info, sirena.Id);
+        keyboardBuilder.AddSubscribeButton(Info, sirena.Sid);
       }
     }
     var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
     string generalInfo = Localize(generalInfoKey);
     StringBuilder builder = new StringBuilder()
-    .AppendFormat(generalInfo, sirena.Title, sirena.Id, sirena.Listener.Length);
+    .AppendFormat(generalInfo, sirena.Title, sirena.ShortHash, sirena.Listener.Length);
 
     if (sirena.LastCall != null)
     {
