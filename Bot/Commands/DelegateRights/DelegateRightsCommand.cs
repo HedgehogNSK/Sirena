@@ -1,6 +1,6 @@
+using Hedgey.Extensions;
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
-using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes;
 
 namespace Hedgey.Sirena.Bot;
@@ -36,9 +36,9 @@ public class DelegateRightsCommand : AbstractBotCommmand
       messageSender.Send(chatId, errorWrongParamters);
       return;
     }
-    ObjectId sirenaId = default;
+    ulong sirenaId = default;
     if (!int.TryParse(parameters[1], out int number)
-        && !ObjectId.TryParse(parameters[1], out sirenaId))
+        && !BlendedflakeIDGenerator.TryParse(parameters[1], out sirenaId))
     {
       string errorWrongSirenaID = localizationProvider.Get("command.delegate.error.incorrect_id", info);
       responseText = string.Format(errorWrongSirenaID, parameters[1]);
@@ -59,10 +59,11 @@ public class DelegateRightsCommand : AbstractBotCommmand
       if (sirena == null)
         return;
 
-      sirenaId = sirena.Id;
+      sirenaId = sirena.Sid;
     }
 
     //Set responsible
+    //TODO: Move from facade to operation interface
     SirenRepresentation updatedSiren = await requests.SetUserResponsible(uid, sirenaId, duid);
 
     if (updatedSiren == null)

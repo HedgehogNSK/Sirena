@@ -1,7 +1,6 @@
 using Hedgey.Extensions.Telegram;
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using RxTelegram.Bot;
@@ -53,7 +52,7 @@ public class GetRequestsListCommand : AbstractBotCommmand
                          from request in siren.Requests
                          select new RequestInfo
                          {
-                           SirenId = siren.Id,
+                           SirenId = siren.Sid,
                            Title = siren.Title,
                            UserId = request.UID,
                            Message = request.Message,
@@ -97,7 +96,7 @@ public class GetRequestsListCommand : AbstractBotCommmand
 
   public class RequestInfo
   {
-    public ObjectId SirenId { get; set; }
+    public ulong SirenId { get; set; }
     public long UserId { get; set; }
     public string Message { get; set; } = string.Empty;
     public string Title { get; internal set; } = string.Empty;

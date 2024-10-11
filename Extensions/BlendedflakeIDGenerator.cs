@@ -88,6 +88,22 @@ public class BlendedflakeIDGenerator : IIDGenerator
     builder.Append('=');
     return builder.ToString();
   }
+  static public bool TryParse(string hash, out ulong id)
+  {
+    id = 0;
+    if (hash.Length > 11)
+      return false;
+    try
+    {
+      var bytes = Converter.FromBase64URLHM(hash);
+      id = (ulong)BitConverter.ToInt64(bytes);
+      return true;
+    }
+    catch
+    {
+      return false;
+    }
+  }
   private long WaitForNextMillisecond(long lastTimestamp)
   {
     return Task.Run(Wait4NextMillisecondAsync).GetAwaiter().GetResult();

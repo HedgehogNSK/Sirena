@@ -14,7 +14,7 @@ public class CoreInstaller(Container container) : Installer(container)
 {
   const string resourcePath = "Sirena.Resources.Commands";
   const int MACHINE_ID = 0;
-  const long EPOCH_TIMESTAMP = 1725182332000; //2024-08-29T10:00:00.000Z
+  const long EPOCH_TIMESTAMP = 1725216638000; //- 68719476735; //2024-08-29T10:00:00.000Z
 
   public override void Install()
   {
@@ -43,7 +43,7 @@ public class CoreInstaller(Container container) : Installer(container)
     Container.Register<IMessageForwarder, BotMessageSenderTimerProxy>(Lifestyle.Singleton);
     Container.Register<IMessageCopier, BotMessageSenderTimerProxy>(Lifestyle.Singleton);
 
-    Container.RegisterSingleton<IIDGenerator>(()=> new CustomSnowflakeGenerator(EPOCH_TIMESTAMP, MACHINE_ID));
+    Container.RegisterSingleton<IIDGenerator>(()=> new BlendedflakeIDGenerator(EPOCH_TIMESTAMP, MACHINE_ID));
   }
 
   public class PlanDictionary : Dictionary<long, CommandPlan>

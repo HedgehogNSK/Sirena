@@ -1,17 +1,16 @@
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
-using MongoDB.Bson;
 
 namespace Hedgey.Sirena.Bot;
 
 public class UnsubscribeSirenaPlanFactory(
-IFactory<NullableContainer<ObjectId>, ProcessParameterUnsubscribeStep> processParamUnsubscribeStep
-  , IFactory<NullableContainer<ObjectId>, TryUnsubscribeStep> attemptUnsubscribeStep) 
+IFactory<NullableContainer<ulong>, ProcessParameterUnsubscribeStep> processParamUnsubscribeStep
+  , IFactory<NullableContainer<ulong>, TryUnsubscribeStep> attemptUnsubscribeStep) 
   : IFactory<IRequestContext, CommandPlan>
 {
   public CommandPlan Create(IRequestContext context)
   {
-    NullableContainer<ObjectId> idContainer = new();
+    NullableContainer<ulong> idContainer = new();
     IObservableStep<IRequestContext, CommandStep.Report>[] steps = [
       processParamUnsubscribeStep.Create(idContainer),
       attemptUnsubscribeStep.Create(idContainer)

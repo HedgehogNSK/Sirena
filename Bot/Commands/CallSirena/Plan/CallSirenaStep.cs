@@ -52,7 +52,7 @@ public class CallSirenaStep : CommandStep
     Stack<long> receiversStack = GetReceiversStack(sirena, uid);
     SirenRepresentation.CallInfo callInfo = new(uid, DateTimeOffset.Now);
 
-    var observableNotification = updateSirenaOperation.UpdateLastCall(sirena.Id, callInfo)
+    var observableNotification = updateSirenaOperation.UpdateLastCall(sirena.Sid, callInfo)
       .SelectMany(NotifySubscriber(context, receiversStack, sirena)).Publish().RefCount();
 
     return observableNotification
@@ -162,6 +162,6 @@ public class CallSirenaStep : CommandStep
 
   public class Factory(IMessageSender messageSender, IMessageCopier messageCopier, IUpdateSirenaOperation updateSirenaOperation, IFactory<IRequestContext, int, SirenRepresentation, IMessageBuilder> callReportMessageBuilderFactory, IFactory<IRequestContext, SirenRepresentation, IMessageBuilder> callServiceMessageBuilderFactory) : IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep>
   {
-    public CallSirenaStep Create(NullableContainer<SirenRepresentation> sirenaContainer, NullableContainer<Message> idContainer) => new CallSirenaStep(sirenaContainer, idContainer, messageSender, messageCopier, updateSirenaOperation, callReportMessageBuilderFactory, callServiceMessageBuilderFactory);
+    public CallSirenaStep Create(NullableContainer<SirenRepresentation> sirenaContainer, NullableContainer<Message> messageContainer) => new CallSirenaStep(sirenaContainer, messageContainer, messageSender, messageCopier, updateSirenaOperation, callReportMessageBuilderFactory, callServiceMessageBuilderFactory);
   }
 }

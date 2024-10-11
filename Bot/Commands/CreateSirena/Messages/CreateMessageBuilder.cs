@@ -3,7 +3,6 @@ using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
-using SimpleInjector;
 using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
@@ -65,7 +64,7 @@ public class CreateMessageBuilder : LocalizedMessageBuilder, IMessageBuilder
     else
     {
       message = Localize("command.create_sirena.success");
-      message = string.Format(message, sirena.Id);
+      message = string.Format(message, sirena.ShortHash);
     }
     var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
     return CreateDefault(message, markup);

@@ -1,19 +1,18 @@
 using Hedgey.Extensions;
 using Hedgey.Localization;
 using Hedgey.Structure.Factory;
-using MongoDB.Bson;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
 public class SirenaIdValidationStep : CommandStep
 {
-  private readonly NullableContainer<ObjectId> idContainer;
+  private readonly NullableContainer<ulong> idContainer;
   private readonly IFactory<IRequestContext, string, IMessageBuilder> messageBuilderFactory;
   private readonly int idArgNumber;
 
   public SirenaIdValidationStep(IFactory<IRequestContext, string, IMessageBuilder> messageBuilderFactory
-    , NullableContainer<ObjectId> idContainer
+    , NullableContainer<ulong> idContainer
     , int idArgNumber = 0)
   {
     this.idContainer = idContainer;
@@ -26,7 +25,7 @@ public class SirenaIdValidationStep : CommandStep
     var param = context.GetArgsString().GetParameterByNumber(idArgNumber);
 
     Report report;
-    if (!ObjectId.TryParse(param, out ObjectId sirenaId))
+    if (!BlendedflakeIDGenerator.TryParse(param, out var sirenaId))
     {
       var builder = messageBuilderFactory.Create(context, param);
       report = new Report(Result.Wait, builder);
@@ -39,9 +38,9 @@ public class SirenaIdValidationStep : CommandStep
     return Observable.Return(report);
   }
   public class Factory(IFactory<IRequestContext, string, IMessageBuilder> messageBuilderFactory)
-    : IFactory<NullableContainer<ObjectId>, SirenaIdValidationStep>
+    : IFactory<NullableContainer<ulong>, SirenaIdValidationStep>
   {
-    public SirenaIdValidationStep Create(NullableContainer<ObjectId> idContainer)
+    public SirenaIdValidationStep Create(NullableContainer<ulong> idContainer)
       => new SirenaIdValidationStep(messageBuilderFactory, idContainer, 0);
   }
   public class MessageBuilderFactory(ILocalizationProvider localizationProvider)

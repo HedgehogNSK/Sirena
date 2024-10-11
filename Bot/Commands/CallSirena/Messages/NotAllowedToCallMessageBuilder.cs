@@ -53,7 +53,7 @@ public class NotAllowedToCallMessageBuilder : LocalizedMessageBuilder
     var keyboardRow = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
       .AddDisplayUserSirenasButton(Info);
     if (cantCalled)
-      keyboardRow = keyboardRow.AddRequestButton(Info, sirena.Id).EndRow().BeginRow();
+      keyboardRow = keyboardRow.AddRequestButton(Info, sirena.Sid).EndRow().BeginRow();
 
     var markup = keyboardRow.AddMenuButton(Info).EndRow().ToReplyMarkup();
 

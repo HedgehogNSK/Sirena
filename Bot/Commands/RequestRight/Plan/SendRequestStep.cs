@@ -15,13 +15,12 @@ public class SendRequestStep(IRightsRequestOperation request
   {
     string userMessage = string.Empty;
     var sirena = sirenaContainer.Get();
-    MongoDB.Bson.ObjectId sid = sirena.Id;
     long uid = context.GetUser().Id;
     long chatId = context.GetChat().Id;
     Message message = context.GetMessage();
     if (!message.From.IsBot)
       userMessage = message.Text;
-    return request.Send(sid, uid, userMessage)
+    return request.Send(sirena.Sid, uid, userMessage)
       .Select(ProcessResult);
 
     Report ProcessResult(IRightsRequestOperation.Result requestResult)

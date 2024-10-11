@@ -1,14 +1,13 @@
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
-using MongoDB.Bson;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class GetSirenaInfoStep(NullableContainer<ObjectId> sirenaIdContainter
+public class GetSirenaInfoStep(NullableContainer<ulong> sirenaIdContainter
   , IFindSirenaOperation findSirena
-  , IFactory<IRequestContext, ObjectId, SirenaNotFoundMessageBuilder> notFoundMessageBuilderFactory
+  , IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder> notFoundMessageBuilderFactory
   , IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder> sirenaInfoMessageBuilderFactory
    ) : CommandStep
 {
@@ -32,11 +31,11 @@ public class GetSirenaInfoStep(NullableContainer<ObjectId> sirenaIdContainter
   }
 
   public class Factory(IFindSirenaOperation findSirenaOperation
-  , IFactory<IRequestContext, ObjectId, SirenaNotFoundMessageBuilder> noSirenaMessageBuilder
+  , IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder> noSirenaMessageBuilder
   , IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder> sirenaInfoMessageBuilderFactory)
-    : IFactory<NullableContainer<ObjectId>, GetSirenaInfoStep>
+    : IFactory<NullableContainer<ulong>, GetSirenaInfoStep>
   {
-    public GetSirenaInfoStep Create(NullableContainer<ObjectId> idContainer)
+    public GetSirenaInfoStep Create(NullableContainer<ulong> idContainer)
      => new GetSirenaInfoStep(idContainer, findSirenaOperation, noSirenaMessageBuilder, sirenaInfoMessageBuilderFactory);
   }
 }

@@ -1,12 +1,11 @@
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
-using MongoDB.Bson;
 
 namespace Hedgey.Sirena.Bot;
 
-public class RequestRightsPlanFactory(IFactory<NullableContainer<ObjectId>, ValidateSirenaIdStep> validateIdStepFactory
-  , IFactory<NullableContainer<ObjectId>, NullableContainer<SirenRepresentation>
+public class RequestRightsPlanFactory(IFactory<NullableContainer<ulong>, ValidateSirenaIdStep> validateIdStepFactory
+  , IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>
   , SirenaExistensValidationStep> sirenExistensValidationStepFactory
   , IFactory<NullableContainer<SirenRepresentation>, AddRequestMessageStep> addRequestMessageStepFactory
   , IFactory<NullableContainer<SirenRepresentation>, SendRequestStep> sendRequestStepFactory
@@ -16,7 +15,7 @@ public class RequestRightsPlanFactory(IFactory<NullableContainer<ObjectId>, Vali
 
   public CommandPlan Create(IRequestContext context)
   {
-    NullableContainer<ObjectId> idContainer = new();
+    NullableContainer<ulong> idContainer = new();
     NullableContainer<SirenRepresentation> sirenaContainer = new();
     CompositeCommandStep validationBulkStep = new(
       validateIdStepFactory.Create(idContainer),

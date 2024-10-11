@@ -1,6 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
-using MongoDB.Bson;
+using Hedgey.Extensions;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 
@@ -41,9 +41,9 @@ public class MuteUserSignalCommand : AbstractBotCommmand
     }
     var sirenaIdString = parameters[2];
     var userIdString = parameters[1];
-    ObjectId sirenaId = default;
+    ulong sirenaId = default;
     if (!int.TryParse(sirenaIdString, out int number)
-        && !ObjectId.TryParse(sirenaIdString, out sirenaId))
+        && !BlendedflakeIDGenerator.TryParse(sirenaIdString, out sirenaId))
     {
       string errorWrongSirenaID = localizationProvider.Get("command.mute_user.incorrect_id", info);
       responseText = string.Format(sirenaIdString, errorWrongSirenaID);

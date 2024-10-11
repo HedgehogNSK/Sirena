@@ -35,10 +35,10 @@ public class SirenasListMesssageBuilder(long chatId, CultureInfo info
         {
           keyboardBuilder.EndRow().BeginRow();
         }
-        keyboardBuilder.AddSirenaInfoButton(Info, sirena.Id, number.ToString());
+        keyboardBuilder.AddSirenaInfoButton(Info, sirena.Sid, number.ToString());
 
         builder.Append(number)
-          .AppendFormat(sirenaInfo, sirena.Title, sirena.OwnerNickname, sirena.Id);
+          .AppendFormat(sirenaInfo, sirena.Title, sirena.OwnerNickname, sirena.ShortHash);
       }
       return CreateDefault(builder.ToString(), keyboardBuilder.EndRow().ToReplyMarkup());
     }

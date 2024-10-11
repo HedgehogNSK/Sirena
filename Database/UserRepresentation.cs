@@ -10,14 +10,14 @@ public class UserRepresentation
   [BsonElement("chatid"), BsonRepresentation(BsonType.Int64)]
   public long ChatID { get; set; }
   [BsonElement("owner")]
-  public ObjectId[] Owner { get; set; } = [];
+  public ulong[] Owner { get; set; } = [];
   [BsonElement("muted")]
   public MuteInfo[] Muted { get; internal set; } = [];
 
   public class MuteInfo
   {
 
-    public MuteInfo(long targetID, ObjectId sirenaId)
+    public MuteInfo(long targetID, ulong sirenaId)
     {
       UID = targetID;
       SirenaID = sirenaId;
@@ -25,7 +25,7 @@ public class UserRepresentation
     [BsonElement("user_id"), BsonRepresentation(BsonType.Int64)]
     public long UID { get; set; }
     [BsonElement("sirena_id")]
-    public ObjectId SirenaID { get; set; }
+    public ulong SirenaID { get; set; }
 
     public override bool Equals(object? obj)
     {
