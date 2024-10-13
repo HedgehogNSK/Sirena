@@ -10,7 +10,7 @@ public class FacadeMongoDBRequests
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly IMongoCollection<UserRepresentation> users;
 
-  public FacadeMongoDBRequests(MongoClient client)
+  public FacadeMongoDBRequests(IMongoClient client)
   {
     db = client.GetDatabase("siren");
     sirens = db.GetCollection<SirenRepresentation>("sirens");
