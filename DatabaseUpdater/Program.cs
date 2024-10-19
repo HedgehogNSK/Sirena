@@ -16,17 +16,15 @@ namespace DatabaseUpdater
       installer.Install();
       container.Verify();
       // Вызов метода обновления базы данных
-      var updateStream = UpdateDatabase(container);
+      
+      IIDGenerator idGen = container.GetInstance<IIDGenerator>();
+      var operation = container.GetInstance<IUpdateSirenaOperation>();
+      var updateStream = UpdateSirenaWithBlendedflakeID(idGen,operation);
       while(!complete);
       Console.WriteLine("Finished");
     }
-
-    static IDisposable UpdateDatabase(Container container)
+    static IDisposable UpdateSirenaWithBlendedflakeID(IIDGenerator idGen, IUpdateSirenaOperation operation)
     {
-      IIDGenerator idGen = container.GetInstance<IIDGenerator>();
-
-      var operation = container.GetInstance<IUpdateSirenaOperation>();
-
       var id = idGen.Get();
       var updateOperation = operation.UpdateDefault(id);
 
