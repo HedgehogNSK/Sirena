@@ -87,7 +87,12 @@ public class SirenaOperations : IDeleteSirenaOperation
     var filterSiren = Builders<SirenRepresentation>.Filter.Eq(x => x.OwnerId, uid);
     return Observable.FromAsync(() => sirens.Find(filterSiren).Skip(number).FirstOrDefaultAsync());
   }
-
+/// <summary>
+/// Update sirena document in a database with new date of last call 
+/// </summary>
+/// <param name="sid"></param>
+/// <param name="callInfo"></param>
+/// <returns></returns>
   public IObservable<SirenRepresentation> UpdateLastCall(ulong sid, SirenRepresentation.CallInfo callInfo)
   {
     var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.Sid, sid);

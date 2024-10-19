@@ -84,19 +84,13 @@ static public class Converter
     int resultIndex = 0;
     int index = 0;
 
-    // TimeStamp(42 bits)							            Sequence(12) Machine ID(10)
-    // 10000010111010011110100 1010100010000000 00 0000000000000 1111111111
-    // 											                          v            v
-    // 10100110 10010010 01110100 00000000 00000000 00010010 10000000 00000000
-    // 													                             ^7
-
     while (index < length - 2)
     {
       byte b1 = bytes[index++];
       byte b2 = bytes[index++];
       byte b3 = bytes[index++];
 
-      result[resultIndex++] = Base64Chars[b1 & 0x3F]; //0x3F 1111 1100
+      result[resultIndex++] = Base64Chars[b1 & 0x3F]; //0x3F = 1111 1100 (Big Ending)
       result[resultIndex++] = Base64Chars[(b1 >> 6) | ((b2 << 2) & 0x3C)]; //0x3C 0011 1100
       result[resultIndex++] = Base64Chars[(b2 >> 4) | ((b3 << 4) & 0x30)]; //0x30 0000 1100
       result[resultIndex++] = Base64Chars[(b3 >> 2) & 0x3F]; //0x0F 1111 0000
