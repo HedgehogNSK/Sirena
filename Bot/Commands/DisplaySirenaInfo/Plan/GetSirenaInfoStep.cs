@@ -9,11 +9,19 @@ public class GetSirenaInfoStep(NullableContainer<ulong> sirenaIdContainter
   , IFindSirenaOperation findSirena
   , IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder> notFoundMessageBuilderFactory
   , IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder> sirenaInfoMessageBuilderFactory
+  , IGetUserInformation getUserInformation
    ) : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
   {
-    return findSirena.Find(sirenaIdContainter.Get()).Select(CreateReport);
+    var uid = context.GetUser().Id;
+    var observableFind = findSirena.Find(sirenaIdContainter.Get()).Publish().RefCount();
+    var observableRequestOwnerNickname = observableFind.Where(_siren => _siren != null && _siren.OwnerId != uid)
+      .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId)
+            .Do(_nick => _sirena.OwnerNickname = _nick)
+            .Select(_ => _sirena));
+    return observableFind.Where(_siren => _siren == null || _siren.OwnerId == uid)
+    .Merge(observableRequestOwnerNickname).Select(CreateReport);
 
     Report CreateReport(SirenRepresentation representation)
     {
@@ -32,10 +40,11 @@ public class GetSirenaInfoStep(NullableContainer<ulong> sirenaIdContainter
 
   public class Factory(IFindSirenaOperation findSirenaOperation
   , IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder> noSirenaMessageBuilder
-  , IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder> sirenaInfoMessageBuilderFactory)
+  , IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder> sirenaInfoMessageBuilderFactory
+  , IGetUserInformation getUserInformation)
     : IFactory<NullableContainer<ulong>, GetSirenaInfoStep>
   {
     public GetSirenaInfoStep Create(NullableContainer<ulong> idContainer)
-     => new GetSirenaInfoStep(idContainer, findSirenaOperation, noSirenaMessageBuilder, sirenaInfoMessageBuilderFactory);
+     => new GetSirenaInfoStep(idContainer, findSirenaOperation, noSirenaMessageBuilder, sirenaInfoMessageBuilderFactory, getUserInformation);
   }
 }

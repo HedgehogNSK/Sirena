@@ -26,6 +26,7 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
   {
     bool userIsOwner = sirena.OwnerId == uid;
     const string generalInfoKey = "command.sirena_info.general_info";
+    const string generalInfoNotOwnerKey = "command.sirena_info.general_info.not_owner";
     const string lastCallKey = "command.sirena_info.last_call";
 
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard()
@@ -64,9 +65,9 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
       }
     }
     var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
-    string generalInfo = Localize(generalInfoKey);
+    string generalInfo = Localize(userIsOwner? generalInfoKey: generalInfoNotOwnerKey);
     StringBuilder builder = new StringBuilder()
-    .AppendFormat(generalInfo, sirena.Title, sirena.ShortHash, sirena.Listener.Length);
+        .AppendFormat(generalInfo, sirena.Title, sirena.ShortHash, sirena.Listener.Length, sirena.OwnerNickname);
 
     if (sirena.LastCall != null)
     {
