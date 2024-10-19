@@ -46,8 +46,8 @@ public class BlendedflakeIDGenerator : IIDGenerator
       if (_sequence >= 3)
         Console.WriteLine(_sequence);
 
-      const int seqSlitBit = 4;  
-      ulong result =  _sequence >> seqSlitBit << ID_BITS;
+      const int seqSlitBit = 4;
+      ulong result = _sequence >> seqSlitBit << ID_BITS;
       result |= _machineID;
       result <<= seqSlitBit;
       result |= _sequence & 0xF;
@@ -65,7 +65,7 @@ public class BlendedflakeIDGenerator : IIDGenerator
   /// </summary>
   /// <param name="base64hash"></param>
   /// <returns></returns>
-  static public string ShortifyHash(string base64hash) 
+  static public string ShortifyHash(string base64hash)
     => regex.Replace(base64hash, string.Empty);
   /// <summary>
   /// Each base64 of Snowflake ID has 11 symbols. And each of them has 1 '=' at the end.
@@ -88,8 +88,7 @@ public class BlendedflakeIDGenerator : IIDGenerator
       return false;
     try
     {
-      var bytes = Converter.FromBase64URLHM(hash);
-      id = (ulong)BitConverter.ToInt64(bytes);
+      id = (ulong)Converter.FromBase64URLHMToLong(hash);
       return true;
     }
     catch

@@ -119,6 +119,8 @@ static public class Converter
   static public long FromBase64URLHMToLong(string hash)
   {
     var bytes = FromBase64URLHM(hash);
+      if (bytes.Length != 8)
+        Array.Resize(ref bytes, 8);
     return BitConverter.ToInt64(bytes, 0);
   }
 
