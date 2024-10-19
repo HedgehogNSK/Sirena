@@ -1,9 +1,8 @@
-using System.Text;
-using System.Text.RegularExpressions;
+using Hedgey.Extensions;
 
-namespace Hedgey.Extensions;
+namespace Hedgey.Tools.BlendedFlake;
 
-public class BlendedflakeIDGenerator : IIDGenerator
+public class IDGenerator : IIDGenerator
 {
   private readonly ulong _epoch;
   private readonly ushort _machineID;
@@ -14,7 +13,7 @@ public class BlendedflakeIDGenerator : IIDGenerator
   private const int DATE_BITS = 42;
   private const int MAX_ID = (1 << ID_BITS) - 1; // 1023
   private const uint MAX_SEQUENCE_LENGTH = (1 << SEQUENCE_BITS) - 1; // 4095
-  public BlendedflakeIDGenerator(long epoch, ushort machineID)
+  public IDGenerator(long epoch, ushort machineID)
   {
     if (machineID < 0 || machineID > MAX_ID)
       throw new ArgumentOutOfRangeException(nameof(machineID), $"Machine ID must be between 0 and {MAX_ID}");
@@ -59,43 +58,6 @@ public class BlendedflakeIDGenerator : IIDGenerator
   private long GetCurrentTimestamp()
     => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
-  static Regex regex = new Regex("-*=");
-  /// <summary>
-  /// Remove last consequent 'A' symbols and '='. 
-  /// </summary>
-  /// <param name="base64hash"></param>
-  /// <returns></returns>
-  static public string ShortifyHash(string base64hash)
-    => regex.Replace(base64hash, string.Empty);
-  /// <summary>
-  /// Each base64 of Snowflake ID has 11 symbols. And each of them has 1 '=' at the end.
-  /// 
-  /// </summary>
-  /// <param name="shortSnowlakeHash"></param>
-  /// <returns></returns>
-  static public string RestoreHash(string shortSnowlakeHash)
-  {
-    const int max = 11; // Hash length is 11 = 10 symbols + 1 symbol '='
-    return new StringBuilder(shortSnowlakeHash)
-      .Append('-', max - shortSnowlakeHash.Length)
-      .Append('=')
-      .ToString();
-  }
-  static public bool TryParse(string hash, out ulong id)
-  {
-    id = 0;
-    if (hash.Length > 12)
-      return false;
-    try
-    {
-      id = (ulong)Converter.FromBase64URLHMToLong(hash);
-      return true;
-    }
-    catch
-    {
-      return false;
-    }
-  }
   private long WaitForNextMillisecond(long lastTimestamp)
   {
     return Task.Run(Wait4NextMillisecondAsync).GetAwaiter().GetResult();
