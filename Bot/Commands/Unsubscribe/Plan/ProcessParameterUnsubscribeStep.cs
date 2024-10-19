@@ -2,6 +2,7 @@ using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
+using Hedgey.Blendflake;
 using MongoDB.Driver;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Reactive.Linq;
@@ -20,7 +21,7 @@ public class ProcessParameterUnsubscribeStep(NullableContainer<ulong> idContaine
     long uid = botUser.Id;
     long chatId = context.GetTargetChatId();
     string param = context.GetArgsString().GetParameterByNumber(0);
-    if (string.IsNullOrEmpty(param) || ! BlendedflakeIDGenerator.TryParse(param, out var id))
+    if (string.IsNullOrEmpty(param) || !HashUtilities.TryParse(param, out var id))
     {
       return getSubscriptions.GetSubscriptions(uid).SelectMany(_sirenas => _sirenas)
         .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId)
@@ -37,7 +38,7 @@ public class ProcessParameterUnsubscribeStep(NullableContainer<ulong> idContaine
     {
       var info = context.GetCultureInfo();
       long chatId = context.GetTargetChatId();
-      IMessageBuilder builder = messageBuilderFactory.Create(context,subscriptions);
+      IMessageBuilder builder = messageBuilderFactory.Create(context, subscriptions);
       return new Report(!subscriptions.Any() ? Result.Wait : Result.Canceled, builder);
     }
   }

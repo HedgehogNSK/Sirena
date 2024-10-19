@@ -1,3 +1,4 @@
+using Hedgey.Blendflake;
 using Hedgey.Extensions;
 using Hedgey.Structure.Factory;
 using System.Reactive.Linq;
@@ -11,7 +12,7 @@ public class ValidateSirenaIdStep(NullableContainer<ulong> sirenaIdContainter
   {
     var key = context.GetArgsString().GetParameterByNumber(0);
 
-    if (string.IsNullOrEmpty(key) || !BlendedflakeIDGenerator.TryParse(key, out var id))
+    if (string.IsNullOrEmpty(key) || !HashUtilities.TryParse(key, out var id))
       return Observable.Return(new Report(Result.Wait, messageBuilderFactory.Create(context)));
 
     sirenaIdContainter.Set(id);

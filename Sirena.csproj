@@ -6,18 +6,20 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <OutputPath>bin\Sirena\</OutputPath>
     <IntermediateOutputPath>obj\Sirena\</IntermediateOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.28.0" />
+    <PackageReference Include="NotBase64URL" Version="0.1.1" />
     <PackageReference Include="rxtelegram.bot" Version="7.9.0" />
     <PackageReference Include="SimpleInjector" Version="5.5.0" />
     <PackageReference Include="System.Reactive" Version="6.0.1" />
     <PackageReference Include="telegram.bot" Version="19.0.0" />
+    <ProjectReference Include="External\Blendflake\src\Blendflake\Blendflake.csproj" />
     <Compile Remove="DatabaseUpdater\**\*.cs" />
+    <Compile Remove="External\Blendflake\**\*.cs" />
   </ItemGroup>
 
 </Project>

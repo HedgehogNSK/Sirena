@@ -2,11 +2,13 @@ using Hedgey.Extensions;
 using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Localization;
 using Hedgey.Structure.Factory;
+using Hedgey.Blendflake;
 using RxTelegram.Bot;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using System.Resources;
 using Telegram.Bot;
+using Hedge.Sirena.ID;
 
 namespace Hedgey.Sirena.Bot.DI;
 
@@ -44,7 +46,7 @@ public class CoreInstaller(Container container) : Installer(container)
     Container.Register<IMessageForwarder, BotMessageSenderTimerProxy>(Lifestyle.Singleton);
     Container.Register<IMessageCopier, BotMessageSenderTimerProxy>(Lifestyle.Singleton);
 
-    Container.RegisterSingleton<IIDGenerator>(()=> new BlendedflakeIDGenerator(EPOCH_TIMESTAMP, MACHINE_ID));
+    Container.RegisterSingleton<IIDGenerator>(() => new BlendflakeAdapter(EPOCH_TIMESTAMP, MACHINE_ID));
   }
 
   public class PlanDictionary : Dictionary<long, CommandPlan>

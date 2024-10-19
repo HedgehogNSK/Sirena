@@ -1,4 +1,5 @@
-using Hedgey.Extensions;
+using Hedgey.Blendflake;
+using Hedgey.Utilities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -13,8 +14,8 @@ public class SirenRepresentation
   /// </summary>
   [BsonElement("sid"), BsonRepresentation(BsonType.Int64)]
   public ulong Sid { get; set; }
-  public string Hash => Extensions.Converter.UlongToBase64URLHM(Sid);
-  public string ShortHash => BlendedflakeIDGenerator.ShortifyHash(Hash);
+  public string Hash => NotBase64URL.From(Sid);
+  public string ShortHash => HashUtilities.Shortify(Hash);
   [BsonElement("ownerid"), BsonRepresentation(BsonType.Int64)]
   public long OwnerId { get; set; }
   public string OwnerNickname { get; set; } = string.Empty;

@@ -1,6 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
-using Hedgey.Extensions;
+using Hedgey.Blendflake;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 
@@ -43,7 +43,7 @@ public class MuteUserSignalCommand : AbstractBotCommmand
     var userIdString = parameters[1];
     ulong sirenaId = default;
     if (!int.TryParse(sirenaIdString, out int number)
-        && !BlendedflakeIDGenerator.TryParse(sirenaIdString, out sirenaId))
+        && !HashUtilities.TryParse(sirenaIdString, out sirenaId))
     {
       string errorWrongSirenaID = localizationProvider.Get("command.mute_user.incorrect_id", info);
       responseText = string.Format(sirenaIdString, errorWrongSirenaID);

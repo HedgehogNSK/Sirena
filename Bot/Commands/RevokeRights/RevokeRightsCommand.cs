@@ -1,6 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
-using Hedgey.Extensions;
+using Hedgey.Blendflake;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 
@@ -43,7 +43,7 @@ public class RevokeRightsCommand : AbstractBotCommmand
     ulong sirenaId = default;
     string sirenaIdString = parameters[1];
     if (!int.TryParse(sirenaIdString, out int number)
-        && !BlendedflakeIDGenerator.TryParse(sirenaIdString, out sirenaId))
+        && !HashUtilities.TryParse(sirenaIdString, out sirenaId))
     {
       string errorWrongSirenaID = localizationProvider.Get("command.revoke_rights.incorrect_sirena_param", info);
       responseText = string.Format(errorWrongSirenaID, sirenaIdString);

@@ -1,3 +1,4 @@
+using Hedge.Sirena.ID;
 using Hedgey.Extensions;
 using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Sirena;
@@ -18,7 +19,7 @@ namespace DatabaseUpdater
     const long EPOCH_TIMESTAMP = 1729300000000;  //Mon Oct 14 2024 22:13:20 GMT+0000
     public override void Install()
     {
-      Container.RegisterSingleton<IIDGenerator>(() => new BlendedflakeIDGenerator(EPOCH_TIMESTAMP, MACHINE_ID));
+      Container.RegisterSingleton<IIDGenerator>(() => new BlendflakeAdapter(EPOCH_TIMESTAMP, MACHINE_ID));
       Container.RegisterSingleton<IUpdateSirenaOperation, SirenaOperations>();
       
       Container.Register<IFactory<IMongoClient>, MongoClientFactory>(Lifestyle.Transient);

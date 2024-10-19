@@ -1,6 +1,6 @@
-using Hedgey.Extensions;
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
+using Hedgey.Blendflake;
 using RxTelegram.Bot.Interface.BaseTypes;
 
 namespace Hedgey.Sirena.Bot;
@@ -38,7 +38,7 @@ public class DelegateRightsCommand : AbstractBotCommmand
     }
     ulong sirenaId = default;
     if (!int.TryParse(parameters[1], out int number)
-        && !BlendedflakeIDGenerator.TryParse(parameters[1], out sirenaId))
+        && !HashUtilities.TryParse(parameters[1], out sirenaId))
     {
       string errorWrongSirenaID = localizationProvider.Get("command.delegate.error.incorrect_id", info);
       responseText = string.Format(errorWrongSirenaID, parameters[1]);
@@ -77,6 +77,4 @@ public class DelegateRightsCommand : AbstractBotCommmand
     responseText = string.Format(successMessage, duid, updatedSiren);
     messageSender.Send(chatId, responseText);
   }
-
-  
 }

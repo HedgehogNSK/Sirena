@@ -1,6 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
-using Hedgey.Extensions;
+using Hedgey.Blendflake;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 
@@ -44,7 +44,7 @@ public class UnmuteUserSignalCommand : AbstractBotCommmand
     var userIdString = parameters[1];
     ulong sirenaId = default;
     if (!int.TryParse(sirenaIdString, out int number)
-        && !BlendedflakeIDGenerator.TryParse(sirenaIdString, out sirenaId))
+        && !HashUtilities.TryParse(sirenaIdString, out sirenaId))
     {
       var errorWrongSirenaID = localizationProvider.Get("command.unmute.error.wrong_sirena_id", cultureInfo);
       responseText = string.Format(errorWrongSirenaID, sirenaIdString);

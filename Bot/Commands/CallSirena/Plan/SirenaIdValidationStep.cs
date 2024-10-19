@@ -1,6 +1,7 @@
 using Hedgey.Extensions;
 using Hedgey.Localization;
 using Hedgey.Structure.Factory;
+using Hedgey.Blendflake;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
@@ -25,7 +26,7 @@ public class SirenaIdValidationStep : CommandStep
     var param = context.GetArgsString().GetParameterByNumber(idArgNumber);
 
     Report report;
-    if (!BlendedflakeIDGenerator.TryParse(param, out var sirenaId))
+    if (!HashUtilities.TryParse(param, out var sirenaId))
     {
       var builder = messageBuilderFactory.Create(context, param);
       report = new Report(Result.Wait, builder);

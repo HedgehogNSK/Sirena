@@ -3,23 +3,26 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sirena", "Sirena.csproj", "{E718FF08-A27F-4CD4-B972-ABF8BD967584}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sirena", "Sirena.csproj", "{72C67606-19A5-48EB-B386-1BF2501B6415}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseUpdater", "DatabaseUpdater\DatabaseUpdater.csproj", "{B1BBEA31-0FF7-4B9F-9295-A404799458F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E718FF08-A27F-4CD4-B972-ABF8BD967584}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E718FF08-A27F-4CD4-B972-ABF8BD967584}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E718FF08-A27F-4CD4-B972-ABF8BD967584}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E718FF08-A27F-4CD4-B972-ABF8BD967584}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {503E7633-6D41-4100-923B-3FF35C000B42}
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72C67606-19A5-48EB-B386-1BF2501B6415}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72C67606-19A5-48EB-B386-1BF2501B6415}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72C67606-19A5-48EB-B386-1BF2501B6415}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72C67606-19A5-48EB-B386-1BF2501B6415}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1BBEA31-0FF7-4B9F-9295-A404799458F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1BBEA31-0FF7-4B9F-9295-A404799458F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1BBEA31-0FF7-4B9F-9295-A404799458F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1BBEA31-0FF7-4B9F-9295-A404799458F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

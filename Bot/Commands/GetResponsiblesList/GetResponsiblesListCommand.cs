@@ -2,6 +2,7 @@ using Hedgey.Extensions;
 using Hedgey.Extensions.Telegram;
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
+using Hedgey.Blendflake;
 using MongoDB.Driver;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
@@ -56,7 +57,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
         return;
       }
     }
-    else if (BlendedflakeIDGenerator.TryParse(param, out var id))
+    else if (HashUtilities.TryParse(param, out var id))
     {
       sirena = await requests.GetSirenaById(id);
       if (sirena == null)
