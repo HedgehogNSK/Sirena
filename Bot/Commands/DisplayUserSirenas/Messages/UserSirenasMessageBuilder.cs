@@ -38,7 +38,7 @@ public class UserSirenasMessageBuilder : LocalizedMessageBuilder
         {
           keyboardBuilder.EndRow().BeginRow();
         }
-        keyboardBuilder.AddSirenaInfoButton(Info, sirena.Sid, number.ToString());
+        keyboardBuilder.AddButton(number, DisplaySirenaInfoCommand.NAME, sirena.ShortHash);
 
         builder.Append(number).AppendFormat(template, sirena.ShortHash, sirena.Title);
         if (sirena.Listener.Length != 0)
