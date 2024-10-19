@@ -19,13 +19,21 @@ public class GetUserOperationAsync : IGetUserOperationAsync
   public async Task<UserRepresentation?> GetAsync(long uid)
   {
     var filter = Builders<UserRepresentation>.Filter.Eq("_id", uid);
-    var user = await usersCollection.Find(filter).FirstOrDefaultAsync();
-    if (user == null)
+    try
     {
-      user = await requests.CreateUser(uid, uid);
-      if(user==null)
-        messageSender.Send(uid, "Database couldn't create user. Please try latter");
+      var user = await usersCollection.Find(filter).FirstOrDefaultAsync();
+
+      if (user == null)
+      {
+        user = await requests.CreateUser(uid, uid);
+        if (user == null)
+          messageSender.Send(uid, "Database couldn't create user. Please try latter");
       }
       return user;
+    }
+    catch (Exception ex)
+    {
+      throw new Exception($"Exception on find user with id {uid}",ex);
+    }
   }
 }
