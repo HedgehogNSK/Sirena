@@ -29,12 +29,12 @@ public static class MarkupShortcuts
   public static ILocalizationProvider? LocalizationProvider { get; set; }
 
   public static IInlineKeyboardRow AddButton(this IInlineKeyboardRow inlineKeyboardRow
-    , string title, string commandName, string param = "")
+    , object title, string commandName, string param = "")
   {
     string command = '/' + commandName;
     if (!string.IsNullOrEmpty(param))
       command += ' ' + param;
-    return inlineKeyboardRow.AddCallbackData(title, command);
+    return inlineKeyboardRow.AddCallbackData(title.ToString(), command);
   }
 
   public static IInlineKeyboardRow AddLocalizedButton(this IInlineKeyboardRow inlineKeyboardRow

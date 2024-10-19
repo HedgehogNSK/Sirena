@@ -33,7 +33,6 @@ public class ConfirmRemoveSirenaMessageBuilder : LocalizedMessageBuilder
   public class Factory(ILocalizationProvider localizationProvider)
   : IFactory<IRequestContext, SirenRepresentation, ConfirmRemoveSirenaMessageBuilder>
   {
-
     public ConfirmRemoveSirenaMessageBuilder Create(IRequestContext context, SirenRepresentation sirena)
     {
       var chatId = context.GetChat().Id;
