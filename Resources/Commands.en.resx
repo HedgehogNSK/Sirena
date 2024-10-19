@@ -20,7 +20,7 @@
     <value>⚠️Last call was made recently by *{0}* at {1} UTC. Please wait {2} until next try.</value>
   </data>
   <data name="command.call.last_call.2">
-    <value>*\&quot;{0}\&quot;*
+    <value>*{0}*
  _Called by_ {1}.</value>
   </data>
   <data name="command.call.not_allowed">
@@ -53,7 +53,7 @@ Please remove one of your sirenas and try again.</value>
     <value>⚠️Unknown error. Sirena wasn&apos;t created.</value>
   </data>
   <data name="command.create_sirena.success">
-    <value>Sirena with ID: `{0}` has been created successfuly.  Tap ID to copy. Share it with the subscribers.</value>
+    <value>Sirena has been created successfuly. It&apos;s identificator (ID): `{0}`. Share the ID with the subscribers.</value>
   </data>
   <data name="command.create.description">
     <value>Creates a Sirena</value>
@@ -296,7 +296,7 @@ Possible reasons:
 1. There is no Sirena with such id;
 2. You are the owner of the Sirena.
 
- You can try to input another *Sirena ID*</value>
+Try another *Sirena ID*</value>
   </data>
   <data name="command.subscribe.success">
     <value>You successfully subscribed to *Sirena*: _{0}_</value>
@@ -401,5 +401,12 @@ ID: `{2}`
   </data>
   <data name="command.call.extra_info.skip">
     <value>🔊 Launch only</value>
+  </data>
+  <data name="command.sirena_info.general_info.not_owner">
+    <value>Title: *{0}*
+ID: `{1}`
+Owner: {3}
+Subscribers: {2}
+</value>
   </data>
 </root>
