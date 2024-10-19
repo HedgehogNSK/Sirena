@@ -65,11 +65,8 @@ public class BlendedflakeIDGenerator : IIDGenerator
   /// </summary>
   /// <param name="base64hash"></param>
   /// <returns></returns>
-  static public string ShortifyHash(string base64hash)
-  {
-    base64hash = regex.Replace(base64hash, string.Empty);
-    return base64hash;
-  }
+  static public string ShortifyHash(string base64hash) 
+    => regex.Replace(base64hash, string.Empty);
   /// <summary>
   /// Each base64 of Snowflake ID has 11 symbols. And each of them has 1 '=' at the end.
   /// 
@@ -79,19 +76,15 @@ public class BlendedflakeIDGenerator : IIDGenerator
   static public string RestoreHash(string shortSnowlakeHash)
   {
     const int max = 11; // Hash length is 11 = 10 symbols + 1 symbol '='
-    int hashLenght = shortSnowlakeHash.Length;
-    StringBuilder builder = new StringBuilder(shortSnowlakeHash);
-    for (int i = 0; i != max - hashLenght; ++i)
-    {
-      builder.Append('-');
-    }
-    builder.Append('=');
-    return builder.ToString();
+    return new StringBuilder(shortSnowlakeHash)
+      .Append('-', max - shortSnowlakeHash.Length)
+      .Append('=')
+      .ToString();
   }
   static public bool TryParse(string hash, out ulong id)
   {
     id = 0;
-    if (hash.Length > 11)
+    if (hash.Length > 12)
       return false;
     try
     {

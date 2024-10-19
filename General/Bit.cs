@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace Hedgey.Extensions;
 
 static public class Bit{
@@ -61,6 +63,26 @@ static public class Bit{
     n = ((n & 0xCCCCCCCCCCCCCCCC) >> 2) | ((n & 0x3333333333333333) << 2);
     n = ((n & 0xAAAAAAAAAAAAAAAA) >> 1) | ((n & 0x5555555555555555) << 1);
     return n;
+  }
+  static public string ToString(ulong n, bool bigEnding = true)
+  {
+    StringBuilder builder = new StringBuilder();
+    int from = bigEnding ? 0 : 63;
+    int to = bigEnding ? 64 : -1;
+    Func<int, int> Next = bigEnding ? (i) => ++i : (i) => --i;
+    for (int i = from; i != to; i = Next(i))
+      builder.Append((n >> i) & 1);
+    return builder.ToString();
+  }
+  static public string ToString(int n, bool bigEnding = true)
+  {
+    StringBuilder builder = new StringBuilder();
+    int from = bigEnding ? 0 : 31;
+    int to = bigEnding ? 32 : -1;
+    Func<int, int> Next = bigEnding ? (i) => ++i : (i) => --i;
+    for (int i = from; i != to; i = Next(i))
+      builder.Append((n >> i) & 1);
+    return builder.ToString();
   }
   static public void Write(ulong n)
   {

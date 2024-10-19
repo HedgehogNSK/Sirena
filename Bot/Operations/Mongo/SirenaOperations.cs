@@ -113,4 +113,15 @@ public class SirenaOperations : IDeleteSirenaOperation
 
     return sirens.UpdateOneAsync(filter, update);
   }
+
+  public IObservable<bool> UpdateDefault(ulong sirenaId)
+  { 
+    
+    FilterDefinitionBuilder<SirenRepresentation> filterBuilder = Builders<SirenRepresentation>.Filter;
+    var filter = filterBuilder.Exists(s => s.Sid, false);
+    var update = Builders<SirenRepresentation>.Update.Set(s => s.Sid, sirenaId);
+
+    return Observable.FromAsync(() => sirens.UpdateOneAsync(filter, update))
+    .Select(x => x.IsAcknowledged && x.IsModifiedCountAvailable && x.ModifiedCount >0);
+  }
 }

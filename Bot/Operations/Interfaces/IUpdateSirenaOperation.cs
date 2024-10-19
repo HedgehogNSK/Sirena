@@ -4,4 +4,5 @@ namespace Hedgey.Sirena.Bot.Operations;
 
 public interface IUpdateSirenaOperation{
   IObservable<SirenRepresentation> UpdateLastCall(ulong sirenId, SirenRepresentation.CallInfo  callInfo);
+  IObservable<bool> UpdateDefault(ulong sirenaId);
 }
