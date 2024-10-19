@@ -1,5 +1,4 @@
 using Hedgey.Structure.Factory;
-using MongoDB.Bson;
 
 namespace Hedgey.Sirena.Bot;
 
