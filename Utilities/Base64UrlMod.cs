@@ -1,19 +1,28 @@
+using System.Text;
+
 namespace Hedgey.Utilities;
 
 static public class Base64UrlMod
 {
+  //[\-0-9A-Z_a-Z] [45;[48;57];[65;90];95;[97;122]]
   public const string alphabet = "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz";
+  //[A-Za-Z0-9+/] [[65;90];[97;122];[48;57];43;47]
+  public const string base64alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+  const uint intTab = '\t';   //9u
+  const uint intNLn = '\n';   //10u
+  const uint intCRt = '\r';   //13u
+  const uint intPlus = '+';   //43u
+  const uint intDash = '-';   //45u  -> 0
+  const uint intSlash = '/';  //47u
+  const uint intColon = ':';  //58u
+  const uint intEq = '=';     //61u
+  const uint intSub = '_';    //95u -> 37
   static public unsafe byte[] GetBytes(string hash)
   {
-    const uint intTab = '\t';   //9u
-    const uint intNLn = '\n';   //10u
-    const uint intCRt = '\r';   //13u
-    const uint intDash = '-';   //45u  Base64 -> 0
-    const uint int0 = '0' - 1u; //47u //[0 - 9] : [48 - 57]  Base64 -> [1 - 10]  diff = 47
-    const uint intEq = '=';     //61u
-    const uint intA = 'A' - 1u; //64u  //[A - Z] : [65 - 90]  Base64 -> [11 - 36] diff = 54
-    const uint intSub = '_';    //95u  Base64 -> 37
-    const uint inta = 'a' - 1u; //96u  //[a - z] : [97 - 122] Base64 -> [38 - 63] diff = 59
+    const uint int0 = '0' - 1u; //47u 
+    const uint intA = 'A' - 1u; //64u 
+    const uint inta = 'a' - 1u; //96u  
 
     int bytesLength = hash.Length - (hash.Length >> 2); // = 3/4 * length
     int switcher = 0;
@@ -42,13 +51,13 @@ static public class Base64UrlMod
           else
           {
             if (currCode > inta)
-              currCode -= 59u;
+              currCode -= 59u;//[a;z] : [97;122] -> [38;63] diff = 59
             else if (currCode == intSub)
               currCode = 37u;
             else if (currCode > intA)
-              currCode -= 54u;
+              currCode -= 54u; //[A;Z] : [65;90]  -> [11;36] diff = 54
             else if (currCode > int0)
-              currCode -= 47u;
+              currCode -= 47u; //['0';'9'] : [48;57]  -> [1;10]  diff = 47
 
             else if (currCode == intTab
                   || currCode == intNLn
@@ -110,12 +119,7 @@ static public class Base64UrlMod
   {
     //Each 3 bytes translates into 4 letters from the list
     int length = bytes.Length;
-    int padding = length % 3;
-    if (padding != 0)
-      padding = padding ^ 3;
-    int stringLength = (length / 3) << 2;
-    if (padding != 0)
-      stringLength += 4;
+    int stringLength = ((length + 2) / 3) << 2;
 
     char[] result = new char[stringLength];
 
@@ -170,5 +174,75 @@ static public class Base64UrlMod
     if (bytes.Length != 8)
       Array.Resize(ref bytes, 8);
     return BitConverter.ToInt64(bytes, 0);
+  }
+  /// <summary>
+  /// Translates Base64 symbols into Base64 Url mod symbols without hash validation
+  /// Only symbols will be validated
+  /// </summary>
+  /// <param name="base64hash"></param>
+  /// <returns></returns>
+  /// <exception cref="ArgumentException"></exception>
+  static public string TranslateFromBase64(string base64hash)
+  {
+    const uint intl = 'l';
+    const uint inty = 'y';
+    const uint intz = 'z';
+    const uint intA = 'A';
+    StringBuilder builder = new StringBuilder();
+
+    for (int i = 0; i != base64hash.Length; ++i)
+    {
+      char c = base64hash[i];
+      uint charNumber = c;
+      if (charNumber > 96u) //a - z: 97- 122
+      {
+        if (charNumber < intl) // [a;k]
+                               // a - P : 97 - 80  = 17
+          charNumber -= 17u;
+        else if (charNumber == intl)
+          charNumber = intSub;
+        else if (charNumber < 123u) //[l;z]
+          // m - a : 109 - 97 = 12
+          charNumber -= 12u;
+        else
+          NotBase64Symbol(c, base64hash);
+      }
+      else if (charNumber > 64u) //A = 65u [A;Z]
+      {
+        if (charNumber == intA)
+          charNumber = intDash;
+        else if (charNumber < 76u) //L
+          // B - 0 : 66 - 48 = 18
+          charNumber -= 18u;
+        else if (charNumber < 91u)
+          // L - A : 76 - 65 = 11
+          charNumber -= 11u;
+        else
+          NotBase64Symbol(c, base64hash);
+      }
+      else if (charNumber > intSlash) /*[0;9] + "="*/
+      {
+        if (charNumber < intColon)
+          // 0 - o : 48 - 111 = -63u
+          charNumber += 63u;
+        else if (charNumber != intEq)
+          NotBase64Symbol(c, base64hash);
+      }
+      else if (charNumber == intSlash)
+        charNumber = intz;
+      else if (charNumber == intPlus)
+        charNumber = inty;
+      else if (charNumber != intEq && charNumber != intTab && charNumber != intNLn && charNumber != intCRt)
+        NotBase64Symbol(c, base64hash);
+
+      c = (char)charNumber;
+      builder.Append(c);
+    }
+    return builder.ToString();
+  }
+
+  static private void NotBase64Symbol(char c, string hash)
+  {
+    throw new ArgumentException($"Symbol \'{c}\' doesn't belong to Base64 symbols. Therefore it's not base64 hash: \'{hash}\'");
   }
 }
