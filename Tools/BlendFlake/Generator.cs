@@ -2,24 +2,25 @@ using Hedgey.Extensions;
 
 namespace Hedgey.Tools.BlendedFlake;
 
-public class IDGenerator : IIDGenerator
+public class Generator : IIDGenerator
 {
-  private readonly ulong _epoch;
-  private readonly ushort _machineID;
+  public readonly ulong epoch;
+  public readonly ushort machineID;
   private uint _sequence;
   private long _lastTimestamp;
   private const int ID_BITS = 10;
   private const int SEQUENCE_BITS = 12;
   private const int DATE_BITS = 42;
+   private const int SEQUENCE_SPLIT_BIT = 4;
   private const int MAX_ID = (1 << ID_BITS) - 1; // 1023
   private const uint MAX_SEQUENCE_LENGTH = (1 << SEQUENCE_BITS) - 1; // 4095
-  public IDGenerator(long epoch, ushort machineID)
+  public Generator(long epoch, ushort machineID)
   {
     if (machineID < 0 || machineID > MAX_ID)
       throw new ArgumentOutOfRangeException(nameof(machineID), $"Machine ID must be between 0 and {MAX_ID}");
 
-    _epoch = (ulong)epoch;
-    _machineID = machineID;
+    this.epoch = (ulong)epoch;
+    this.machineID = machineID;
     _sequence = 0;
     _lastTimestamp = -1L;
   }
@@ -45,19 +46,17 @@ public class IDGenerator : IIDGenerator
       if (_sequence >= 3)
         Console.WriteLine(_sequence);
 
-      const int seqSlitBit = 4;
-      ulong result = _sequence >> seqSlitBit << ID_BITS;
-      result |= _machineID;
-      result <<= seqSlitBit;
+      ulong result = _sequence >> SEQUENCE_SPLIT_BIT << ID_BITS;
+      result |= machineID;
+      result <<= SEQUENCE_SPLIT_BIT;
       result |= _sequence & 0xF;
       result <<= DATE_BITS;
-      result |= ((ulong)_lastTimestamp - _epoch) & 0x3FFFFFFFFFF;
+      result |= ((ulong)_lastTimestamp - epoch) & 0x3FFFFFFFFFF;
       return result;
     }
   }
   private long GetCurrentTimestamp()
     => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-
   private long WaitForNextMillisecond(long lastTimestamp)
   {
     return Task.Run(Wait4NextMillisecondAsync).GetAwaiter().GetResult();
@@ -72,5 +71,29 @@ public class IDGenerator : IIDGenerator
       } while (timestamp <= lastTimestamp);
       return timestamp;
     }
+  }
+
+  static public int ComputeMachineID(ulong id)
+  {
+    const int shift = DATE_BITS + SEQUENCE_SPLIT_BIT;
+    const int ID_MASK = (1 << ID_BITS) - 1;
+    return (int)(id >> shift) & ID_MASK;
+  }
+  static public ulong ComputeCreationTimestamp(ulong id, ulong epoch)
+  {
+    const long TIMESTAMP_MASK = (1L << DATE_BITS) - 1;
+    return epoch + (id & TIMESTAMP_MASK);
+  }
+  static public DateTimeOffset ComputeCreationDateTime(ulong id, ulong epoch)
+  {
+    var x = ComputeCreationTimestamp(id, epoch);
+    return DateTimeOffset.FromUnixTimeMilliseconds((long)x);
+  }
+  static public int ComputeSequenceNumber(ulong id)
+  {
+    const int SPLIT_MASK = (1 << SEQUENCE_SPLIT_BIT) - 1;
+    ulong temp = id >> DATE_BITS;
+    temp = (temp & SPLIT_MASK) | ((temp >> (ID_BITS + SEQUENCE_SPLIT_BIT)) << SEQUENCE_SPLIT_BIT);
+    return (int)temp;
   }
 }

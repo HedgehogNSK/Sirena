@@ -45,7 +45,7 @@ public class CoreInstaller(Container container) : Installer(container)
     Container.Register<IMessageForwarder, BotMessageSenderTimerProxy>(Lifestyle.Singleton);
     Container.Register<IMessageCopier, BotMessageSenderTimerProxy>(Lifestyle.Singleton);
 
-    Container.RegisterSingleton<IIDGenerator>(()=> new IDGenerator(EPOCH_TIMESTAMP, MACHINE_ID));
+    Container.RegisterSingleton<IIDGenerator>(() => new Generator(EPOCH_TIMESTAMP, MACHINE_ID));
   }
 
   public class PlanDictionary : Dictionary<long, CommandPlan>

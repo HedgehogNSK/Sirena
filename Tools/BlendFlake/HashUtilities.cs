@@ -28,7 +28,7 @@ static public class HashUtilities
     if (length == 12 && shortHash[length - 1] == eq)
       return shortHash;
     if (length >= 12)
-      throw new ArgumentException($"\"{shortHash}\" is not a hash of BlendedFlake ID");
+      throw new ArgumentException($"\"{shortHash}\" is not a BlendedFlake ID hash");
 
     const int max = 11; // Hash length is 11 = 10 symbols + 1 symbol '='
     return new StringBuilder(shortHash)
