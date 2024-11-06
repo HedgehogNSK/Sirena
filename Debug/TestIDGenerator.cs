@@ -12,11 +12,11 @@ static public class TestIDGenerator
   static public void SetGenerator(Generator generator) { TestIDGenerator.generator = generator; }
   static public void Display(ulong id)
   {
-    string result = Base64UrlMod.FromLong(id); // Get Base64 URL Hedgey modification string
+    string result = NotBase64URL.From(id); // Get Base64 URL Hedgey modification string
     Console.WriteLine($"Bits [Low Ending]: {Bit.ToString(id, false)}");
     string shortResult = HashUtilities.Shortify(result);
     string restoreResult = HashUtilities.Expand(shortResult);
-    ulong number = (ulong)Base64UrlMod.ToLong(restoreResult);
+    ulong number = (ulong)NotBase64URL.ToLong(restoreResult);
     var machineID = Generator.ComputeMachineID(id);
     var sequence = Generator.ComputeSequenceNumber(id);
     var timestamp = Generator.ComputeCreationTimestamp(id, generator.epoch);
@@ -28,7 +28,7 @@ static public class TestIDGenerator
   static public void TestBase64(string test)
   {
     var bytes = Encoding.ASCII.GetBytes(test);
-    var hash = Base64UrlMod.FromBytes(bytes);
+    var hash = NotBase64URL.From(bytes);
     Console.WriteLine(hash);
   }
 }

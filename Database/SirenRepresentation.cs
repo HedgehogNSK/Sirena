@@ -14,7 +14,7 @@ public class SirenRepresentation
   /// </summary>
   [BsonElement("sid"), BsonRepresentation(BsonType.Int64)]
   public ulong Sid { get; set; }
-  public string Hash => Base64UrlMod.FromLong(Sid);
+  public string Hash => NotBase64URL.From(Sid);
   public string ShortHash => HashUtilities.Shortify(Hash);
   [BsonElement("ownerid"), BsonRepresentation(BsonType.Int64)]
   public long OwnerId { get; set; }

@@ -11,10 +11,10 @@ static public class HashUtilities
   /// <summary>
   /// Remove last consequent '-' symbols and '='. Use only for base64 url modification by Hedgey
   /// </summary>
-  /// <param name="base64UrlMod"></param>
+  /// <param name="base64url"></param>
   /// <returns></returns>
-  static public string Shortify(string base64UrlMod)
-    => regex.Replace(base64UrlMod, string.Empty);
+  static public string Shortify(string base64url)
+    => regex.Replace(base64url, string.Empty);
   /// <summary>
   /// Each base64 of Snowflake ID has 11 symbols. And each of them has 1 '=' at the end.
   ///
@@ -43,7 +43,7 @@ static public class HashUtilities
       return false;
     try
     {
-      id = (ulong)Base64UrlMod.ToLong(hash);
+      id = (ulong)NotBase64URL.ToLong(hash);
       return true;
     }
     catch
