@@ -1,4 +1,4 @@
-using Hedgey.Tools.BlendedFlake;
+using Hedgey.Blendflake;
 using Hedgey.Utilities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;

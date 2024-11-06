@@ -2,7 +2,7 @@ using Hedgey.Extensions;
 using Hedgey.Extensions.Telegram;
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
-using Hedgey.Tools.BlendedFlake;
+using Hedgey.Blendflake;
 using MongoDB.Driver;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;

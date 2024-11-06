@@ -1,7 +1,7 @@
 using Hedgey.Extensions;
 using Hedgey.Localization;
 using Hedgey.Structure.Factory;
-using Hedgey.Tools.BlendedFlake;
+using Hedgey.Blendflake;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;

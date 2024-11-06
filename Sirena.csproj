@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <StartupObject>Hedgey.Sirena.Program</StartupObject>
@@ -17,7 +17,9 @@
     <PackageReference Include="SimpleInjector" Version="5.5.0" />
     <PackageReference Include="System.Reactive" Version="6.0.1" />
     <PackageReference Include="telegram.bot" Version="19.0.0" />
+    <ProjectReference Include="External\Blendflake\src\Blendflake\Blendflake.csproj" />
     <Compile Remove="DatabaseUpdater\**\*.cs" />
+    <Compile Remove="External\Blendflake\**\*.cs" />
   </ItemGroup>
 
 </Project>

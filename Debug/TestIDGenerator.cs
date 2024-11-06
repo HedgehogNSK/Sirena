@@ -1,6 +1,6 @@
 using System.Text;
 using Hedgey.Extensions;
-using Hedgey.Tools.BlendedFlake;
+using Hedgey.Blendflake;
 using Hedgey.Utilities;
 
 namespace Hedgey.Debug;
