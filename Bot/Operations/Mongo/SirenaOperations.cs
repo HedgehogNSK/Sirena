@@ -51,7 +51,7 @@ public class SirenaOperations : IDeleteSirenaOperation
     var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.Sid, sid);
     var update = Builders<SirenRepresentation>.Update.Pull(x => x.Listener, uid)
         .Pull(x => x.Responsible, uid) // Удаление из Responsible
-        .PullFilter(x => x.Requests, r => r.UID == uid);;
+        .PullFilter(x => x.Requests, r => r.UID == uid);
     return Observable.FromAsync(() => sirens.UpdateOneAsync(filter, update)).Select(x => x.ModifiedCount != 0);
   }
   public IObservable<SirenRepresentation> Find(ulong sid)
@@ -66,6 +66,13 @@ public class SirenaOperations : IDeleteSirenaOperation
     var pattern = new Regex(formatedKey, RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Multiline);
     var bsonRegex = new BsonRegularExpression(pattern);
     var filter = Builders<SirenRepresentation>.Filter.Regex(x => x.Title, bsonRegex);
+    return Observable.FromAsync(() => sirens.Find(filter).ToListAsync());
+  }
+  public IObservable<IEnumerable<SirenRepresentation>> GetAvailableForCallSirenas(long uid)
+  {
+    var builder = Builders<SirenRepresentation>.Filter;
+    var filter = (builder.Eq(x => x.OwnerId, uid) | builder.AnyEq(x => x.Responsible, uid))
+      & builder.SizeGt(x => x.Listener, 0);
     return Observable.FromAsync(() => sirens.Find(filter).ToListAsync());
   }
   public IObservable<IEnumerable<SirenRepresentation>> GetUserSirenas(long uid)
@@ -87,12 +94,12 @@ public class SirenaOperations : IDeleteSirenaOperation
     var filterSiren = Builders<SirenRepresentation>.Filter.Eq(x => x.OwnerId, uid);
     return Observable.FromAsync(() => sirens.Find(filterSiren).Skip(number).FirstOrDefaultAsync());
   }
-/// <summary>
-/// Update sirena document in a database with new date of last call 
-/// </summary>
-/// <param name="sid"></param>
-/// <param name="callInfo"></param>
-/// <returns></returns>
+  /// <summary>
+  /// Update sirena document in a database with new date of last call
+  /// </summary>
+  /// <param name="sid"></param>
+  /// <param name="callInfo"></param>
+  /// <returns></returns>
   public IObservable<SirenRepresentation> UpdateLastCall(ulong sid, SirenRepresentation.CallInfo callInfo)
   {
     var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.Sid, sid);
@@ -102,7 +109,7 @@ public class SirenaOperations : IDeleteSirenaOperation
 
   public IObservable<IRightsRequestOperation.Result> Send(ulong sid, long requesterId, string message)
     => Observable.FromAsync(() => RequestRightsAsync(sid, requesterId, message))
-    .Select(_result => new IRightsRequestOperation.Result(_result.MatchedCount!=0, _result.ModifiedCount!=0));
+    .Select(_result => new IRightsRequestOperation.Result(_result.MatchedCount != 0, _result.ModifiedCount != 0));
 
   private Task<UpdateResult> RequestRightsAsync(ulong sid, long requesterId, string message)
   {
@@ -120,13 +127,13 @@ public class SirenaOperations : IDeleteSirenaOperation
   }
 
   public IObservable<bool> UpdateDefault(ulong sirenaId)
-  { 
-    
+  {
+
     FilterDefinitionBuilder<SirenRepresentation> filterBuilder = Builders<SirenRepresentation>.Filter;
     var filter = filterBuilder.Exists(s => s.Sid, false);
     var update = Builders<SirenRepresentation>.Update.Set(s => s.Sid, sirenaId);
 
     return Observable.FromAsync(() => sirens.UpdateOneAsync(filter, update))
-    .Select(x => x.IsAcknowledged && x.IsModifiedCountAvailable && x.ModifiedCount >0);
+    .Select(x => x.IsAcknowledged && x.IsModifiedCountAvailable && x.ModifiedCount > 0);
   }
 }
