@@ -56,8 +56,8 @@ public class RequestFindSirenaStep : CommandStep
   {
     var chatId = context.GetTargetChatId();
     var info = context.GetCultureInfo();
-    string key = context.GetArgsString();
-    MessageBuilder builder = new NoSirenaMessageBuilder(chatId, info, localizationProvider, key);
+    string title = context.GetArgsString();
+    MessageBuilder builder = new NoSirenaWithSuchTitleMessageBuilder(chatId, info, localizationProvider, title);
     return new Report(Result.Wait, builder);
   }
 }
