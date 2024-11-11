@@ -3,6 +3,9 @@
   <data name="command.call.ask_sirena_id">
     <value>Please provide Sirena&apos;s ID to call. It must be Sirena that you own or you are responsible for</value>
   </data>
+  <data name="command.call.available.description">
+    <value>Choose *Sirena* to call</value>
+  </data>
   <data name="command.call.description">
     <value>Call Sirena by number or by id</value>
   </data>
@@ -15,6 +18,9 @@
   </data>
   <data name="command.call.extra_info">
     <value>ℹ️You can send extra information for subscribers or just click the *Call* button.</value>
+  </data>
+  <data name="command.call.extra_info.skip">
+    <value>🔊 Launch only</value>
   </data>
   <data name="command.call.last_call">
     <value>⚠️Last call was made recently by *{0}* at {1} UTC. Please wait {2} until next try.</value>
@@ -130,7 +136,7 @@ Please remove one of your sirenas and try again.</value>
 Search phrase has to be at least {0} symbols length but less than {1} symbols.</value>
   </data>
   <data name="command.find.no_id">
-    <value>There is no Sirena with this ID: \&quot;{0}\&quot;.
+    <value>There is no Sirena with this ID: `{0}`.
 Please check input ID.</value>
   </data>
   <data name="command.find.no_title">
@@ -210,6 +216,20 @@ Please try another key phrase.</value>
   <data name="command.request_rights.already_sent">
     <value>⚠️You have *already sent* a permission request for the sirena.</value>
   </data>
+  <data name="command.request_rights.available.empty">
+    <value>You don&apos;t have any Sirena for which you could request call rights.</value>
+  </data>
+  <data name="command.request_rights.available.header">
+    <value>*Your are able to request rights to call:*
+
+</value>
+  </data>
+  <data name="command.request_rights.extra_info">
+    <value>ℹ️You are about to ask rights to call sirena: {0}.You can write extra infromation for the owner of the Sirena or you can send request as is by click on the button down bellow.</value>
+  </data>
+  <data name="command.request_rights.extra_info.skip">
+    <value>🙏 Request only</value>
+  </data>
   <data name="command.request_rights.fail">
     <value>⚠️Request failed. Possible reasons: 
 1. There is no *sirena* with ID: `{0}`
@@ -223,14 +243,6 @@ You can send request message or skip it. But you have to set correc sirena id</v
   </data>
   <data name="command.request_rights.success">
     <value>You have successfuly sent a a permission request for the sirena: {0}</value>
-  </data>
-  <data name="command.request_rights.available.header">
-    <value>*Your are able to request rights to call:*
-
-</value>
-  </data>
-  <data name="command.request_rights.available.empty">
-    <value>You don&apos;t have any Sirena for which you could request call rights.</value>
   </data>
   <data name="command.request.description">
     <value>Request owner of Sirena to delegate right to call Sirena</value>
@@ -263,6 +275,13 @@ You can send request message or skip it. But you have to set correc sirena id</v
   <data name="command.sirena_info.general_info">
     <value>Title: *{0}*
 ID: `{1}`
+Subscribers: {2}
+</value>
+  </data>
+  <data name="command.sirena_info.general_info.not_owner">
+    <value>Title: *{0}*
+ID: `{1}`
+Owner: {3}
 Subscribers: {2}
 </value>
   </data>
@@ -321,6 +340,21 @@ ID: `{2}`
   <data name="command.unmute.description">
     <value>Unmute previously muted user for certain Siren</value>
   </data>
+  <data name="command.unmute.error.not_found">
+    <value>⚠️Couldn&apos;t find sirena to mute user</value>
+  </data>
+  <data name="command.unmute.error.wrong_parameter">
+    <value>To unmute user please input command with parameters: /unmute {user id to mute} {sirena id}</value>
+  </data>
+  <data name="command.unmute.error.wrong_sirena_id">
+    <value>⚠️0} parameter is incorrect. Second parameter has to be serial number or *ID* of your sirena</value>
+  </data>
+  <data name="command.unmute.error.wrong_uid">
+    <value>⚠️{0} parameter is incorrect. First parameter has to be *UID* of user that is already responsible for sirena.</value>
+  </data>
+  <data name="command.unmute.success">
+    <value>User {0} has been unmuted. You will be notified if this user will call the sirena: *{1}*</value>
+  </data>
   <data name="command.unsubscribe.description">
     <value>Unsubscribes from certain Sirena</value>
   </data>
@@ -372,41 +406,10 @@ ID: `{2}`
   <data name="menu.buttons.unsubscribe.title">
     <value>🔕 UnSubscribe</value>
   </data>
-  <data name="miscellaneous.user_ghost">
-    <value>Ghost</value>
-  </data>
   <data name="miscellaneous.no_command">
     <value>⚠️No known command were found! Use /help or /menu to find out what I can do.</value>
   </data>
-  <data name="command.unmute.error.wrong_sirena_id">
-    <value>⚠️0} parameter is incorrect. Second parameter has to be serial number or *ID* of your sirena</value>
-  </data>
-  <data name="command.unmute.error.wrong_uid">
-    <value>⚠️{0} parameter is incorrect. First parameter has to be *UID* of user that is already responsible for sirena.</value>
-  </data>
-  <data name="command.unmute.error.wrong_parameter">
-    <value>To unmute user please input command with parameters: /unmute {user id to mute} {sirena id}</value>
-  </data>
-  <data name="command.unmute.success">
-    <value>User {0} has been unmuted. You will be notified if this user will call the sirena: *{1}*</value>
-  </data>
-  <data name="command.unmute.error.not_found">
-    <value>⚠️Couldn&apos;t find sirena to mute user</value>
-  </data>
-  <data name="command.request_rights.extra_info">
-    <value>ℹ️You are about to ask rights to call sirena: {0}.You can write extra infromation for the owner of the Sirena or you can send request as is by click on the button down bellow.</value>
-  </data>
-  <data name="command.request_rights.extra_info.skip">
-    <value>🙏 Request only</value>
-  </data>
-  <data name="command.call.extra_info.skip">
-    <value>🔊 Launch only</value>
-  </data>
-  <data name="command.sirena_info.general_info.not_owner">
-    <value>Title: *{0}*
-ID: `{1}`
-Owner: {3}
-Subscribers: {2}
-</value>
+  <data name="miscellaneous.user_ghost">
+    <value>Ghost</value>
   </data>
 </root>

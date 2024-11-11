@@ -17,10 +17,10 @@ public class CallSirenaCommandInstaller : PlanBassedCommandInstaller<CallSirenaC
     Container.RegisterConditional<IFactory<IRequestContext, IMessageBuilder>, AddExtraInformationStep.MessagBuilderFactory, AddExtraInformationStep.Factory>();
 
     Container.RegisterSingleton<IFactory<NullableContainer<ulong>, SirenaIdValidationStep>, SirenaIdValidationStep.Factory>();
-    Container.RegisterConditional<IFactory<IRequestContext, string, IMessageBuilder>, StringNotIdMessageBuilder.Factory, SirenaIdValidationStep.Factory>();
+    Container.RegisterConditional<IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder>, StringNotIdMessageBuilder.Factory, SirenaIdValidationStep.Factory>();
 
     Container.RegisterSingleton<IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep>, SirenaExistensValidationStep.Factory>();
-    Container.RegisterConditional<IFactory<IRequestContext, ulong, IMessageBuilder>, SirenaExistensValidationStep.MessagBuilderFactory, SirenaExistensValidationStep.Factory>();
+    Container.RegisterConditional<IFactory<IRequestContext, string, IMessageBuilder>, SirenaExistensValidationStep.MessagBuilderFactory, SirenaExistensValidationStep.Factory>();
 
     Container.RegisterSingleton<IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep>, CallSirenaStep.Factory>();
     Container.RegisterConditional<IFactory<IRequestContext, int, SirenRepresentation, IMessageBuilder>, SirenaCallReportMessageBuilder.Factory, CallSirenaStep.Factory>();

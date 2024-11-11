@@ -1,57 +1,43 @@
-using Hedgey.Extensions;
-using Hedgey.Localization;
-using Hedgey.Structure.Factory;
 using Hedgey.Blendflake;
+using Hedgey.Extensions;
+using Hedgey.Sirena.Bot.Operations;
+using Hedgey.Sirena.Database;
+using Hedgey.Structure.Factory;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SirenaIdValidationStep : CommandStep
+public class SirenaIdValidationStep(
+  IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> availableSirenasMessageBuilderFactory
+, IGetUserRelatedSirenas getUserRelatedSirenas
+, NullableContainer<ulong> idContainer
+, int idArgNumber = 0) : CommandStep
 {
-  private readonly NullableContainer<ulong> idContainer;
-  private readonly IFactory<IRequestContext, string, IMessageBuilder> messageBuilderFactory;
-  private readonly int idArgNumber;
-
-  public SirenaIdValidationStep(IFactory<IRequestContext, string, IMessageBuilder> messageBuilderFactory
-    , NullableContainer<ulong> idContainer
-    , int idArgNumber = 0)
-  {
-    this.idContainer = idContainer;
-    this.messageBuilderFactory = messageBuilderFactory;
-    this.idArgNumber = idArgNumber;
-  }
-
   public override IObservable<Report> Make(IRequestContext context)
   {
     var param = context.GetArgsString().GetParameterByNumber(idArgNumber);
 
-    Report report;
     if (!HashUtilities.TryParse(param, out var sirenaId))
     {
-      var builder = messageBuilderFactory.Create(context, param);
-      report = new Report(Result.Wait, builder);
+      var uid = context.GetUser().Id;
+      return getUserRelatedSirenas.GetAvailableForCallSirenas(uid).Select(CreateReport);
     }
-    else
-    {
-      idContainer.Set(sirenaId);
-      report = new Report(Result.Success);
-    }
+
+    idContainer.Set(sirenaId);
+    Report report = new Report(Result.Success);
     return Observable.Return(report);
+
+    Report CreateReport(IEnumerable<SirenRepresentation> sirenas)
+    {
+      IMessageBuilder builder = availableSirenasMessageBuilderFactory.Create(context, sirenas);
+      return new Report(Result.Canceled, builder);
+    };
   }
-  public class Factory(IFactory<IRequestContext, string, IMessageBuilder> messageBuilderFactory)
+  public class Factory(IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> availableSirenasMessageBuilderFactory
+  , IGetUserRelatedSirenas getUserRelatedSirenas)
     : IFactory<NullableContainer<ulong>, SirenaIdValidationStep>
   {
     public SirenaIdValidationStep Create(NullableContainer<ulong> idContainer)
-      => new SirenaIdValidationStep(messageBuilderFactory, idContainer, 0);
-  }
-  public class MessageBuilderFactory(ILocalizationProvider localizationProvider)
-    : IFactory<IRequestContext, string, IMessageBuilder>
-  {
-    public IMessageBuilder Create(IRequestContext context, string param)
-    {
-      var chatId = context.GetChat().Id;
-      var info = context.GetCultureInfo();
-      return new StringNotIdMessageBuilder(chatId, info, localizationProvider, param);
-    }
+      => new SirenaIdValidationStep(availableSirenasMessageBuilderFactory, getUserRelatedSirenas, idContainer, 0);
   }
 }

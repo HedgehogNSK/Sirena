@@ -33,7 +33,11 @@ public class AddExtraInformationStep : CommandStep
     else
     {
       if (!message.From.IsBot)
-        messageContainer.Set(message);
+      {
+        var commandName = context.GetCommandName();
+        if (string.IsNullOrEmpty(commandName))
+          messageContainer.Set(message);
+      }
       report = new(Result.Success);
     }
     return Observable.Return(report);

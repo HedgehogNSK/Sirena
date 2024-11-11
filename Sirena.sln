@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{35E173B2-934
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blendflake", "External\Blendflake\src\Blendflake\Blendflake.csproj", "{02A3D913-23ED-4969-A1D4-3145F316FD41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseUpdater", "DatabaseUpdater\DatabaseUpdater.csproj", "{F5AF97C9-69B5-444E-A495-EB065726D73C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseUpdater", "DatabaseUpdater\DatabaseUpdater.csproj", "{2DF0DEA4-F002-4C9A-910C-223C6591F4C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{02A3D913-23ED-4969-A1D4-3145F316FD41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02A3D913-23ED-4969-A1D4-3145F316FD41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02A3D913-23ED-4969-A1D4-3145F316FD41}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5AF97C9-69B5-444E-A495-EB065726D73C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5AF97C9-69B5-444E-A495-EB065726D73C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5AF97C9-69B5-444E-A495-EB065726D73C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5AF97C9-69B5-444E-A495-EB065726D73C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DF0DEA4-F002-4C9A-910C-223C6591F4C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DF0DEA4-F002-4C9A-910C-223C6591F4C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DF0DEA4-F002-4C9A-910C-223C6591F4C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DF0DEA4-F002-4C9A-910C-223C6591F4C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
