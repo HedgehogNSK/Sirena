@@ -12,8 +12,8 @@ public class ListSirenaMessageBuilder : LocalizedMessageBuilder
   private (SirenRepresentation sirena, string ownerName)[] collection;
 
   public ListSirenaMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider, (SirenRepresentation sirena, string ownerName)[] collection)
-  : base(chatId,info,localizationProvider)
+  , ILocalizationProvider localizationProvider, (SirenRepresentation sirena, string ownerName)[] collection)
+  : base(chatId, info, localizationProvider)
   {
     this.collection = collection;
   }
@@ -21,7 +21,7 @@ public class ListSirenaMessageBuilder : LocalizedMessageBuilder
   public override SendMessage Build()
   {
     const int buttonsPerLine = 5;
-    string template =Localize( "command.subscriptions.bref_info");
+    string template = Localize("command.subscriptions.bref_info");
     StringBuilder builder = new StringBuilder(Localize("command.find.header"));
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
     int number = 0;
