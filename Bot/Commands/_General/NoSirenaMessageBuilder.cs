@@ -4,15 +4,11 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class NoSirenaMessageBuilder : LocalizedMessageBuilder
-{
-  string key = string.Empty;
-  public NoSirenaMessageBuilder(long chatId, CultureInfo info
+public class NoSirenaMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, string key)
-  : base(chatId, info, localizationProvider)
-  {
-    this.key = key;
-  }
+   : LocalizedMessageBuilder(chatId, info, localizationProvider)
+{
+
   public override SendMessage Build()
   {
     string noSirenaByIdError = Localize("command.find.no_id");
