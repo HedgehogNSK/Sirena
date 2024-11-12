@@ -1,5 +1,7 @@
+using Hedgey.Blendflake;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Structure.Factory;
+using Hedgey.Utilities;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
@@ -8,11 +10,11 @@ public class TryUnsubscribeStep : CommandStep
 {
   private readonly NullableContainer<ulong> idContainer;
   private readonly IUnsubscribeSirenaOperation unsubscribeOperation;
-  private readonly IFactory<IRequestContext, ulong,bool, IMessageBuilder> messageBuilderFactory;
+  private readonly IFactory<IRequestContext, string, bool, IMessageBuilder> messageBuilderFactory;
 
   public TryUnsubscribeStep(NullableContainer<ulong> idContainer
   , IUnsubscribeSirenaOperation unsubscribeOperation
-  , IFactory<IRequestContext, ulong, bool, IMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, string, bool, IMessageBuilder> messageBuilderFactory)
   {
     this.idContainer = idContainer;
     this.unsubscribeOperation = unsubscribeOperation;
@@ -30,14 +32,17 @@ public class TryUnsubscribeStep : CommandStep
       var info = context.GetCultureInfo();
       long chatId = context.GetTargetChatId();
       Result result = isSuccess ? Result.Success : Result.Canceled;
-      IMessageBuilder builder = messageBuilderFactory.Create(context,id, isSuccess);
+      string hash = NotBase64URL.From(id);
+      hash = HashUtilities.Shortify(hash);
+      IMessageBuilder builder = messageBuilderFactory.Create(context, hash, isSuccess);
       return new Report(result, builder);
     }
   }
-  
-  public class Factory(IUnsubscribeSirenaOperation unsubscribeOperation, IFactory<IRequestContext, ulong, bool, IMessageBuilder> messageBuilderFactory) : IFactory<NullableContainer<ulong>, TryUnsubscribeStep>
+
+  public class Factory(IUnsubscribeSirenaOperation unsubscribeOperation
+  , IFactory<IRequestContext, string, bool, IMessageBuilder> messageBuilderFactory) : IFactory<NullableContainer<ulong>, TryUnsubscribeStep>
   {
     public TryUnsubscribeStep Create(NullableContainer<ulong> idContainer)
-    => new TryUnsubscribeStep(idContainer,unsubscribeOperation, messageBuilderFactory);
+    => new TryUnsubscribeStep(idContainer, unsubscribeOperation, messageBuilderFactory);
   }
 }

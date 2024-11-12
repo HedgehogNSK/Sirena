@@ -8,14 +8,14 @@ namespace Hedgey.Sirena.Bot;
 
 internal class UnsubscribeMessageBuilder : LocalizedMessageBuilder
 {
-  private readonly ulong sirenaId;
+  private readonly string hash;
   private bool isSuccess;
 
   public UnsubscribeMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider localizationProvider, ulong sirenaId, bool isSuccess) 
+  , ILocalizationProvider localizationProvider, string hash, bool isSuccess)
   : base(chatId, info, localizationProvider)
   {
-    this.sirenaId = sirenaId;
+    this.hash = hash;
     this.isSuccess = isSuccess;
   }
   public override SendMessage Build()
@@ -24,13 +24,13 @@ internal class UnsubscribeMessageBuilder : LocalizedMessageBuilder
     if (isSuccess)
     {
       message = Localize("command.unsubscribe.success");
-      message = string.Format(message, sirenaId);
+      message = string.Format(message, hash);
       return CreateDefault(message, MarkupShortcuts.CreateMenuButtonOnlyMarkup(Info));
     }
     else
     {
       message = Localize("command.unsubscribe.fail");
-      message = string.Format(message, sirenaId);
+      message = string.Format(message, hash);
       string unsubscribeTitle = Localize("menu.buttons.anotherTry.title");
       var replyMarkup = KeyboardBuilder.CreateInlineKeyboard()
       .BeginRow().AddMenuButton(Info)
@@ -41,13 +41,13 @@ internal class UnsubscribeMessageBuilder : LocalizedMessageBuilder
   }
 
   public class Factory(ILocalizationProvider localizationProvider)
-    : IFactory<IRequestContext, ulong, bool, IMessageBuilder>
+    : IFactory<IRequestContext, string, bool, IMessageBuilder>
   {
-    public IMessageBuilder Create(IRequestContext context, ulong sirenaId, bool isSuccess)
+    public IMessageBuilder Create(IRequestContext context, string hash, bool isSuccess)
     {
       var chatId = context.GetTargetChatId();
       var info = context.GetCultureInfo();
-      return new UnsubscribeMessageBuilder(chatId, info, localizationProvider,sirenaId, isSuccess);
+      return new UnsubscribeMessageBuilder(chatId, info, localizationProvider, hash, isSuccess);
     }
   }
 }
