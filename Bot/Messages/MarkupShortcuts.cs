@@ -48,12 +48,12 @@ public static class MarkupShortcuts
 
   public static IInlineKeyboardRow AddMenuButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info)
     => inlineKeyboardRow.AddLocalizedButton(menuTitle, info, MenuBotCommand.NAME);
-  public static IInlineKeyboardRow AddCallSirenaButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, ulong? sirenaId = null)
-    => inlineKeyboardRow.AddLocalizedButton(callTitle, info, CallSirenaCommand.NAME, sirenaId != null ? Utilities.NotBase64URL.From(sirenaId.Value) : string.Empty);
+  public static IInlineKeyboardRow AddCallSirenaButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string shortHash = "")
+    => inlineKeyboardRow.AddLocalizedButton(callTitle, info, CallSirenaCommand.NAME, shortHash);
   public static IInlineKeyboardRow AddCreateButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info)
     => inlineKeyboardRow.AddLocalizedButton(createTitle, info, CreateSirenaCommand.NAME);
-  public static IInlineKeyboardRow AddDeleteButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, ulong sirenaId, string title = deleteTitle)
-    => inlineKeyboardRow.AddLocalizedButton(title, info, DeleteSirenaCommand.NAME, Utilities.NotBase64URL.From(sirenaId));
+  public static IInlineKeyboardRow AddDeleteButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string sirenaId, string title = deleteTitle)
+    => inlineKeyboardRow.AddLocalizedButton(title, info, DeleteSirenaCommand.NAME, sirenaId);
   public static IInlineKeyboardRow AddDisplaySubscriptionsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, int count = 0, string title = subscriptionsTitle)
   {
     if (LocalizationProvider == null)
@@ -78,27 +78,35 @@ public static class MarkupShortcuts
   public static IInlineKeyboardRow AddFindButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info)
     => inlineKeyboardRow.AddLocalizedButton(findTitle, info, FindSirenaCommand.NAME);
   public static IInlineKeyboardRow AddRequestButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
-  , ulong sirenaId, string title = requestRightTitle)
-    => inlineKeyboardRow.AddLocalizedButton(title, info, RequestRightsCommand.NAME, Utilities.NotBase64URL.From(sirenaId));
+  , string shortHash, string title = requestRightTitle)
+    => inlineKeyboardRow.AddLocalizedButton(title, info, RequestRightsCommand.NAME, shortHash);
   public static IInlineKeyboardRow AddSirenaInfoButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
-  , ulong sirenaId, string title = getInfoTitle)
-    => inlineKeyboardRow.AddLocalizedButton(title, info, DisplaySirenaInfoCommand.NAME, Utilities.NotBase64URL.From(sirenaId));
+  , string shortHash, string title = getInfoTitle)
+    => inlineKeyboardRow.AddLocalizedButton(title, info, DisplaySirenaInfoCommand.NAME, shortHash);
   public static IInlineKeyboardRow AddSubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info)
    => inlineKeyboardRow.AddLocalizedButton(subscribeTitle, info, SubscribeCommand.NAME);
-  public static IInlineKeyboardRow AddSubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, ulong sirenaId)
-   => inlineKeyboardRow.AddLocalizedButton(subscribeTitle, info, SubscribeCommand.NAME, Utilities.NotBase64URL.From(sirenaId));
-  public static IInlineKeyboardRow AddUnsubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, ulong sirenaId)
-    => inlineKeyboardRow.AddLocalizedButton(unsubscribeTitle, info, UnsubscribeCommand.NAME, Utilities.NotBase64URL.From(sirenaId));
-  public static IInlineKeyboardRow AddDisplayRequestsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, ulong sirenaId, int count)
-  {
-    string title = string.Format(getReuqestsTitle, count);
-    return inlineKeyboardRow.AddLocalizedButton(title, info, GetRequestsListCommand.NAME, Utilities.NotBase64URL.From(sirenaId));
+  public static IInlineKeyboardRow AddSubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string shortHash)
+   => inlineKeyboardRow.AddLocalizedButton(subscribeTitle, info, SubscribeCommand.NAME, shortHash);
+  public static IInlineKeyboardRow AddUnsubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string shortHash)
+    => inlineKeyboardRow.AddLocalizedButton(unsubscribeTitle, info, UnsubscribeCommand.NAME, shortHash);
+  public static IInlineKeyboardRow AddDisplayRequestsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string shortHash, int count)
+  {    
+    if (LocalizationProvider == null)
+      throw new ArgumentNullException(nameof(LocalizationProvider), $"You have to set {nameof(MarkupShortcuts.LocalizationProvider)} field manually before use localized buttons");
+    
+    string localTitle = LocalizationProvider.Get(getReuqestsTitle, info);
+    localTitle = string.Format(localTitle, count);
+    
+    return inlineKeyboardRow.AddButton(localTitle, GetRequestsListCommand.NAME, shortHash);
   }
 
-  public static IInlineKeyboardRow AddDisplayResponsiblesButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, ulong sirenaId, int count)
+  public static IInlineKeyboardRow AddDisplayResponsiblesButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string sirenaId, int count)
   {
-    string title = string.Format(getResponsiblesTitle, count);
-    return inlineKeyboardRow.AddLocalizedButton(title, info, GetResponsiblesListCommand.NAME, Utilities.NotBase64URL.From(sirenaId));
+    if (LocalizationProvider == null)
+      throw new ArgumentNullException(nameof(LocalizationProvider), $"You have to set {nameof(MarkupShortcuts.LocalizationProvider)} field manually before use localized buttons");
+    string localTitle = LocalizationProvider.Get(getResponsiblesTitle, info);
+    localTitle = string.Format(localTitle, count);
+    return inlineKeyboardRow.AddButton(localTitle, GetResponsiblesListCommand.NAME,sirenaId);
   }
 
   public static IReplyMarkup CreateMenuButtonOnlyMarkup(CultureInfo info)

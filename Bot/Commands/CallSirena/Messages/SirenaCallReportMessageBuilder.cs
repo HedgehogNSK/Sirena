@@ -25,7 +25,7 @@ public class SirenaCallReportMessageBuilder : LocalizedMessageBuilder
     string notification = Localize("command.call.success");
     string message = string.Format(notification, notifiedSubscribers);
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-     .AddMenuButton(Info).AddDeleteButton(Info, sirenRepresentation.Sid).EndRow()
+     .AddMenuButton(Info).AddDeleteButton(Info, sirenRepresentation.ShortHash).EndRow()
      .ToReplyMarkup();
 
     return CreateDefault(message, markup);
