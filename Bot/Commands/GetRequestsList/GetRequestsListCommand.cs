@@ -37,7 +37,7 @@ public class GetRequestsListCommand : AbstractBotCommmand
     var filter = filterBuilder.Eq(x => x.OwnerId, uid)
                & filterBuilder.SizeGt(s => s.Requests, 0);
     var projection = Builders<SirenRepresentation>.Projection
-        .Include(x => x.Id)
+        .Include(x => x.Sid)
         .Include(x => x.Title)
         .Include(x => x.Requests);
     var userSirensWithRequests = await sirens.Find(filter).Project<SirenRepresentation>(projection).ToListAsync();
