@@ -49,9 +49,11 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
       bool isSubscribed = sirena.Listener.Contains(uid);
       if (isSubscribed)
       {
-        bool canRequest = !sirena.CanBeCalledBy(uid)
-           && !sirena.Requests.Any(_request => _request.UID == uid);
-        if (canRequest)
+        bool canCall = sirena.CanBeCalledBy(uid);
+        bool canRequest = !sirena.Requests.Any(_request => _request.UID == uid);
+        if (canCall)
+          keyboardBuilder.AddCallSirenaButton(Info, sirena.Sid).EndRow().BeginRow();
+        else if (canRequest)
           keyboardBuilder.AddRequestButton(Info, sirena.Sid);
 
         keyboardBuilder.AddUnsubscribeButton(Info, sirena.Sid);
@@ -65,7 +67,7 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
       }
     }
     var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
-    string generalInfo = Localize(userIsOwner? generalInfoKey: generalInfoNotOwnerKey);
+    string generalInfo = Localize(userIsOwner ? generalInfoKey : generalInfoNotOwnerKey);
     StringBuilder builder = new StringBuilder()
         .AppendFormat(generalInfo, sirena.Title, sirena.ShortHash, sirena.Listener.Length, sirena.OwnerNickname);
 

@@ -36,7 +36,7 @@ public class SirenRepresentation
 
   public override string ToString()
   {
-    return $"{Title} (`{Id}`)";
+    return $"[`{ShortHash}`]\"{Title}\"";
   }
 
   public bool CanBeCalledBy(long uid)
