@@ -11,13 +11,13 @@ public class HelpCommand : AbstractBotCommmand, IBotCommand
   public const string DESCRIPTION = "";
   private readonly ILocalizationProvider localizationProvider;
   private readonly IMessageSender messageSender;
-  List<AbstractBotCommmand> commands;
+  IEnumerable<AbstractBotCommmand> commands;
   public HelpCommand(IEnumerable<AbstractBotCommmand> commands
   , ILocalizationProvider localizationProvider
   , IMessageSender messageSender)
   : base(NAME, DESCRIPTION)
   {
-    this.commands = commands != null ? new(commands) : new();
+    this.commands = commands.Where(x => x != this);
     this.localizationProvider = localizationProvider;
     this.messageSender = messageSender;
   }

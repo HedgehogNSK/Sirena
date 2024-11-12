@@ -1,14 +1,13 @@
+using Hedge.Sirena.ID;
 using Hedgey.Extensions;
 using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Localization;
 using Hedgey.Structure.Factory;
-using Hedgey.Blendflake;
 using RxTelegram.Bot;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 using System.Resources;
 using Telegram.Bot;
-using Hedge.Sirena.ID;
 
 namespace Hedgey.Sirena.Bot.DI;
 
@@ -26,10 +25,8 @@ public class CoreInstaller(Container container) : Installer(container)
     Container.RegisterSingleton<RequestHandler>();
     Container.RegisterSingleton<ResourceManager>(() => new ResourceManager(resourcePath, typeof(Program).Assembly));
     Container.RegisterSingleton<ILocalizationProvider, ResourceManagerAdapterLocalizationProvider>();
-    Container.RegisterInitializer<ILocalizationProvider>(_provider =>
-    {
-      MarkupShortcuts.LocalizationProvider = _provider;
-    });
+    Container.RegisterInitializer<ILocalizationProvider>(_provider 
+      => MarkupShortcuts.LocalizationProvider = _provider);
 
     Container.Register<IFactory<TelegramBot>, TelegramHelpFactory>();
     Container.Register<IFactory<TelegramBotClient>, TelegramHelpFactory>();
