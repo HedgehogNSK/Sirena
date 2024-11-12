@@ -23,7 +23,7 @@ public class ConfirmRemoveSirenaMessageBuilder : LocalizedMessageBuilder
     string cancel = "command.delete.cancel";
     string confirm = Localize("command.delete.confirm");
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-      .AddSirenaInfoButton(Info, sirena.Sid, cancel)
+      .AddSirenaInfoButton(Info, sirena.ShortHash, cancel)
       .AddCallbackData(confirm, true.ToString())
       .EndRow().ToReplyMarkup();
 

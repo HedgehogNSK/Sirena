@@ -12,10 +12,20 @@ public class SirenRepresentation
   /// <summary>
   /// Search id
   /// </summary>
+  private ulong sid;
   [BsonElement("sid"), BsonRepresentation(BsonType.Int64)]
-  public ulong Sid { get; set; }
-  public string Hash => NotBase64URL.From(Sid);
-  public string ShortHash => HashUtilities.Shortify(Hash);
+  public required ulong Sid
+  {
+    get => sid;
+    init
+    {
+      sid = value;
+      Hash = NotBase64URL.From(Sid);
+      ShortHash = HashUtilities.Shortify(Hash);
+    }
+  }
+  public string Hash { get; private set; } = string.Empty;
+  public string ShortHash { get; private set; } = string.Empty;
   [BsonElement("ownerid"), BsonRepresentation(BsonType.Int64)]
   public long OwnerId { get; set; }
   public string OwnerNickname { get; set; } = string.Empty;
@@ -36,7 +46,7 @@ public class SirenRepresentation
 
   public override string ToString()
   {
-    return $"{Title} (`{Id}`)";
+    return $"[`{ShortHash}`]\"{Title}\"";
   }
 
   public bool CanBeCalledBy(long uid)

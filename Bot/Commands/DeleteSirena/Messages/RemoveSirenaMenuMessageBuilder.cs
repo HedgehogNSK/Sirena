@@ -41,7 +41,7 @@ public class RemoveSirenaMenuMessageBuilder : LocalizedMessageBuilder
           keyboardBuilder = keyboardBuilder.EndRow().BeginRow();
 
         builder.Append(number).AppendFormat(template, sirena.Title, sirena.ShortHash);
-        keyboardBuilder = keyboardBuilder.AddDeleteButton(Info, sirena.Sid, number.ToString());
+        keyboardBuilder = keyboardBuilder.AddDeleteButton(Info, sirena.ShortHash, number.ToString());
       }
       IReplyMarkup markup = new InlineKeyboardMarkup()
       {

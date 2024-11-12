@@ -1,6 +1,8 @@
+using Hedgey.Blendflake;
 using Hedgey.Extensions.Telegram;
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
+using Hedgey.Utilities;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using RxTelegram.Bot;
@@ -37,7 +39,7 @@ public class GetRequestsListCommand : AbstractBotCommmand
     var filter = filterBuilder.Eq(x => x.OwnerId, uid)
                & filterBuilder.SizeGt(s => s.Requests, 0);
     var projection = Builders<SirenRepresentation>.Projection
-        .Include(x => x.Id)
+        .Include(x => x.Sid)
         .Include(x => x.Title)
         .Include(x => x.Requests);
     var userSirensWithRequests = await sirens.Find(filter).Project<SirenRepresentation>(projection).ToListAsync();
@@ -96,14 +98,22 @@ public class GetRequestsListCommand : AbstractBotCommmand
 
   public class RequestInfo
   {
-    public ulong SirenId { get; set; }
-    public long UserId { get; set; }
-    public string Message { get; set; } = string.Empty;
-    public string Title { get; internal set; } = string.Empty;
-
-    public override string ToString()
+    public string Message { get; init; } = string.Empty;
+    private ulong sid;
+    public ulong SirenId
     {
-      return "*\"" + Title + "\"* : `" + SirenId + '`';
+      get => sid; init
+      {
+        sid = value;
+        var hash = NotBase64URL.From(sid);
+        ShortHash = HashUtilities.Shortify(hash);
+      }
     }
+    public string ShortHash { get; private set; } = string.Empty;
+    public string Title { get; internal init; } = string.Empty;
+    public long UserId { get; init; }
+
+    public override string ToString() 
+      => $"`[``{ShortHash}``]`\"{Title}\"";
   }
 }

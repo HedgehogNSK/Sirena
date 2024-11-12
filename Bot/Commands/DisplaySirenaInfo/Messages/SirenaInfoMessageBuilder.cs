@@ -35,37 +35,39 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
     if (userIsOwner)
     {
       if (sirena.Listener.Length != 0)
-        keyboardBuilder.AddCallSirenaButton(Info, sirena.Sid).EndRow().BeginRow();
+        keyboardBuilder.AddCallSirenaButton(Info, sirena.ShortHash).EndRow().BeginRow();
       if (sirena.Requests.Length != 0)
-        keyboardBuilder.AddDisplayRequestsButton(Info, sirena.Sid, sirena.Requests.Length);
+        keyboardBuilder.AddDisplayRequestsButton(Info, sirena.ShortHash, sirena.Requests.Length);
       if (sirena.Responsible.Length != 0)
-        keyboardBuilder.AddDisplayResponsiblesButton(Info, sirena.Sid, sirena.Responsible.Length);
+        keyboardBuilder.AddDisplayResponsiblesButton(Info, sirena.ShortHash, sirena.Responsible.Length);
       if (sirena.Requests.Length != 0 || sirena.Responsible.Length != 0)
         keyboardBuilder.EndRow().BeginRow();
-      keyboardBuilder.AddDeleteButton(Info, sirena.Sid);
+      keyboardBuilder.AddDeleteButton(Info, sirena.ShortHash);
     }
     else
     {
       bool isSubscribed = sirena.Listener.Contains(uid);
       if (isSubscribed)
       {
-        bool canRequest = !sirena.CanBeCalledBy(uid)
-           && !sirena.Requests.Any(_request => _request.UID == uid);
-        if (canRequest)
-          keyboardBuilder.AddRequestButton(Info, sirena.Sid);
+        bool canCall = sirena.CanBeCalledBy(uid);
+        bool canRequest = !sirena.Requests.Any(_request => _request.UID == uid);
+        if (canCall)
+          keyboardBuilder.AddCallSirenaButton(Info, sirena.ShortHash).EndRow().BeginRow();
+        else if (canRequest)
+          keyboardBuilder.AddRequestButton(Info, sirena.ShortHash);
 
-        keyboardBuilder.AddUnsubscribeButton(Info, sirena.Sid);
+        keyboardBuilder.AddUnsubscribeButton(Info, sirena.ShortHash);
 
         if (canRequest)
           keyboardBuilder.EndRow().BeginRow();
       }
       else
       {
-        keyboardBuilder.AddSubscribeButton(Info, sirena.Sid);
+        keyboardBuilder.AddSubscribeButton(Info, sirena.ShortHash);
       }
     }
     var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
-    string generalInfo = Localize(userIsOwner? generalInfoKey: generalInfoNotOwnerKey);
+    string generalInfo = Localize(userIsOwner ? generalInfoKey : generalInfoNotOwnerKey);
     StringBuilder builder = new StringBuilder()
         .AppendFormat(generalInfo, sirena.Title, sirena.ShortHash, sirena.Listener.Length, sirena.OwnerNickname);
 
