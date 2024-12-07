@@ -33,14 +33,14 @@ public class MuteUserSignalCommand : AbstractBotCommmand
     long chatId = context.GetChat().Id;
     var info = context.GetCultureInfo();
     string[] parameters = context.GetArgsString().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-    if (parameters.Length < 3)
+    if (parameters.Length < 2)
     {
       string errorWrongParamters = localizationProvider.Get("command.mute_user.incorrect_parameters", info);
       messageSender.Send(chatId, errorWrongParamters);
       return;
     }
-    var sirenaIdString = parameters[2];
-    var userIdString = parameters[1];
+    var sirenaIdString = parameters[1];
+    var userIdString = parameters[0];
     ulong sirenaId = default;
     if (!int.TryParse(sirenaIdString, out int number)
         && !HashUtilities.TryParse(sirenaIdString, out sirenaId))
@@ -79,7 +79,7 @@ public class MuteUserSignalCommand : AbstractBotCommmand
       return;
     }
     string successMessage = localizationProvider.Get("command.mute_user.success", info);
-    responseText = string.Format(successMessage, _UIDtoMute, sirenaId);
+    responseText = string.Format(successMessage, _UIDtoMute, HashUtilities.Shortify(sirenaIdString));
     messageSender.Send(chatId, responseText);
   }
 }

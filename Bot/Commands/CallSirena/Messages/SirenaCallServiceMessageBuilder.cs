@@ -5,6 +5,7 @@ using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Enums;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
+using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
@@ -28,14 +29,18 @@ public class SirenaCallServiceMessageBuilder : LocalizedMessageBuilder
     string userName = BotTools.GetDisplayName(initiator);
     long uid = initiator.Id;
     string notification = string.Format(notificationBase, sirena.Title, userName, uid);
-
+    var markupBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
+    .AddUnsubscribeButton(Info, sirena)
+    .AddMuteButton(Info, initiator, sirena)
+    .EndRow()
+    .ToReplyMarkup();
     var message = new SendMessage()
     {
       ChatId = chatId,
       DisableNotification = true,
       ProtectContent = false,
       Text = notification,
-      ReplyMarkup = null,
+      ReplyMarkup = markupBuilder,
       ParseMode = ParseMode.Markdown
     };
     return message;

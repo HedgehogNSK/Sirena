@@ -56,7 +56,7 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
         else if (canRequest)
           keyboardBuilder.AddRequestButton(Info, sirena.ShortHash);
 
-        keyboardBuilder.AddUnsubscribeButton(Info, sirena.ShortHash);
+        keyboardBuilder.AddUnsubscribeButton(Info, sirena);
 
         if (canRequest)
           keyboardBuilder.EndRow().BeginRow();

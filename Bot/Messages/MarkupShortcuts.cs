@@ -1,4 +1,5 @@
 using Hedgey.Localization;
+using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Enums;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
@@ -17,6 +18,7 @@ public static class MarkupShortcuts
   public const string createTitle = prefix + "create.title";
   public const string getInfoTitle = prefix + "get_info.title";
   public const string findTitle = prefix + "find.title";
+  public const string muteTitle = prefix + "mute_user.title";
   public const string subscribeTitle = prefix + "subscribe.title";
   public const string unsubscribeTitle = prefix + "unsubscribe.title";
   public const string deleteTitle = prefix + "delete.title";
@@ -77,6 +79,8 @@ public static class MarkupShortcuts
 
   public static IInlineKeyboardRow AddFindButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info)
     => inlineKeyboardRow.AddLocalizedButton(findTitle, info, FindSirenaCommand.NAME);
+  public static IInlineKeyboardRow AddMuteButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, User user, SirenRepresentation sirena)
+    => inlineKeyboardRow.AddLocalizedButton(muteTitle, info, MuteUserSignalCommand.NAME, user.Id.ToString()+' '+sirena.Hash);
   public static IInlineKeyboardRow AddRequestButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
   , string shortHash, string title = requestRightTitle)
     => inlineKeyboardRow.AddLocalizedButton(title, info, RequestRightsCommand.NAME, shortHash);
@@ -87,8 +91,8 @@ public static class MarkupShortcuts
    => inlineKeyboardRow.AddLocalizedButton(subscribeTitle, info, SubscribeCommand.NAME);
   public static IInlineKeyboardRow AddSubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string shortHash)
    => inlineKeyboardRow.AddLocalizedButton(subscribeTitle, info, SubscribeCommand.NAME, shortHash);
-  public static IInlineKeyboardRow AddUnsubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string shortHash)
-    => inlineKeyboardRow.AddLocalizedButton(unsubscribeTitle, info, UnsubscribeCommand.NAME, shortHash);
+  public static IInlineKeyboardRow AddUnsubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, SirenRepresentation siren)
+    => inlineKeyboardRow.AddLocalizedButton(unsubscribeTitle, info, UnsubscribeCommand.NAME, siren.Hash);
   public static IInlineKeyboardRow AddDisplayRequestsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string shortHash, int count)
   {    
     if (LocalizationProvider == null)
