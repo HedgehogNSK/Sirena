@@ -24,14 +24,14 @@ public class CreateSirenaOperationAsync : ICreateSirenaOperationAsync
     SirenRepresentation siren = new SirenRepresentation
     {
       Title = sirenName,
-      Sid = idGenerator.Get(),
+      SID = idGenerator.Get(),
       OwnerId = uid,
       UseCount = 0
     };
     await sirenCollection.InsertOneAsync(siren);
 
     var update = Builders<UserRepresentation>.Update
-    .AddToSet(_user => _user.Owner, siren.Sid);
+    .AddToSet(_user => _user.Owner, siren.SID);
     UpdateOptions updateOptions = new UpdateOptions()
     {
       IsUpsert = true,

@@ -52,7 +52,7 @@ public class CallSirenaStep : CommandStep
     Stack<long> receiversStack = GetReceiversStack(sirena, uid);
     SirenRepresentation.CallInfo callInfo = new(uid, DateTimeOffset.Now);
 
-    var observableNotification = updateSirenaOperation.UpdateLastCall(sirena.Sid, callInfo)
+    var observableNotification = updateSirenaOperation.UpdateLastCall(sirena.SID, callInfo)
       .SelectMany(NotifySubscriber(context, receiversStack, sirena)).Publish().RefCount();
 
     return observableNotification

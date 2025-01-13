@@ -59,7 +59,7 @@ public class DelegateRightsCommand : AbstractBotCommmand
       if (sirena == null)
         return;
 
-      sirenaId = sirena.Sid;
+      sirenaId = sirena.SID;
     }
 
     //Set responsible
