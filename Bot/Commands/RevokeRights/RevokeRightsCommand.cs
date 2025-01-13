@@ -72,7 +72,7 @@ public class RevokeRightsCommand : AbstractBotCommmand
       if (sirena == null)
         return;
 
-      sirenaId = sirena.Sid;
+      sirenaId = sirena.SID;
     }
 
     //Revoke rights

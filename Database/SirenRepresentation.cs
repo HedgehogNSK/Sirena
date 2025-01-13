@@ -14,13 +14,13 @@ public class SirenRepresentation
   /// </summary>
   private ulong sid;
   [BsonElement("sid"), BsonRepresentation(BsonType.Int64)]
-  public required ulong Sid
+  public required ulong SID
   {
     get => sid;
     init
     {
       sid = value;
-      Hash = NotBase64URL.From(Sid);
+      Hash = NotBase64URL.From(SID);
       ShortHash = HashUtilities.Shortify(Hash);
     }
   }
@@ -36,6 +36,8 @@ public class SirenRepresentation
   [BsonRepresentation(BsonType.Int64)]
   [BsonElement("listener")]
   public long[] Listener { get; set; } = [];
+  [BsonElement("muted")]
+  public MutedInfo[] Muted{get;set;} = [];
   [BsonRepresentation(BsonType.Int64)]
   [BsonElement("responsible")]
   public long[] Responsible { get; set; } = [];
@@ -50,7 +52,25 @@ public class SirenRepresentation
   }
 
   public bool CanBeCalledBy(long uid)
-  => OwnerId == uid || Responsible.Contains(uid);
+  {
+    //If user don't have right to call sirens or there is no listeners
+    if ((OwnerId != uid && !Responsible.Contains(uid)) || Listener.Length == 0)
+      return false;
+
+    //If no one mutes anyone for the sirena then user can call it
+    if(!Muted.Any()) return true;
+    
+    //Count of listeners who didn't mute the user
+    int actualListeners = Listener.Length - Muted.Count(x => x.MutedUID == uid) ;
+
+    //If the user is not owner he is also a listener so we have to subtract himself from the count
+    if(uid != OwnerId)
+      actualListeners -= 1;
+
+    ArgumentOutOfRangeException.ThrowIfLessThan(actualListeners,0, nameof(actualListeners));
+
+    return actualListeners != 0;
+  }
 
   public class Request
   {
@@ -73,14 +93,27 @@ public class SirenRepresentation
   }
   public class CallInfo
   {
-    public CallInfo(long uid, DateTimeOffset now)
+    public CallInfo(long uid, DateTimeOffset date)
     {
       Caller = uid;
-      Date = now;
+      Date = date;
     }
     [BsonElement("caller"), BsonRepresentation(BsonType.Int64)]
     public long Caller { get; internal set; }
     [BsonElement("date"), BsonRepresentation(BsonType.DateTime)]
     public DateTimeOffset Date { get; internal set; }
+  }
+
+  public class MutedInfo
+  {
+    public MutedInfo(long user_id, long muted_id){
+      UID = user_id;
+      MutedUID = muted_id;
+    }
+
+    [BsonElement("user_id"), BsonRepresentation(BsonType.Int64)]
+    public long UID { get; internal set;}
+    [BsonElement("muted_id"), BsonRepresentation(BsonType.Int64)]
+    public long MutedUID { get; internal set;}
   }
 }

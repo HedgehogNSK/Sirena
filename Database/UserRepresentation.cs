@@ -10,36 +10,4 @@ public class UserRepresentation
   [BsonElement("chatid"), BsonRepresentation(BsonType.Int64)]
   public long ChatID { get; set; }
   [BsonElement("owner")]
-  public ulong[] Owner { get; set; } = [];
-  [BsonElement("muted")]
-  public MuteInfo[] Muted { get; internal set; } = [];
-
-  public class MuteInfo
-  {
-
-    public MuteInfo(long targetID, ulong sirenaId)
-    {
-      UID = targetID;
-      SirenaID = sirenaId;
-    }
-    [BsonElement("user_id"), BsonRepresentation(BsonType.Int64)]
-    public long UID { get; set; }
-    [BsonElement("sirena_id")]
-    public ulong SirenaID { get; set; }
-
-    public override bool Equals(object? obj)
-    {
-      if (!(obj is MuteInfo otherInfo)) return false;
-      if (otherInfo.UID != this.UID || !otherInfo.SirenaID.Equals(SirenaID)) return false;
-      return true;
-    }
-    public override int GetHashCode()
-    {
-      unchecked
-      {
-        const int primeMul = 23;
-        return (int)UID * primeMul + SirenaID.GetHashCode();
-      }
-    }
-  }
-}
+  public ulong[] Owner { get; set; } = [];}

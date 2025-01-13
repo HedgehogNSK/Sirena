@@ -31,10 +31,11 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
 
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard()
         .BeginRow();
-
+    
+    bool canCall = sirena.CanBeCalledBy(uid);
     if (userIsOwner)
     {
-      if (sirena.Listener.Length != 0)
+      if (canCall)
         keyboardBuilder.AddCallSirenaButton(Info, sirena.ShortHash).EndRow().BeginRow();
       if (sirena.Requests.Length != 0)
         keyboardBuilder.AddDisplayRequestsButton(Info, sirena.ShortHash, sirena.Requests.Length);
@@ -49,7 +50,6 @@ public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
       bool isSubscribed = sirena.Listener.Contains(uid);
       if (isSubscribed)
       {
-        bool canCall = sirena.CanBeCalledBy(uid);
         bool canRequest = !sirena.Requests.Any(_request => _request.UID == uid);
         if (canCall)
           keyboardBuilder.AddCallSirenaButton(Info, sirena.ShortHash).EndRow().BeginRow();
