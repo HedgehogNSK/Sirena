@@ -19,8 +19,8 @@ public class SendRequestStep(IRightsRequestOperation request
     long chatId = context.GetChat().Id;
     Message message = context.GetMessage();
     if (!message.From.IsBot)
-      userMessage = message.Text;
-    return request.Send(sirena.Sid, uid, userMessage)
+      userMessage = context.GetArgsString();
+    return request.Send(sirena.SID, uid, userMessage)
       .Select(ProcessResult);
 
     Report ProcessResult(IRightsRequestOperation.Result requestResult)

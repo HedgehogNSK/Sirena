@@ -33,15 +33,15 @@ public class UnmuteUserSignalCommand : AbstractBotCommmand
     long uid = botUser.Id;
     long chatId = context.GetChat().Id;
     System.Globalization.CultureInfo cultureInfo = context.GetCultureInfo();
-    string[] parameters = context.GetArgsString().Split(' ', 3, StringSplitOptions.RemoveEmptyEntries);
-    if (parameters.Length < 3)
+    string[] parameters = context.GetArgsString().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+    if (parameters.Length < 2)
     {
       var errorWrongParamters = localizationProvider.Get("command.unmute.error.wrong_parameter", cultureInfo);
       messageSender.Send(chatId, errorWrongParamters);
       return;
     }
-    var sirenaIdString = parameters[2];
-    var userIdString = parameters[1];
+    var sirenaIdString = parameters[1];
+    var userIdString = parameters[0];
     ulong sirenaId = default;
     if (!int.TryParse(sirenaIdString, out int number)
         && !HashUtilities.TryParse(sirenaIdString, out sirenaId))

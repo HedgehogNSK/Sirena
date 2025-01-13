@@ -34,14 +34,14 @@ public class RevokeRightsCommand : AbstractBotCommmand
     long chatId = context.GetChat().Id;
     var info = context.GetCultureInfo();
     string[] parameters = context.GetArgsString().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-    if (parameters.Length < 3)
+    if (parameters.Length < 2)
     {
       string errorWrongParamters = localizationProvider.Get("command.revoke_rights.incorrect_parameters", info);
       messageSender.Send(chatId, errorWrongParamters);
       return;
     }
     ulong sirenaId = default;
-    string sirenaIdString = parameters[1];
+    string sirenaIdString = parameters[0];
     if (!int.TryParse(sirenaIdString, out int number)
         && !HashUtilities.TryParse(sirenaIdString, out sirenaId))
     {
@@ -51,7 +51,7 @@ public class RevokeRightsCommand : AbstractBotCommmand
       return;
     }
     ChatFullInfo? chat = null;
-    string userIdString = parameters[2];
+    string userIdString = parameters[1];
     if (long.TryParse(userIdString, out long ruid))
     {
       chat = await Extensions.Telegram.BotTools.GetChatByUID(bot, ruid);
