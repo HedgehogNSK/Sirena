@@ -30,14 +30,14 @@ public class DelegateRightsCommand : AbstractBotCommmand
     long chatId = context.GetChat().Id;
     var info = context.GetCultureInfo();
     string[] parameters = context.GetArgsString().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-    if (parameters.Length < 3)
+    if (parameters.Length < 2)
     {
       string errorWrongParamters = localizationProvider.Get("command.delegate.error.incorrect_paramters", info);
       messageSender.Send(chatId, errorWrongParamters);
       return;
     }
     ulong sirenaId = default;
-    if (!int.TryParse(parameters[1], out int number)
+    if (!int.TryParse(parameters[0], out int number)
         && !HashUtilities.TryParse(parameters[1], out sirenaId))
     {
       string errorWrongSirenaID = localizationProvider.Get("command.delegate.error.incorrect_id", info);
@@ -45,7 +45,7 @@ public class DelegateRightsCommand : AbstractBotCommmand
       messageSender.Send(chatId, responseText);
       return;
     }
-    if (!long.TryParse(parameters[2], out long duid))
+    if (!long.TryParse(parameters[1], out long duid))
     {
       string errorWrongUID = localizationProvider.Get("command.delegate.error.incorrect_user_id", info);
       responseText = string.Format(errorWrongUID, parameters[2]);
