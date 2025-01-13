@@ -3,6 +3,9 @@
   <data name="command.call.ask_sirena_id">
     <value>Please provide Sirena&apos;s ID to call. It must be Sirena that you own or you are responsible for</value>
   </data>
+  <data name="command.call.no_available">
+    <value>Your Sirenas are not being listened to yet</value>
+  </data>
   <data name="command.call.available.description">
     <value>Choose *Sirena* to call</value>
   </data>
@@ -349,7 +352,7 @@ ID: `{2}`
     <value>To unmute user please input command with parameters: /unmute {user id to mute} {sirena id}</value>
   </data>
   <data name="command.unmute.error.wrong_sirena_id">
-    <value>⚠️ 0} parameter is incorrect. Second parameter has to be serial number or *ID* of your sirena</value>
+    <value>⚠️ {0} parameter is incorrect. Second parameter has to be serial number or *ID* of your sirena</value>
   </data>
   <data name="command.unmute.error.wrong_uid">
     <value>⚠️ {0} parameter is incorrect. First parameter has to be *UID* of user that is already responsible for sirena.</value>

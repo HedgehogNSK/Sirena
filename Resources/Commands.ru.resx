@@ -3,6 +3,9 @@
   <data name="command.call.ask_sirena_id">
     <value>Пожалуйста, введите *ИД* Сирены для вызова. Это должна быть либо ваша Сирена, либо Сирена, на вызов которой, вам выдал права её владелец</value>
   </data>
+  <data name="command.call.no_available">
+    <value>Ваши Сирены пока что никто не слушает</value>
+  </data>
   <data name="command.call.available.description">
     <value>Выберите *Сирену* для вызова</value>
   </data>
