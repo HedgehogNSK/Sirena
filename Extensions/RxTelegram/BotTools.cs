@@ -16,6 +16,14 @@ public static class BotTools
       var chat = await bot.GetChat(getChat);
       return chat;
     }
+    catch (RxTelegram.Bot.Exceptions.ApiException apiEx)
+    {
+      if (apiEx.ErrorCode == RxTelegram.Bot.Exceptions.ErrorCode.ChatNotFound)
+        Console.WriteLine($"Chat with id:\'{uid}\' not found. Probably it's a ghost or test user");
+      else
+        Console.WriteLine(apiEx);
+      return default;
+    }
     catch (Exception ex)
     {
       Console.WriteLine(ex);
@@ -39,20 +47,22 @@ public static class BotTools
   public static async Task<string> GetDisplayName(this TelegramBot bot, long uid)
   {
     var chat = await bot.GetChatByUID(uid);
-    if(chat==null)
+    if (chat == null)
       return "Ghost";
     return chat.GetDisplayName();
   }
 
-  public static CopyMessages Clone(this CopyMessages source){
-    return new CopyMessages(){
-       ChatId = source.ChatId,
-        DisableNotification = source.DisableNotification,
-        FromChatId = source.FromChatId,
-        MessageIds = source.MessageIds,
-        MessageThreadId = source.MessageThreadId,
-        ProtectContent = source.ProtectContent,
-        RemoveCaption = source.RemoveCaption
+  public static CopyMessages Clone(this CopyMessages source)
+  {
+    return new CopyMessages()
+    {
+      ChatId = source.ChatId,
+      DisableNotification = source.DisableNotification,
+      FromChatId = source.FromChatId,
+      MessageIds = source.MessageIds,
+      MessageThreadId = source.MessageThreadId,
+      ProtectContent = source.ProtectContent,
+      RemoveCaption = source.RemoveCaption
     };
   }
 }
