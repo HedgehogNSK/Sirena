@@ -1,7 +1,9 @@
+using Hedgey.Blendflake;
 using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
+using Hedgey.Utilities;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
@@ -9,7 +11,7 @@ namespace Hedgey.Sirena.Bot;
 public class SirenaExistensValidationStep(NullableContainer<ulong> idContainer
 , NullableContainer<SirenRepresentation> sirenaContainer
 , IFindSirenaOperation findSirenaOperation
-, IFactory<IRequestContext, ulong, IMessageBuilder> noSirenaMessageBuilderFactory)
+, IFactory<IRequestContext, string, IMessageBuilder> noSirenaMessageBuilderFactory)
  : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -19,15 +21,16 @@ public class SirenaExistensValidationStep(NullableContainer<ulong> idContainer
 
     Report CreateReport(SirenRepresentation representation)
     {
-      var sirenaId = idContainer.Get();
+      string sid = NotBase64URL.From(sirenaId);
+      sid = HashUtilities.Shortify(sid);
       if (representation == null)
-        return new Report(Result.Wait, noSirenaMessageBuilderFactory.Create(context, sirenaId));
+        return new Report(Result.Wait, noSirenaMessageBuilderFactory.Create(context, sid));
       sirenaContainer.Set(representation);
       return new Report(Result.Success);
     }
   }
 
-  public class Factory(IFactory<IRequestContext, ulong, IMessageBuilder> messageBuilderFactory
+  public class Factory(IFactory<IRequestContext, string, IMessageBuilder> messageBuilderFactory
   , IFindSirenaOperation findSirenaOperation)
     : IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep>
   {
@@ -38,9 +41,9 @@ public class SirenaExistensValidationStep(NullableContainer<ulong> idContainer
   }
 
   public class MessagBuilderFactory(ILocalizationProvider localizationProvider)
-    : IFactory<IRequestContext, ulong, NoSirenaMessageBuilder>
+    : IFactory<IRequestContext, string, NoSirenaMessageBuilder>
   {
-    public NoSirenaMessageBuilder Create(IRequestContext context, ulong sirenaId)
+    public NoSirenaMessageBuilder Create(IRequestContext context, string sirenaId)
     {
       var chatId = context.GetChat().Id;
       var info = context.GetCultureInfo();
