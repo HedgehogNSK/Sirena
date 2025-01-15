@@ -133,11 +133,12 @@ public class SirenaOperations : IDeleteSirenaOperation
     return sirens.UpdateOneAsync(filter, update);
   }
 
+  //Update function. Do not use for real database
   public IObservable<bool> UpdateDefault(ulong sirenaId)
   {
 
     FilterDefinitionBuilder<SirenRepresentation> filterBuilder = Builders<SirenRepresentation>.Filter;
-    var filter = filterBuilder.Exists(s => s.SID, false);
+    var filter = filterBuilder.Gt(s => s.SID, 500000);
     var update = Builders<SirenRepresentation>.Update.Set(s => s.SID, sirenaId);
 
     return Observable.FromAsync(() => sirens.UpdateOneAsync(filter, update))

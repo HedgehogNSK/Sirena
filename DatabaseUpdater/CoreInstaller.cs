@@ -16,7 +16,7 @@ namespace DatabaseUpdater
   {
     const int MACHINE_ID = 0;
     //DO NOT TOUCH THIS STAMP
-    const long EPOCH_TIMESTAMP = 1729300000000;  //Mon Oct 14 2024 22:13:20 GMT+0000
+    const long EPOCH_TIMESTAMP = 1736959000000;  //Wed Jan 15 2025 16:36:40 GMT+0000
     public override void Install()
     {
       Container.RegisterSingleton<IIDGenerator>(() => new BlendflakeAdapter(EPOCH_TIMESTAMP, MACHINE_ID));
