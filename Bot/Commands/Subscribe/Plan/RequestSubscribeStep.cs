@@ -17,7 +17,7 @@ public class RequestSubscribeStep(NullableContainer<ulong> sirenaIdContainter
     var sid = sirenaIdContainter.Get();
     var uid = context.GetUser().Id;
 
-    var request = subscribeOperation.Subscribe(uid, sid).Publish().RefCount();
+    var request = subscribeOperation.Subscribe(uid, sid).Publish().RefCount(2);
     var fail = request.Where(x => x == null).Select(_ => CreateReportNotFound());
     var success = request.Where(x => x != null).Select(CreateSuccesfulReport);
     return success.Merge(fail);
