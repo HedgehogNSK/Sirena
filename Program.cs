@@ -1,12 +1,18 @@
-﻿using Hedgey.Extensions.SimpleInjector;
+﻿using Hedgey.Extensions.NetCoreServer;
+using Hedgey.Extensions.SimpleInjector;
+using Hedgey.Extensions.Telegram;
 using Hedgey.Extensions.Types;
 using Hedgey.Sirena.Bot;
 using Hedgey.Sirena.Bot.DI;
+using Hedgey.Sirena.Bot.DI.HTTP;
+using Hedgey.Sirena.HTTP.Server;
 using MongoDB.Driver;
 using RxTelegram.Bot;
+using RxTelegram.Bot.Api;
 using RxTelegram.Bot.Exceptions;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Callbacks;
+using RxTelegram.Bot.Interface.Setup;
 using SimpleInjector;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -19,16 +25,27 @@ static internal class Program
     Container container = new Container();
     Installer installer = new CoreInstaller(container);
     installer.Install();
+    installer = new ServerInstaller(container);
+    installer.Install();
     installer = new SharedCommandServicesInstaller(container);
     installer.Install();
     InstallCommands(container);
 
     container.Verify();
-    
+
     var botProxyRequests = container.GetInstance<AbstractBotMessageSender>();
     var bot = container.GetInstance<TelegramBot>();
     var me = await bot.GetMe();
     Console.WriteLine($"Bot name: @{me.Username}");
+
+    //HTTP(s) server initialization
+    var server = container.GetInstance<HttpsServer>();
+    StartServer(server);
+
+    SetWebhook setWebhook = container.GetInstance<SetWebhook>();
+    await bot.SetWebhook(setWebhook);
+    await bot.DisplayWebhookInfo();
+
     var observableMessages = bot.Updates.Message
         .Catch((Exception _ex) =>
         {
@@ -87,12 +104,12 @@ static internal class Program
         .Where(_report => _report.StepReport.MessageBuilder != null)
         .SelectMany(_report => botProxyRequests.ObservableSend(_report.StepReport.MessageBuilder)
           .Catch((Exception _ex) =>
-            {
-              Console.WriteLine("On Send Report exception: {0}", _ex);
+          {
+            Console.WriteLine("On Send Report exception: {0}", _ex);
 
-              ExceptionHandler.OnError(_ex);
-              return Observable.Empty<Message>().Delay(TimeSpan.FromSeconds(1));
-            }))
+            ExceptionHandler.OnError(_ex);
+            return Observable.Empty<Message>().Delay(TimeSpan.FromSeconds(1));
+          }))
         .Subscribe();
 #pragma warning restore CS8604 // Possible null reference argument.
     var schedulerTrackStream = schedulerTrackPublisher.Connect();
@@ -100,14 +117,24 @@ static internal class Program
     IDisposable subscription = new CompositeDisposable(callbackStream
     , constexStream, approveCallbackStream, planProcessingStream
     , sendMessagesStream, schedulerTrackStream);
+
     string? input;
     do
     {
       input = Console.ReadLine();
+      switch (input)
+      {
+        case "set wh": { await SwitchToWebHook(); } break;
+        case "set lp": { await SwitchToLongpolling(); } break;
+        default: { }; break;
+      }
     } while (input != "exit");
+
     planScheduler.Dispose();
     planProcessingStream.Dispose();
     subscription.Dispose();
+    server.Stop();
+    await bot.DeleteWebhook();
 
     IObservable<bool> SendCallbackApprove(CallbackQuery query)
     {
@@ -122,6 +149,37 @@ static internal class Program
           throw new Exception($"Error on callback answer to user {query.From.Id} on request: \"{query.Data}\"", _ex);
         });
     }
+
+    async Task SwitchToLongpolling()
+    {
+      Console.WriteLine("Switching to Longpolling requests");
+      await bot.DeleteWebhook();
+      server.Stop();
+      var tracker = new LongpollingUpdateTracker(bot);
+      bot.Updates.Set(tracker);
+    }
+
+    async Task SwitchToWebHook()
+    {
+      StartServer(server);
+      var updateHandler = container.GetInstance<UpdateHandler>();
+      bot.Updates.Set(updateHandler.Update);
+      await bot.SetWebhook(setWebhook);
+      await bot.DisplayWebhookInfo();
+    }
+  }
+
+  private static void StartServer(HttpsServer server)
+  {
+    if (server.IsStarted)
+    {
+      Console.WriteLine("Server is already launched");
+      return;
+    }
+    bool httpStarted = server.Start();
+    Console.WriteLine($"Starting HTTP server on port {server.Port}...");
+    if (!httpStarted)
+      throw new Exception("Server is not started");
   }
 
   private static void InstallCommands(Container container)

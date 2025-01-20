@@ -7,8 +7,7 @@ static public class OSTools{
     var value = Environment.GetEnvironmentVariable(key);
     if (string.IsNullOrEmpty(value))
     {
-      Console.WriteLine(key+" is not set");
-      Environment.Exit(0);
+      Environment.FailFast(key + " is not set. Please set environment variable");
     }
     return value;
 }}

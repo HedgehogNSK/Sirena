@@ -1,20 +1,21 @@
 using Hedgey.Extensions;
 using Hedgey.Structure.Factory;
 using RxTelegram.Bot;
-using Telegram.Bot;
+using RxTelegram.Bot.Interface.Setup;
 
 namespace Hedgey.Sirena;
 
-public class TelegramHelpFactory : IFactory< TelegramBot>,IFactory<TelegramBotClient>
+public class TelegramHelpFactory : IFactory<TelegramBot>
 {
   private readonly string token;
+  private readonly IObservable<Update> updateStream;
 
-  public TelegramHelpFactory(){
-    const string tokenKey = "SIRENA_TOKEN";
-    token = OSTools.GetEnvironmentVar(tokenKey);
-    if(string.IsNullOrEmpty(token))
-        throw new ArgumentException("TelegramBot can't be created. Reason: wrong token.");
-}
-  TelegramBot IFactory<TelegramBot>.Create() => new TelegramBot(token);
-  TelegramBotClient IFactory<TelegramBotClient>.Create() => new TelegramBotClient(token);
+  public TelegramHelpFactory(IObservable<Update> updateHandler)
+  {
+    const string botToken = "SIRENA_TOKEN";
+    token = OSTools.GetEnvironmentVar(botToken);
+    this.updateStream = updateHandler;
+  }
+  TelegramBot IFactory<TelegramBot>.Create()
+    => new TelegramBot.Builder(token).SetTracker(updateStream).Build();
 }

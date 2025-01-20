@@ -10,7 +10,6 @@
 /*.suo
 /*.cache
 /.vscode
-*.dll
 *.pdb
 *.exe
 *.bak

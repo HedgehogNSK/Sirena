@@ -1,3 +1,4 @@
+using System.Text;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Chats;
@@ -32,17 +33,14 @@ public static class BotTools
   }
 
   private static string GetDisplayName(string Username, string FirstName, string LastName)
-  {
-    return !string.IsNullOrEmpty(Username) ? '@' + Username :
-          (FirstName + ' ' + LastName);
-  }
+    => !string.IsNullOrEmpty(Username) ? '@' + Username : (FirstName + ' ' + LastName);
   public static string GetDisplayName(this Chat chat)
-  => GetDisplayName(chat.Username, chat.FirstName, chat.LastName);
+    => GetDisplayName(chat.Username, chat.FirstName, chat.LastName);
   public static string GetDisplayName(this ChatFullInfo chatInfo)
-  => GetDisplayName(chatInfo.Username, chatInfo.FirstName, chatInfo.LastName);
+    => GetDisplayName(chatInfo.Username, chatInfo.FirstName, chatInfo.LastName);
 
   public static string GetDisplayName(this User user)
-  => GetDisplayName(user.Username, user.FirstName, user.LastName);
+    => GetDisplayName(user.Username, user.FirstName, user.LastName);
 
   public static async Task<string> GetDisplayName(this TelegramBot bot, long uid)
   {
@@ -53,8 +51,7 @@ public static class BotTools
   }
 
   public static CopyMessages Clone(this CopyMessages source)
-  {
-    return new CopyMessages()
+    => new CopyMessages()
     {
       ChatId = source.ChatId,
       DisableNotification = source.DisableNotification,
@@ -64,5 +61,21 @@ public static class BotTools
       ProtectContent = source.ProtectContent,
       RemoveCaption = source.RemoveCaption
     };
+  public static async Task DisplayWebhookInfo(this TelegramBot bot)
+  {
+    var whinfo = await bot.GetWebhookInfo();
+    var allowedUpdates = whinfo.AllowedUpdates?.Aggregate(string.Empty, (a, b) => string.Concat(a, ' ', b)) ?? null;
+    StringBuilder builder = new StringBuilder("___WEBHOOK INFO___\n");
+    builder.Append("Listener IP: ").AppendLine(whinfo.IpAddress)
+    .Append("Has certificate: ").Append(whinfo.HasCustomCertificate).AppendLine()
+    .Append("Allowed updates:").AppendLine(allowedUpdates)
+    .Append("Pending updates count: ").Append(whinfo.PendingUpdateCount).AppendLine();
+
+    if (whinfo.LastErrorDate != null)
+      builder.Append("Error message: [").Append(whinfo.LastErrorDate).Append(']').AppendLine(whinfo.LastErrorMessage);
+
+    builder.AppendLine("------------------");
+
+    Console.WriteLine(builder.ToString());
   }
 }

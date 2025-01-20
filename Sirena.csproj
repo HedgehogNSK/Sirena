@@ -13,11 +13,19 @@
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="3.1.0" />
     <PackageReference Include="NetCoreServer" Version="8.0.7" />
+    <PackageReference Include="newtonsoft.json" Version="13.0.3" />
     <PackageReference Include="NotBase64URL" Version="0.1.1" />
-    <PackageReference Include="rxtelegram.bot" Version="8.2.0" />
     <PackageReference Include="SimpleInjector" Version="5.5.0" />
     <PackageReference Include="System.Reactive" Version="6.0.1" />
-    <PackageReference Include="telegram.bot" Version="19.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="RxTelegram.Bot">
+      <HintPath>External/RxTelegram.Bot/RxTelegram.Bot.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="External\Blendflake\src\Blendflake\Blendflake.csproj" />
     <Compile Remove="DatabaseUpdater\**\*.cs" />
     <Compile Remove="External\Blendflake\**\*.cs" />
