@@ -17,7 +17,7 @@ public class HelpCommand : AbstractBotCommmand, IBotCommand
   , IMessageSender messageSender)
   : base(NAME, DESCRIPTION)
   {
-    this.commands = commands.Where(x => x != this);
+    this.commands = commands.Where(x => x != this && x is not StartCommand);
     this.localizationProvider = localizationProvider;
     this.messageSender = messageSender;
   }
