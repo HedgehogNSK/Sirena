@@ -1,7 +1,7 @@
 using Hedgey.Blendflake;
-using Hedgey.Extensions;
+using Hedgey.Sirena.ID;
 
-namespace Hedge.Sirena.ID;
+namespace Hedgey.Extensions.Blendflake;
 
 public class BlendflakeAdapter : Generator, IIDGenerator
 {
