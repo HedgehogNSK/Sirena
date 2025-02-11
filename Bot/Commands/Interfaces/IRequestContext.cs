@@ -5,11 +5,12 @@ namespace Hedgey.Sirena;
 
 public interface IRequestContext
 {
-  string GetCommandName();
   string GetArgsString();
-  User GetUser();
   Chat GetChat();
-  Message GetMessage();
-  long GetTargetChatId();
+  string GetCommandName();
   CultureInfo GetCultureInfo();
+  Message GetMessage();
+  string GetQuery();
+  long GetTargetChatId();
+  User GetUser();
 }

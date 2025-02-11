@@ -21,11 +21,8 @@ public class MessageRequestContext : IRequestContext
   public string GetCommandName() => commandName;
   public CultureInfo GetCultureInfo() => new(GetUser().LanguageCode);
   public Message GetMessage() => message;
+  public string GetQuery() => message.Text;
   public long GetTargetChatId() => message.From.Id;
   public User GetUser() => message.From;
   public bool IsCommandSet() => commandIsSet;
-  public bool IsValid(AbstractBotCommmand command)
-  {
-    return command.Command == commandName;
-  }
 }

@@ -1,4 +1,3 @@
-using Hedgey.Sirena.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Globalization;
 
@@ -16,20 +15,11 @@ public class CallbackRequestContext : IRequestContext
     Extensions.TextTools.ExtractCommandAndArgs(query.Data, out commandName, out argString);
   }
   public string GetArgsString() => argString;
-
   public Chat GetChat() => query.Message.Chat;
-
-  public string GetCommandName()
-=> commandName;
-
-  public Message GetMessage() => query.Message;
-
-  public long GetTargetChatId()
-  => query.From.Id;
-  public User GetUser() => query.From;
+  public string GetCommandName() => commandName;
   public CultureInfo GetCultureInfo() => new(GetUser().LanguageCode);
-  public bool IsValid(AbstractBotCommmand command)
-  {
-    return command.Command == commandName;
-  }
+  public Message GetMessage() => query.Message;
+  public string GetQuery() => query.Data;
+  public long GetTargetChatId() => query.From.Id;
+  public User GetUser() => query.From;
 }
