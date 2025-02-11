@@ -63,7 +63,8 @@
   </data>
   <data name="command.create_sirena.success">
     <value>Сирена была успешно создана. Идентификатор (ИД): `{0}`
-Разошлите ИД своим подписчиками.</value>
+ Пригласительная ссылка:
+</value>
   </data>
   <data name="command.create.description">
     <value>Создать Сирену</value>
@@ -418,5 +419,8 @@ _{0}_</value>
   </data>
   <data name="miscellaneous.user_ghost">
     <value>Призрак</value>
+  </data>
+  <data name="command.start.create-user.fail">
+    <value>⚠️При создании нового пользователя возникла ошибка. Попробуйте повторить попытку чуть позже.</value>
   </data>
 </root>

@@ -62,7 +62,8 @@ Please remove one of your sirenas and try again.</value>
     <value>⚠️ Unknown error. Sirena wasn&apos;t created.</value>
   </data>
   <data name="command.create_sirena.success">
-    <value>Sirena has been created successfuly. It&apos;s identificator (ID): `{0}`. Share the ID with the subscribers.</value>
+    <value>Sirena has been created successfuly. It&apos;s identificator (ID): `{0}`. Invite link:
+</value>
   </data>
   <data name="command.create.description">
     <value>Creates a Sirena</value>
@@ -421,5 +422,11 @@ ID: `{2}`
   </data>
   <data name="miscellaneous.user_ghost">
     <value>Ghost</value>
+  </data>
+  <data name="miscellaneous.link">
+    <value>https://t.me/{1}?start={0}</value>
+  </data>
+  <data name="command.start.create-user.fail">
+    <value>⚠️ An error occurred while creating a new user. Please try again later.</value>
   </data>
 </root>
