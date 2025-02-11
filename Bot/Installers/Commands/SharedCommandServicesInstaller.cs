@@ -20,6 +20,8 @@ public class SharedCommandServicesInstaller(Container container) : Installer(con
     Container.RegisterSingleton<IUnsubscribeSirenaOperation, SirenaOperations>();
     Container.RegisterSingleton<IGetUserInformation, GetUserInformation>();
     Container.RegisterSingleton<IGetUserOverviewAsync, GetUserStatsOperationAsync>();
+    Container.RegisterSingleton<IUserInfoOperations, UserOperations>();
+    Container.RegisterSingleton<IUserEditOperations, UserOperations>();
 
     Container.RegisterSingleton<FacadeMongoDBRequests>();
     Container.Register<IFactory<IMongoClient>, MongoClientFactory>(Lifestyle.Transient);

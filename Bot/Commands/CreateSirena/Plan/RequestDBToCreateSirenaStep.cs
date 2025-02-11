@@ -8,29 +8,25 @@ public class RequestDBToCommandStep : CommandStep
 {
   private readonly ICreateSirenaOperationAsync createSirenAsync;
   private readonly CreateMessageBuilder messageBuilder;
-  private readonly NullableContainer<UserRepresentation> userContainer;
   private readonly NullableContainer<string> titleContainer;
 
   public RequestDBToCommandStep(ICreateSirenaOperationAsync createSirenAsync
   , CreateMessageBuilder messageBuilder
-  , NullableContainer<UserRepresentation> userContainer
   , NullableContainer<string> titleContainer)
 : base()
   {
     this.createSirenAsync = createSirenAsync;
     this.messageBuilder = messageBuilder;
-    this.userContainer = userContainer;
     this.titleContainer = titleContainer;
   }
 
   public override IObservable<Report> Make(IRequestContext context)
   {
-    return Observable.FromAsync(()
-      =>
+    return Observable.FromAsync(() =>
     {
-      var user = userContainer.Get();
+      var uid = context.GetUser().Id;
       var sirenaTitle = titleContainer.Get();
-      return createSirenAsync.CreateAsync(user.UID, sirenaTitle);
+      return createSirenAsync.CreateAsync(uid, sirenaTitle);
     })
     .Select(CreateReport);
   }

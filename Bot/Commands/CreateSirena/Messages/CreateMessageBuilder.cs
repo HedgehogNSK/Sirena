@@ -1,6 +1,7 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
+using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
@@ -14,17 +15,20 @@ public class CreateMessageBuilder : LocalizedMessageBuilder, IMessageBuilder
   private int minSymbols;
   private int maxSymbols;
   private SirenRepresentation? sirena;
+  private readonly string botName;
 
   public CreateMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider localizationProvider, int minSymbols, int maxSymbols)
+  , ILocalizationProvider localizationProvider, int minSymbols, int maxSymbols
+  ,string botName)
    : base(chatId, info, localizationProvider)
   {
     this.minSymbols = minSymbols;
     this.maxSymbols = maxSymbols;
+    this.botName = botName;
   }
-  internal void SetUser(UserRepresentation? representation)
+  internal void SetUser(bool isSet)
   {
-    userIsSet = representation != null;
+    userIsSet = isSet;
   }
   internal void SetSirena(SirenRepresentation? sirena)
   {
@@ -64,22 +68,30 @@ public class CreateMessageBuilder : LocalizedMessageBuilder, IMessageBuilder
     else
     {
       message = Localize("command.create_sirena.success");
-      message = string.Format(message, sirena.ShortHash);
+      var link = Localize("miscellaneous.link");
+      message = string.Format(message, sirena.ShortHash)+string.Format(link, sirena.ShortHash,botName);
     }
     var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
     return CreateDefault(message, markup);
   }
 
-  public class Factory(ILocalizationProvider localizationProvider) 
-  : IFactory<IRequestContext, CreateMessageBuilder>
+  public class Factory : IFactory<IRequestContext, CreateMessageBuilder>
   {
+    private readonly ILocalizationProvider localizationProvider;
+    private readonly string botName;
+    public Factory(ILocalizationProvider localizationProvider, TelegramBot bot)
+    {
+      this.localizationProvider = localizationProvider;
+      botName = bot.GetMe().GetAwaiter().GetResult().Username.Replace("_","\\_"); 
+    }
+
     public CreateMessageBuilder Create(IRequestContext context)
     {
       var chatID = context.GetChat().Id;
       var info = context.GetCultureInfo();
       return new CreateMessageBuilder(chatID, info, localizationProvider
      , ValidateTitleCommandStep.TITLE_MIN_LENGHT
-     , ValidateTitleCommandStep.TITLE_MAX_LENGHT);
+     , ValidateTitleCommandStep.TITLE_MAX_LENGHT, botName);
     }
   }
 }

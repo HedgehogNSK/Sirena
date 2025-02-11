@@ -1,42 +1,35 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
-using RxTelegram.Bot.Interface.BaseTypes;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
 public class GetUserCommandStep : CommandStep
 {
-  private readonly IGetUserOperationAsync getUserOperationAsync;
+  private readonly IUserInfoOperations getUserOperationAsync;
   private readonly CreateMessageBuilder messageBuilder;
-  private readonly NullableContainer<UserRepresentation> userContainer;
+  private readonly NullableContainer<UserStatistics> statsContainer;
 
-  public GetUserCommandStep(IGetUserOperationAsync getUserOperationAsync
+  public GetUserCommandStep(IUserInfoOperations getUserOperationAsync
   , CreateMessageBuilder messageBuilder
-  , NullableContainer<UserRepresentation> userContainer)
+  , NullableContainer<UserStatistics> statsContainer)
   : base()
   {
     this.getUserOperationAsync = getUserOperationAsync;
     this.messageBuilder = messageBuilder;
-    this.userContainer = userContainer;
+    this.statsContainer = statsContainer;
   }
 
   public override IObservable<Report> Make(IRequestContext context)
   {
-    User botUser = context.GetUser();
-    long uid = botUser.Id;
-    return Observable.FromAsync(() => getUserOperationAsync.GetAsync(uid))
+    long uid = context.GetUser().Id;
+    return getUserOperationAsync.Get(uid)
     .Select(CreateReport);
   }
 
-  private Report CreateReport(UserRepresentation? representation)
+  private Report CreateReport(UserStatistics userStats)
   {
-    messageBuilder.SetUser(representation);
-    if (representation == null)
-    {
-      return new Report(Result.Wait, messageBuilder);
-    }
-    userContainer.Set(representation);
+    messageBuilder.SetUser(true);    
+    statsContainer.Set(userStats);
     return new(Result.Success, null);
   }
 }

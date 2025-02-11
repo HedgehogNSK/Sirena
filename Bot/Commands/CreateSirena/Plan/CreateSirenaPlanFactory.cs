@@ -1,5 +1,4 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
 
@@ -8,16 +7,16 @@ namespace Hedgey.Sirena.Bot;
 public class CreateSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
   private readonly IFactory<IRequestContext, CreateMessageBuilder> messageBuilderFactory;
-  private readonly IGetUserOperationAsync getUserOperationAsync;
+  private readonly IUserInfoOperations userInfo;
   private readonly ICreateSirenaOperationAsync createSirenaAsync;
 
   public CreateSirenaPlanFactory(
    IFactory<IRequestContext, CreateMessageBuilder> messageBuilderFactory
-   , IGetUserOperationAsync getUserOperationAsync
+   , IUserInfoOperations userInfo
    , ICreateSirenaOperationAsync createSirenaAsync)
   {
     this.messageBuilderFactory = messageBuilderFactory;
-    this.getUserOperationAsync = getUserOperationAsync;
+    this.userInfo = userInfo;
     this.createSirenaAsync = createSirenaAsync;
   }
 
@@ -26,17 +25,17 @@ public class CreateSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
     CreateMessageBuilder messageBuilder = messageBuilderFactory.Create(context);
 
     NullableContainer<string> titleContainer = new();
-    NullableContainer<UserRepresentation> userContainer = new();
+    NullableContainer<UserStatistics> statsContainer = new();
 
     var validation = new CompositeCommandStep([
-      new CheckAbilityToCreateSirenaStep(userContainer,messageBuilder),
+      new CheckAbilityToCreateSirenaStep(statsContainer,messageBuilder),
       new ValidateTitleCommandStep(messageBuilder,titleContainer),
     ]);
 
     IObservableStep<IRequestContext, CommandStep.Report>[] steps = [
-      new GetUserCommandStep(getUserOperationAsync,messageBuilder,userContainer),
+      new GetUserCommandStep(userInfo,messageBuilder,statsContainer),
       validation,
-      new RequestDBToCommandStep(createSirenaAsync,messageBuilder,userContainer, titleContainer),
+      new RequestDBToCommandStep(createSirenaAsync,messageBuilder, titleContainer),
     ];
     return new(CreateSirenaCommand.NAME, steps);
   }
