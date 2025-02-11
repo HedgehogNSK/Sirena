@@ -5,14 +5,14 @@ namespace Hedgey.Sirena.Bot.Operations.Mongo;
 
 public class GetUserOperationAsync : IGetUserOperationAsync
 {
-  private IMongoCollection<UserRepresentation> usersCollection;
+  private IMongoCollection<UserRepresentation> users;
   private readonly FacadeMongoDBRequests requests;
   private readonly IMessageSender messageSender;
 
   public GetUserOperationAsync(IMongoCollection<UserRepresentation> usersCollection
   , FacadeMongoDBRequests requests, IMessageSender messageSender)
   {
-    this.usersCollection = usersCollection;
+    this.users = usersCollection;
     this.requests = requests;
     this.messageSender = messageSender;
   }
@@ -21,7 +21,7 @@ public class GetUserOperationAsync : IGetUserOperationAsync
     var filter = Builders<UserRepresentation>.Filter.Eq("_id", uid);
     try
     {
-      var user = await usersCollection.Find(filter).FirstOrDefaultAsync();
+      var user = await users.Find(filter).FirstOrDefaultAsync();
 
       if (user == null)
       {
@@ -33,7 +33,7 @@ public class GetUserOperationAsync : IGetUserOperationAsync
     }
     catch (Exception ex)
     {
-      throw new Exception($"Exception on find user with id {uid}",ex);
+      throw new Exception($"Exception on find user with id {uid}", ex);
     }
   }
 }

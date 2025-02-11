@@ -26,6 +26,7 @@ public static class MarkupShortcuts
   public const string getReuqestsTitle = prefix + "get_requests.title";
   public const string getResponsiblesTitle = prefix + "get_responsibles.title";
   public const string requestRightTitle = prefix + "request_rights.title";
+  public const string retryTitle = prefix + "anotherTry.title";
   public const string subscriptionsTitle = prefix + "subscriptions.title";
 
   public static ILocalizationProvider? LocalizationProvider { get; set; }
@@ -84,6 +85,15 @@ public static class MarkupShortcuts
   public static IInlineKeyboardRow AddRequestButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
   , string shortHash, string title = requestRightTitle)
     => inlineKeyboardRow.AddLocalizedButton(title, info, RequestRightsCommand.NAME, shortHash);
+  public static IInlineKeyboardRow AddRetryButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
+  , string command, string title = retryTitle)
+  {
+    if (LocalizationProvider == null)
+      throw new ArgumentNullException(nameof(LocalizationProvider), $"You have to set {nameof(MarkupShortcuts.LocalizationProvider)} field manually before use localized buttons");
+    string localTitle = LocalizationProvider.Get(title, info);
+    return inlineKeyboardRow.AddCallbackData(localTitle, command);
+  }
+
   public static IInlineKeyboardRow AddSirenaInfoButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
   , string shortHash, string title = getInfoTitle)
     => inlineKeyboardRow.AddLocalizedButton(title, info, DisplaySirenaInfoCommand.NAME, shortHash);

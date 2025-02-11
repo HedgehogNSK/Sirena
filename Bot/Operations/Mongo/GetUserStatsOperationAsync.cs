@@ -2,7 +2,7 @@ using Hedgey.Sirena.Database;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace Hedgey.Sirena.Bot.Operations;
+namespace Hedgey.Sirena.Bot.Operations.Mongo;
 public class GetUserStatsOperationAsync : IGetUserOverviewAsync
 {
   private readonly IMongoCollection<SirenRepresentation> sirens;
@@ -28,11 +28,4 @@ public class GetUserStatsOperationAsync : IGetUserOverviewAsync
 
     return await query.FirstOrDefaultAsync();
   }
-}
-
-public struct UserStatistics
-{
-  public int SirenasCount { get; set; }
-  public int Subscriptions { get; set; }
-  public int Responsible { get; set; }
 }
