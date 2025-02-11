@@ -1,5 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
+using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
@@ -8,7 +9,7 @@ using System.Globalization;
 namespace Hedgey.Sirena.Bot;
 public class MenuMessageBuilder : LocalizedMessageBuilder
 {
-  const string menuTitle = "command.menu.title";
+  string menuLocalKey = "command.menu.title";
   private bool userHasSirenas = false;
   private bool userSubscribed = false;
   private UserStatistics? result = null;
@@ -18,6 +19,11 @@ public class MenuMessageBuilder : LocalizedMessageBuilder
   : base(chatId, info,localizationProvider)
   { }
 
+  public MenuMessageBuilder SetText(string localizationKey)
+  {
+    menuLocalKey = localizationKey;
+    return this;
+  }
   public MenuMessageBuilder UserHasSirenas(bool userHasSirenas)
   {
     this.userHasSirenas = userHasSirenas;
@@ -52,7 +58,19 @@ public class MenuMessageBuilder : LocalizedMessageBuilder
       keyboardBuilder.AddDisplayUserSirenasButton(Info,result?.SirenasCount ?? 0);
 
     IReplyMarkup markup = keyboardBuilder.EndRow().ToReplyMarkup();
-    string localizedMessage = Localize(menuTitle);
+    string localizedMessage = Localize(menuLocalKey);
     return CreateDefault(localizedMessage, markup);
+  }
+
+  public class Factory(ILocalizationProvider localizationProvider)
+   : IFactory<IRequestContext, UserStatistics, IMessageBuilder>
+  {
+    public IMessageBuilder Create(IRequestContext context, UserStatistics userStats)
+    {
+      CultureInfo info = context.GetCultureInfo();
+      long chatId = context.GetTargetChatId();
+      return new MenuMessageBuilder(chatId, info, localizationProvider)
+        .AddUserStatistics(userStats);
+    }
   }
 }
