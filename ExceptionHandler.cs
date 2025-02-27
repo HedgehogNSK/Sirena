@@ -7,21 +7,24 @@ static public class ExceptionHandler
 {
   static public void OnError(Exception exception){
     var time = Shortucts.CurrentTimeLabel();
-    var ex = exception;
+    var current = exception;
+    Console.WriteLine(time + "EXCEPTION!!!");
+    int i=0;
     do
     {
-      switch (ex)
+      switch (current)
       {
         case ApiException apiException:
           {
-            string message = time + apiException.Message + ": " + apiException.Description;
+            string message = $"<{i}> {current.GetType().FullName}: {apiException.Message}\nDescription: {apiException.Description}\n{apiException.StackTrace}";
             Console.WriteLine(message);
           }
           break;
-        default: Console.WriteLine(time + exception); break;
+        default: Console.WriteLine($"<{i}> {current.GetType().FullName}: {current.Message}\n{current.StackTrace}"); break;
       }
-      ex = ex.InnerException;
+      current = current.InnerException;
+      ++i;
     }
-    while (ex != null);
+    while (current != null);
   }
 }
