@@ -14,4 +14,5 @@ public class NullableContainer<T>
     return Content??
        throw new ArgumentNullException("Value were not initialized yet",typeof(T?).Name);
   }
+  public bool IsEmpty => Content == null;
 }

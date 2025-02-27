@@ -16,3 +16,7 @@ public interface IFactory<in T1, in T2, in T3, out TObject>
 {
   TObject Create(T1 param1, T2 param2, T3 param3);
 }
+public interface IFactory<in T1, in T2, in T3, in T4, out TObject>
+{
+  TObject Create(T1 param1, T2 param2, T3 param3, T4 param4);
+}

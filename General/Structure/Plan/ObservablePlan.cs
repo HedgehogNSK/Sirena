@@ -88,7 +88,7 @@ public abstract class ObservablePlan<TContext, TReport>
       Init();
 
       if (enumerator == null)
-        throw new ArgumentNullException("It's a miracle! Enumerator is null. Did you miss the initialization of enumerator?");
+        throw new ArgumentNullException("It's a miracle! Enumerator is null. How did you skip an initialization of enumerator?");
     }
     if (CurrentStep == null && !enumerator.MoveNext())
     {

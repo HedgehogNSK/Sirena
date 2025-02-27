@@ -1,4 +1,4 @@
-﻿using Hedgey.Extensions.NetCoreServer;
+using Hedgey.Extensions.NetCoreServer;
 using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Extensions.Telegram;
 using Hedgey.Extensions.Types;
@@ -77,17 +77,17 @@ static internal class Program
         .SelectMany(SendCallbackApprove)
         .Catch((Exception _ex) =>
         {
-          Console.WriteLine("Send callback approve exception: {0}", _ex);
-
+          Console.WriteLine("Send callback approve exception:\n");
           ExceptionHandler.OnError(_ex);
           return Observable.Empty<bool>();
         })
         .Repeat()
-        .Subscribe(_ => { }, ExceptionHandler.OnError);
+        .Subscribe();
 
     var callbackStream = observableCallbackPublisher.Connect();
-    var planScheduler = container.GetInstance<PlanScheduler>();
 
+    //Plan scheduler subscriptions
+    var planScheduler = container.GetInstance<PlanScheduler>();
     var schedulerTrackPublisher = planScheduler.Track()
         .Catch((Exception _ex) =>
         {
@@ -96,22 +96,23 @@ static internal class Program
         })
         .Repeat()
         .Publish();
+
     var planProcessingStream = schedulerTrackPublisher
         .Subscribe(requestHandler.ProcessPlanReport);
 
 #pragma warning disable CS8604 // Possible null reference argument.
     var sendMessagesStream = schedulerTrackPublisher
         .Where(_report => _report.StepReport.MessageBuilder != null)
-        .SelectMany(_report => botProxyRequests.ObservableSend(_report.StepReport.MessageBuilder)
-          .Catch((Exception _ex) =>
-          {
-            Console.WriteLine("On Send Report exception: {0}", _ex);
-
-            ExceptionHandler.OnError(_ex);
-            return Observable.Empty<Message>().Delay(TimeSpan.FromSeconds(1));
-          }))
+        .SelectMany(_report => botProxyRequests.ObservableSend(_report.StepReport.MessageBuilder))
+        .Catch((Exception _ex) =>
+        {
+          ExceptionHandler.OnError(_ex);
+          return Observable.Empty<Message>();
+        })
+        .Repeat()
         .Subscribe();
 #pragma warning restore CS8604 // Possible null reference argument.
+
     var schedulerTrackStream = schedulerTrackPublisher.Connect();
 
     IDisposable subscription = new CompositeDisposable(callbackStream

@@ -37,7 +37,7 @@ public class SirenRepresentation
   [BsonElement("listener")]
   public long[] Listener { get; set; } = [];
   [BsonElement("muted")]
-  public MutedInfo[] Muted{get;set;} = [];
+  public MutedInfo[] Muted { get; set; } = [];
   [BsonRepresentation(BsonType.Int64)]
   [BsonElement("responsible")]
   public long[] Responsible { get; set; } = [];
@@ -48,7 +48,7 @@ public class SirenRepresentation
 
   public override string ToString()
   {
-    return $"`[``{ShortHash}``]` {Title}";
+    return $"\\[`{ShortHash}`] {Title}";
   }
 
   public bool CanBeCalledBy(long uid)
@@ -58,31 +58,26 @@ public class SirenRepresentation
       return false;
 
     //If no one mutes anyone for the sirena then user can call it
-    if(!Muted.Any()) return true;
-    
+    if (!Muted.Any()) return true;
+
     //Count of listeners who didn't mute the user
-    int actualListeners = Listener.Length - Muted.Count(x => x.MutedUID == uid) ;
+    int actualListeners = Listener.Length - Muted.Count(x => x.MutedUID == uid);
 
     //If the user is not owner he is also a listener so we have to subtract himself from the count
-    if(uid != OwnerId)
+    if (uid != OwnerId)
       actualListeners -= 1;
 
-    ArgumentOutOfRangeException.ThrowIfLessThan(actualListeners,0, nameof(actualListeners));
+    ArgumentOutOfRangeException.ThrowIfLessThan(actualListeners, 0, nameof(actualListeners));
 
     return actualListeners != 0;
   }
 
-  public class Request
+  public class Request(long uid, string message)
   {
-    public Request(long uid, string message)
-    {
-      UID = uid;
-      Message = message;
-    }
     [BsonElement("user_id")]
-    public long UID { get; set; }
+    public long UID { get; } = uid;
     [BsonElement("message")]
-    public string Message { get; set; } = string.Empty;
+    public string Message { get; } = message;
     public override int GetHashCode() => UID.GetHashCode();
     public override bool Equals(object? obj)
     {
@@ -91,29 +86,13 @@ public class SirenRepresentation
       return false;
     }
   }
-  public class CallInfo
-  {
-    public CallInfo(long uid, DateTimeOffset date)
-    {
-      Caller = uid;
-      Date = date;
-    }
-    [BsonElement("caller"), BsonRepresentation(BsonType.Int64)]
-    public long Caller { get; internal set; }
-    [BsonElement("date"), BsonRepresentation(BsonType.DateTime)]
-    public DateTimeOffset Date { get; internal set; }
-  }
+  public record class CallInfo(
+    [property: BsonElement("caller"), BsonRepresentation(BsonType.Int64)] long Caller
+    , [property: BsonElement("date"), BsonRepresentation(BsonType.DateTime)] DateTimeOffset Date)
+  { }
 
-  public class MutedInfo
-  {
-    public MutedInfo(long user_id, long muted_id){
-      UID = user_id;
-      MutedUID = muted_id;
-    }
-
-    [BsonElement("user_id"), BsonRepresentation(BsonType.Int64)]
-    public long UID { get; internal set;}
-    [BsonElement("muted_id"), BsonRepresentation(BsonType.Int64)]
-    public long MutedUID { get; internal set;}
-  }
+  public record class MutedInfo(
+    [property: BsonElement("user_id"), BsonRepresentation(BsonType.Int64)] long UID,
+    [property: BsonElement("muted_id"), BsonRepresentation(BsonType.Int64)] long MutedUID)
+  { }
 }
