@@ -55,7 +55,8 @@ static public class TextTools
     if (string.IsNullOrEmpty(source)) return false;
 
     source = source.TrimStart();
-    if (source[0] != '/'){
+    if (source[0] != '/')
+    {
       argString = source;
       return false;
     }
@@ -63,4 +64,27 @@ static public class TextTools
     argString = source.SkipWords(1).AssembleString();
     return true;
   }
+  private static readonly char[] markdownV2charsToEscape = ['_', '*', '[', ']', '(', ')', '~', '`', '>', '#', '+', '-', '=', '|', '{', '}', '.', '!'];
+  private static readonly char[] markdowncharsToEscape = ['_', '*', '[', '`'];
+  public static string EscapeChars(this string input, char[] charsToEscape)
+  {
+    if (string.IsNullOrEmpty(input))
+      return input;
+
+    var result = new StringBuilder(input.Length * 2);
+
+    foreach (char c in input)
+    {
+      if (Array.Exists(charsToEscape, ch => ch == c))
+        result.Append('\\');
+
+      result.Append(c);
+    }
+    return result.ToString();
+  }
+  public static string EscapeMarkdownV2Chars(this string input)  
+  => EscapeChars(input, markdownV2charsToEscape);
+  
+  public static string EscapeMarkdownChars(this string input)  
+  => EscapeChars(input, markdowncharsToEscape);
 }
