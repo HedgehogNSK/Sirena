@@ -4,7 +4,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class PlanExecutorBotCommand : AbstractBotCommmand
  {
-   private readonly IFactory<IRequestContext,CommandPlan> planFactory;
+  private readonly IFactory<IRequestContext, CommandPlan> planFactory;
   private readonly PlanScheduler planScheduler;
 
   public PlanExecutorBotCommand(string name, string description

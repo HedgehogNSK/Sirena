@@ -15,4 +15,25 @@ public class PlanBassedCommandInstaller<TCommand, TPlanFactory>(Container contai
     Container.RegisterConditional<IFactory<IRequestContext, CommandPlan>, TPlanFactory>((_predicate)
       => _predicate.Consumer.ImplementationType == typeof(TCommand));
   }
+  protected void RegisterStepFactoryIntoPlanFactory<TStepInterface>
+  (Lifestyle lifestyle, Func<TStepInterface> instanceCreator)
+  where TStepInterface : class
+  {
+    var registration = lifestyle.CreateRegistration(instanceCreator, Container);
+    Container.RegisterConditional<TStepInterface>(registration
+      , (_context) => _context.Consumer.ImplementationType == typeof(TPlanFactory));
+  }
+  protected void RegisterStepFactoryIntoPlanFactory<TStepInterface>
+  (Lifestyle lifestyle, Type concretteType)
+  where TStepInterface : class
+  {
+    var registration = lifestyle.CreateRegistration(concretteType, Container);
+    Container.RegisterConditional<TStepInterface>(registration
+      , (_context) => _context.Consumer.ImplementationType == typeof(TPlanFactory));
+  }
+  protected void RegisterStepFactoryIntoPlanFactory<TStepInterface, TStepImpl>
+  (Lifestyle lifestyle)
+  where TStepInterface : class
+  where TStepImpl : TStepInterface
+  => RegisterStepFactoryIntoPlanFactory<TStepInterface>(lifestyle, typeof(TStepImpl));
 }
