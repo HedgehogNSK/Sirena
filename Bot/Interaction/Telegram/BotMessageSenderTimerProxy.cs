@@ -6,19 +6,22 @@ using System.Reactive;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
-public class BotMessageSenderTimerProxy : AbstractBotMessageSender, IMessageSender, IMessageForwarder, IMessageCopier, IDisposable
+public class BotMessageSenderTimerProxy : AbstractBotMessageSender, IMessageSender
+  , IMessageForwarder, IMessageCopier, IMessageEditor, IDisposable
 {
   const int MAX_SENDS_PER_SECOND = 30;
   static readonly TimeSpan second = TimeSpan.FromSeconds(1);
   private readonly IMessageSender sender;
   private readonly IMessageCopier messageCopier;
   private readonly IMessageForwarder messageForwarder;
+  private readonly IMessageEditor messageEditor;
   BottleNeck trafficController;
   public BotMessageSenderTimerProxy(AbstractBotMessageSender sender)
   {
     this.sender = sender;
-    this.messageCopier = sender;
-    this.messageForwarder = sender;
+    messageCopier = sender;
+    messageForwarder = sender;
+    messageEditor = sender;
     var observableLimitReset = Observable.Timer(second).Select(_ => Unit.Default);
     trafficController = new BottleNeck(observableLimitReset, MAX_SENDS_PER_SECOND);
   }
@@ -50,6 +53,18 @@ public class BotMessageSenderTimerProxy : AbstractBotMessageSender, IMessageSend
   => WrapByDispatcher(messageCopier.Copy(message));
   public override IObservable<MessageIdObject[]> Copy(CopyMessages messages)
   => WrapByDispatcher(messageCopier.Copy(messages));
+
+  public override IObservable<bool> Edit(EditMessageMedia message)
+  => WrapByDispatcher(messageEditor.Edit(message));
+  public override IObservable<Message> Edit(EditMessageCaption message)
+  => WrapByDispatcher(messageEditor.Edit(message));
+  public override IObservable<Message> Edit(EditMessageReplyMarkup message)
+  => WrapByDispatcher(messageEditor.Edit(message));
+  public override IObservable<Message> Edit(EditMessageText message)
+  => WrapByDispatcher(messageEditor.Edit(message));
+  public override IObservable<Message> Edit(IEditMessageBuilder messageBuilder)
+  => WrapByDispatcher(messageEditor.Edit(messageBuilder));
+
   public override IObservable<Message> Forward(ForwardMessage message)
   => WrapByDispatcher(messageForwarder.Forward(message));
   public override IObservable<MessageIdObject[]> Forward(ForwardMessages messages)

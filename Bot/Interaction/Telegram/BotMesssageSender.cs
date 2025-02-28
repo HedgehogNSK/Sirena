@@ -37,6 +37,52 @@ namespace Hedgey.Sirena.Bot
         });
     }
 
+    public override IObservable<bool> Edit(EditMessageMedia message) 
+      => Observable.Defer(() => Observable.FromAsync(() => bot.EditMessageMedia(message)))
+          .Catch((Exception _ex) =>
+          {
+            const string editErrorMessage = "Exception on edit message {0} in chat: {1}";
+            throw new Exception(string.Format(editErrorMessage
+              , message.MessageId, message.ChatId.Identifier)
+            , _ex);
+          });
+
+    public override IObservable<Message> Edit(EditMessageCaption message) 
+      => Observable.Defer(() => Observable.FromAsync(() => bot.EditMessageCaption(message)))
+          .Catch((Exception _ex) =>
+          {
+            const string editErrorMessage = "Exception on edit message caption {0} in chat: {1}";
+            throw new Exception(string.Format(editErrorMessage
+              , message.MessageId, message.ChatId.Identifier)
+            , _ex);
+          });
+
+    public override IObservable<Message> Edit(EditMessageReplyMarkup message) 
+      => Observable.Defer(() => Observable.FromAsync(() => bot.EditMessageReplyMarkup(message)))
+          .Catch((Exception _ex) =>
+          {
+            const string editErrorMessage = "Exception on edit message reply markup {0} in chat: {1}";
+            throw new Exception(string.Format(editErrorMessage
+              , message.MessageId, message.ChatId.Identifier)
+            , _ex);
+          });
+
+    public override IObservable<Message> Edit(EditMessageText message) 
+      => Observable.Defer(() => Observable.FromAsync(() => bot.EditMessageText(message)))
+          .Catch((Exception _ex) =>
+          {
+            const string editErrorMessage = "Exception on edit message {0} in chat: {1}";
+            throw new Exception(string.Format(editErrorMessage
+              , message.MessageId, message.ChatId.Identifier)
+            , _ex);
+          });
+
+    public override IObservable<Message> Edit(IEditMessageBuilder messageBuilder)
+    {
+      return Edit(messageBuilder.Build()).Catch((Exception _exception)
+        => throw new Exception($"Exception on edit message made by builder {messageBuilder.GetType().Name}", _exception));
+    }
+
     const string forwardErrorMessage = "Exception on forward message [{0}|{1}] to chat: {2}";
 
     public override IObservable<Message> Forward(ForwardMessage message)

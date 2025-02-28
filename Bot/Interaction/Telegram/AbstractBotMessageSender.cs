@@ -5,10 +5,16 @@ using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 namespace Hedgey.Sirena.Bot
 {
   public abstract class AbstractBotMessageSender : IMessageSender
-    , IMessageForwarder, IMessageCopier
+    , IMessageForwarder, IMessageCopier, IMessageEditor
   {
     public abstract IObservable<MessageIdObject> Copy(CopyMessage message);
     public abstract IObservable<MessageIdObject[]> Copy(CopyMessages messages);
+
+    public abstract IObservable<bool> Edit(EditMessageMedia message);
+    public abstract IObservable<Message> Edit(EditMessageCaption message);
+    public abstract IObservable<Message> Edit(EditMessageReplyMarkup message);
+    public abstract IObservable<Message> Edit(EditMessageText message);
+    public abstract IObservable<Message> Edit(IEditMessageBuilder messageBuilder);
 
     public abstract IObservable<Message> Forward(ForwardMessage message);
     public abstract IObservable<MessageIdObject[]> Forward(ForwardMessages messages);

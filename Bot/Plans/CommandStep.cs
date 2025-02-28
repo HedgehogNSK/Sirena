@@ -1,4 +1,5 @@
 using Hedgey.Structure.Plan;
+using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
@@ -26,11 +27,24 @@ public abstract class CommandStep : IObservableStep<IRequestContext, CommandStep
   }
 
   //TODO: Change IMessageBuilder<BaseRequest> -> IEnumerable<IMessageBuilder>
-  public record class Report(Result Result, ISendMessageBuilder? MessageBuilder = null)
+  public record class Report(Result Result, ISendMessageBuilder? MessageBuilder = null
+  , IEditMessageBuilder? EditMessageBuilder = null)
   {
     public override string ToString()
     {
-      return $"Report: [State: {Result} | {MessageBuilder?.GetType().Name ?? "No message"}]";
+      StringBuilder builder = new StringBuilder("Report: [State: ")
+      .Append(Result);
+
+      if (MessageBuilder != null)
+        builder.Append(" | ")
+        .Append(MessageBuilder?.GetType().Name);
+
+      if (EditMessageBuilder != null)
+        builder.Append(" | ")
+        .Append(EditMessageBuilder?.GetType().Name);
+
+      builder.Append(']');
+      return builder.ToString();
     }
   }
 }
