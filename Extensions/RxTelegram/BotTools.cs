@@ -1,8 +1,9 @@
-using System.Text;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Chats;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
+using System.Reactive.Linq;
+using System.Text;
 
 namespace Hedgey.Extensions.Telegram;
 
@@ -32,24 +33,46 @@ public static class BotTools
     }
   }
 
-  private static string GetDisplayName(string Username, string FirstName, string LastName)
+  private static string ComposeName(string Username, string FirstName, string LastName)
     => !string.IsNullOrEmpty(Username) ? '@' + Username : (FirstName + ' ' + LastName);
-  public static string GetDisplayName(this Chat chat)
-    => GetDisplayName(chat.Username, chat.FirstName, chat.LastName);
+  public static string GetChatName(this Chat chat)
+    => ComposeName(chat.Username, chat.FirstName, chat.LastName);
+  public static string GetMemberName(this ChatMember chatMember)
+    => GetDisplayName(chatMember.User);
   public static string GetDisplayName(this ChatFullInfo chatInfo)
-    => GetDisplayName(chatInfo.Username, chatInfo.FirstName, chatInfo.LastName);
-
+    => ComposeName(chatInfo.Username, chatInfo.FirstName, chatInfo.LastName);
   public static string GetDisplayName(this User user)
-    => GetDisplayName(user.Username, user.FirstName, user.LastName);
-
+    => ComposeName(user.Username, user.FirstName, user.LastName);
   public static async Task<string> GetDisplayName(this TelegramBot bot, long uid)
   {
-    var chat = await bot.GetChatByUID(uid);
-    if (chat == null)
-      return "Ghost";
-    return chat.GetDisplayName();
+    var getChatMember = new GetChatMember()
+    {
+      UserId = uid,
+      ChatId = uid
+    };
+    try
+    {
+      var chatMember = await bot.GetChatMember(getChatMember);
+      if (chatMember == null)
+        return "Ghost";
+      return chatMember.GetMemberName();
+    }
+    catch (RxTelegram.Bot.Exceptions.ApiException apiEx)
+    {
+      if (apiEx.ErrorCode == RxTelegram.Bot.Exceptions.ErrorCode.ChatNotFound)
+        Console.WriteLine($"Chat with id:\'{uid}\' not found. Probably it's a ghost or test user");
+      else
+        Console.WriteLine(apiEx);
+      return string.Empty;
+    }
+    catch (RxTelegram.Bot.Exceptions.RequestValidationException ex)
+    {
+      Console.WriteLine(ex);
+      foreach (var error in ex.ValidationErrors)
+        Console.WriteLine(error.GetMessage);
+      return string.Empty;
+    }
   }
-
   public static CopyMessages Clone(this CopyMessages source)
     => new CopyMessages()
     {
