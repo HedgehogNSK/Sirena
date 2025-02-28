@@ -18,9 +18,19 @@ public class GetUserInformation : IGetUserInformation
     this.localizationProvider = localizationProvider;
   }
   public IObservable<string> GetNickname(long uid)
-    =>  GetNickname(uid, CultureInfo.InvariantCulture);
+    => GetNickname(uid, CultureInfo.InvariantCulture);
   public IObservable<string> GetNickname(long userID, CultureInfo info)
     => GetNickname(userID, userID, info);
+  /// <summary>
+  /// Get user name by id from certain chat
+  /// DO NOT user this function for private chats
+  /// USE this function only for group chats
+  /// For private chats user id must be equal to chat id
+  /// </summary>
+  /// <param name="uid"></param>
+  /// <param name="cid"></param>
+  /// <param name="info"></param>
+  /// <returns></returns>
   public IObservable<string> GetNickname(long uid, long cid, CultureInfo info)
   {
     var getChatMember = new GetChatMember()
@@ -29,32 +39,34 @@ public class GetUserInformation : IGetUserInformation
       ChatId = cid
     };
     return Observable.FromAsync(() => bot.GetChatMember(getChatMember))
-    .Select(_chatMember => _chatMember.GetMemberName())
+    .Select(_chatMember =>
+    {
+      return _chatMember.GetMemberName();
+    })
     .Catch((Exception ex) =>
     {
+      Console.WriteLine($"Exception happen on attempt to get user nickname of user:{uid} in chat:{cid}");
       switch (ex)
       {
         case RxTelegram.Bot.Exceptions.ApiException apiEx:
           {
-            if (apiEx.ErrorCode == RxTelegram.Bot.Exceptions.ErrorCode.ChatNotFound)
-              Console.WriteLine($"Chat with id:\'{uid}\' not found. Probably it's a ghost or test user");
-            else
-              Console.WriteLine($"{apiEx.GetType().FullName}: {apiEx.Message}\nDescription: {apiEx.Description}\n{apiEx.StackTrace}");
-          } break;
+            Console.WriteLine($"{apiEx.GetType().FullName}: {apiEx.Message}]\nError Code: {apiEx.ErrorCode}\nDescription: {apiEx.Description}\n{apiEx.StackTrace}");
+          }
+          break;
         case RxTelegram.Bot.Exceptions.RequestValidationException validationEx:
           {
             Console.WriteLine(validationEx);
             foreach (var error in validationEx.ValidationErrors)
               Console.WriteLine(error.GetMessage);
-          } break;
+          }
+          break;
         default:
           {
-            var errorMessage = $"Exception on attempt to get chat member with user id: {getChatMember.UserId} in chat: {getChatMember.ChatId}";
-            ex = new Exception(errorMessage, ex);
             Console.WriteLine(ex);
-          } break;
+          }
+          break;
       }
-      return Observable.Return( localizationProvider.Get("miscellaneous.user_ghost", info));
+      return Observable.Return(localizationProvider.Get("miscellaneous.user_ghost", info));
     });
   }
 }

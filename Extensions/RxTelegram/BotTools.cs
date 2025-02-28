@@ -9,7 +9,7 @@ namespace Hedgey.Extensions.Telegram;
 
 public static class BotTools
 {
-
+  [Obsolete("Use IGetUserInformation.GetNickname instead")]
   static public async Task<ChatFullInfo?> GetChatByUID(this TelegramBot bot, long uid)
   {
     var getChat = new GetChat { ChatId = uid };
@@ -43,6 +43,7 @@ public static class BotTools
     => ComposeName(chatInfo.Username, chatInfo.FirstName, chatInfo.LastName);
   public static string GetDisplayName(this User user)
     => ComposeName(user.Username, user.FirstName, user.LastName);
+  [Obsolete("Use IGetUserInformation.GetNickname instead")]
   public static async Task<string> GetDisplayName(this TelegramBot bot, long uid)
   {
     var getChatMember = new GetChatMember()
