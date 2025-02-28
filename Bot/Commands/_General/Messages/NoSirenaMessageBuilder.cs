@@ -6,7 +6,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class NoSirenaMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, string key)
-   : LocalizedMessageBuilder(chatId, info, localizationProvider)
+   : MessageBuilder(chatId, info, localizationProvider)
 {
 
   public override SendMessage Build()

@@ -36,22 +36,25 @@ public class DelegateRightsCommand : AbstractBotCommmand
       messageSender.Send(chatId, errorWrongParamters);
       return;
     }
+    //Select Number or Hash of sirena to delegate
     ulong sirenaId = default;
     if (!int.TryParse(parameters[0], out int number)
-        && !HashUtilities.TryParse(parameters[1], out sirenaId))
+        && !HashUtilities.TryParse(parameters[0], out sirenaId))
     {
       string errorWrongSirenaID = localizationProvider.Get("command.delegate.error.incorrect_id", info);
-      responseText = string.Format(errorWrongSirenaID, parameters[1]);
+      responseText = string.Format(errorWrongSirenaID, parameters[0]);
       messageSender.Send(chatId, responseText);
       return;
     }
+    //Select user to delegate
     if (!long.TryParse(parameters[1], out long duid))
     {
       string errorWrongUID = localizationProvider.Get("command.delegate.error.incorrect_user_id", info);
-      responseText = string.Format(errorWrongUID, parameters[2]);
+      responseText = string.Format(errorWrongUID, parameters[1]);
       messageSender.Send(chatId, responseText);
       return;
     }
+    //Load sirena data by number
     if (sirenaId == default)
     {
       //Get id of siren

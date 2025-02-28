@@ -11,7 +11,7 @@ namespace Hedgey.Sirena.Bot;
 public class SirenaExistensValidationStep(NullableContainer<ulong> idContainer
 , NullableContainer<SirenRepresentation> sirenaContainer
 , IFindSirenaOperation findSirenaOperation
-, IFactory<IRequestContext, string, IMessageBuilder> noSirenaMessageBuilderFactory)
+, IFactory<IRequestContext, string, ISendMessageBuilder> noSirenaMessageBuilderFactory)
  : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -30,7 +30,7 @@ public class SirenaExistensValidationStep(NullableContainer<ulong> idContainer
     }
   }
 
-  public class Factory(IFactory<IRequestContext, string, IMessageBuilder> messageBuilderFactory
+  public class Factory(IFactory<IRequestContext, string, ISendMessageBuilder> messageBuilderFactory
   , IFindSirenaOperation findSirenaOperation)
     : IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep>
   {

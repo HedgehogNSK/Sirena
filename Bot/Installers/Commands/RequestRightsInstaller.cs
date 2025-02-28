@@ -1,15 +1,21 @@
 using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Bot.Operations.Mongo;
+using Hedgey.Structure.Factory;
+using SimpleInjector;
 
 namespace Hedgey.Sirena.Bot.DI;
 
-public class RequestRightsInstaller(SimpleInjector.Container container)
+public class RequestRightsInstaller(Container container)
    : PlanBassedCommandInstaller<RequestRightsCommand, RequestRightsPlanFactory>(container)
 {
   public override void Install()
   {
     base.Install();
+
+    var creationFunction = () => new ValidateSirenaIdStep.Factory(Container.GetInstance<AskSirenaIdMessageBuilder.Factory>());
+    RegisterStepFactoryIntoPlanFactory<IFactory<NullableContainer<ulong>, ValidateSirenaIdStep>>
+    (Lifestyle.Singleton, creationFunction);
 
     Container.RegisterStepFactoryWithBuilderFactory(typeof(DisplayCommandMenuStep.Factory), typeof(RequestListMessageBuilderFactory));
     Container.RegisterStepFactoryWithBuilderFactory(typeof(SendRequestStep.Factory), typeof(RightRequestResultMessageBuilder.Factory));

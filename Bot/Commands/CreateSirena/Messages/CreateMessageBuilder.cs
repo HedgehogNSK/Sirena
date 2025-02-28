@@ -7,7 +7,7 @@ using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
-public class CreateMessageBuilder : LocalizedMessageBuilder, IMessageBuilder
+public class CreateMessageBuilder : MessageBuilder, ISendMessageBuilder
 {
   private bool userIsSet;
   private bool isAllowed;
@@ -50,7 +50,7 @@ public class CreateMessageBuilder : LocalizedMessageBuilder, IMessageBuilder
     if (!userIsSet)
     {
       message = Localize("command.create_sirena.error.no_user");
-      message = string.Format(message, chatId);
+      message = string.Format(message, ChatID);
     }
     else if (!isAllowed)
     {

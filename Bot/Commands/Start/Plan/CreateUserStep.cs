@@ -5,12 +5,12 @@ using System.Reactive.Linq;
 namespace Hedgey.Sirena.Bot;
 
 public class CreateUserStep(IUserEditOperations userEdit
-  , IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory
+  , IFactory<IRequestContext, ISendMessageBuilder> messageBuilderFactory
   , NullableContainer<UpdateState> updateState)
   : CommandStep
 {
   private readonly IUserEditOperations userEdit = userEdit;
-  private readonly IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory = messageBuilderFactory;
+  private readonly IFactory<IRequestContext, ISendMessageBuilder> messageBuilderFactory = messageBuilderFactory;
   private readonly NullableContainer<UpdateState> updateState = updateState;
 
   public override IObservable<Report> Make(IRequestContext context)
@@ -34,11 +34,11 @@ public class CreateUserStep(IUserEditOperations userEdit
   }
 
   public class Factory(IUserEditOperations userEdit
-  , IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, ISendMessageBuilder> messageBuilderFactory)
     : IFactory<NullableContainer<UpdateState>, CreateUserStep>
   {
     private readonly IUserEditOperations userEdit = userEdit;
-    private readonly IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory = messageBuilderFactory;
+    private readonly IFactory<IRequestContext, ISendMessageBuilder> messageBuilderFactory = messageBuilderFactory;
 
     public CreateUserStep Create(NullableContainer<UpdateState> updateState)
       => new(userEdit, messageBuilderFactory, updateState);

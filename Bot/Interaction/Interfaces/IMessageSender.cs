@@ -8,5 +8,5 @@ public interface IMessageSender{
   void Send(ChatId chatId, string text,IReplyMarkup? markup = default, bool silent = true);
   void Send(SendMessage message);
   IObservable<Message> ObservableSend(SendMessage message);
-  IObservable<Message> ObservableSend(IMessageBuilder messageBuilder);
+  IObservable<Message> ObservableSend(ISendMessageBuilder messageBuilder);
 }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-public class ListSirenaMessageBuilder : LocalizedMessageBuilder
+public class ListSirenaMessageBuilder : MessageBuilder
 {
   private (SirenRepresentation sirena, string ownerName)[] collection;
 

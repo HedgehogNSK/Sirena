@@ -8,7 +8,7 @@ public class OptionalDataRequireMessageBuilder(IRequestContext context
   , ILocalizationProvider localizationProvider
   , string notificationLocalizationKey
   , string skipButtonLocalizationKey)
-   : LocalizedMessageBuilder(context.GetChat().Id, context.GetCultureInfo(), localizationProvider)
+   : MessageBuilder(context.GetChat().Id, context.GetCultureInfo(), localizationProvider)
 {
   protected string SkipButtonCallback => '/'+context.GetCommandName();
 

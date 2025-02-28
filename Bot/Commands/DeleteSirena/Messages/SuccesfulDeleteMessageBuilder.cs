@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SuccesfulDeleteMessageBuilder : LocalizedMessageBuilder
+public class SuccesfulDeleteMessageBuilder : MessageBuilder
 {
   private SirenRepresentation deletedSirena;
 

@@ -5,10 +5,10 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 public class WelcomeMessageBuilderFactory(ILocalizationProvider localizationProvider)
- : IFactory<IRequestContext, UserStatistics, IMessageBuilder>
+ : IFactory<IRequestContext, UserStatistics, ISendMessageBuilder>
 {
   const string messageKey = "command.start.welcome";
-  public IMessageBuilder Create(IRequestContext context, UserStatistics userStats)
+  public ISendMessageBuilder Create(IRequestContext context, UserStatistics userStats)
   {
     CultureInfo info = context.GetCultureInfo();
     long chatId = context.GetTargetChatId();

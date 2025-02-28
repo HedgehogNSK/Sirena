@@ -9,7 +9,7 @@ namespace Hedgey.Sirena.Bot;
 public class RequestSubscribeStep(NullableContainer<ulong> sirenaIdContainter
   , ISubscribeToSirenaOperation subscribeOperation
   , IFactory<IRequestContext, SirenRepresentation, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
-  , IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder> sirenaNotFoundMessageBuilderFactory)
+  , IFactory<IRequestContext, ulong, ISendMessageBuilder> sirenaNotFoundMessageBuilderFactory)
   : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -39,7 +39,7 @@ public class RequestSubscribeStep(NullableContainer<ulong> sirenaIdContainter
   }
   public class Factory(ISubscribeToSirenaOperation subscribeOperation
   , IFactory<IRequestContext, SirenRepresentation, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
-  , IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder> sirenaNotFoundMessageBuilderFactory)
+  , IFactory<IRequestContext, ulong, ISendMessageBuilder> sirenaNotFoundMessageBuilderFactory)
   : IFactory<NullableContainer<ulong>, RequestSubscribeStep>
   {
     public RequestSubscribeStep Create(NullableContainer<ulong> idContainer) => new RequestSubscribeStep(idContainer, subscribeOperation, successMessagBuilderFactory, sirenaNotFoundMessageBuilderFactory);

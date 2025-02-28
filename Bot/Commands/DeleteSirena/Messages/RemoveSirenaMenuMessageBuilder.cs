@@ -11,7 +11,7 @@ using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-public class RemoveSirenaMenuMessageBuilder : LocalizedMessageBuilder
+public class RemoveSirenaMenuMessageBuilder : MessageBuilder
 {
   private readonly IEnumerable<SirenRepresentation> userSirenas;
 

@@ -139,7 +139,7 @@ public static class MarkupShortcuts
     };
   }
 
-  static public SendMessage CreateDefaultMessage(long chatId, string message, IReplyMarkup? replyMarkup = null)
+  static public SendMessage CreateDefaultMessage(ChatId chatId, string message, IReplyMarkup? replyMarkup = null)
     => new SendMessage()
     {
       ChatId = chatId,

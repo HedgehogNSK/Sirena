@@ -3,15 +3,20 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public abstract class LocalizedMessageBuilder : MessageBuilder
+public abstract class LocalizedBaseRequestBuilder : BaseRequestBuilder
 {
-  protected LocalizedMessageBuilder(long chatId, CultureInfo info, ILocalizationProvider localizationProvider) : base(chatId)
+  protected LocalizedBaseRequestBuilder(long chatId, CultureInfo info, ILocalizationProvider localizationProvider) : base(chatId)
   {
     Info = info;
     LocalizationProvider = localizationProvider;
   }
 
-  public CultureInfo Info { get; }
+  public virtual LocalizedBaseRequestBuilder  SetCulture(CultureInfo info)
+  {
+    Info = info;
+    return this;
+  }
+  public CultureInfo Info { get; private set; }
   public ILocalizationProvider LocalizationProvider { get; }
 
   protected string Localize(string key) => LocalizationProvider.Get(key, Info);

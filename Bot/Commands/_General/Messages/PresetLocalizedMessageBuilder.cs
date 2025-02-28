@@ -4,14 +4,14 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class PresetLocalizedMessageBuilder : LocalizedMessageBuilder
+public class PresetLocalizedMessageBuilder : MessageBuilder
 {
   protected readonly string key;
   private readonly object[] args;
 
   public PresetLocalizedMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, string localizationKey
-  , object[] args)
+  , params object[] args)
     : base(chatId, info, localizationProvider)
   {
     key = localizationKey;
@@ -21,8 +21,8 @@ public class PresetLocalizedMessageBuilder : LocalizedMessageBuilder
   public override SendMessage Build()
   {
     string message = Localize(key);
-    if(args.Length!=0)
-      message =string.Format(message, args);
+    if (args.Length != 0)
+      message = string.Format(message, args);
     return CreateDefault(message);
   }
 }

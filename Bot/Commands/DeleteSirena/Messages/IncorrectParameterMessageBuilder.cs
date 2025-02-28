@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class IncorrectParameterMessageBuilder : LocalizedMessageBuilder
+public class IncorrectParameterMessageBuilder : MessageBuilder
 {
   public IncorrectParameterMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider)

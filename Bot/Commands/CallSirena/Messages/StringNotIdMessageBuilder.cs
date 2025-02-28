@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-public class StringNotIdMessageBuilder : LocalizedMessageBuilder
+public class StringNotIdMessageBuilder : MessageBuilder
 {
   private IEnumerable<SirenRepresentation> sirens;
 
@@ -18,7 +18,6 @@ public class StringNotIdMessageBuilder : LocalizedMessageBuilder
   , IEnumerable<SirenRepresentation> sirens)
   : base(chatId, info, localizationProvider)
   {
-    this.chatId = chatId;
     this.sirens = sirens;
   }
 

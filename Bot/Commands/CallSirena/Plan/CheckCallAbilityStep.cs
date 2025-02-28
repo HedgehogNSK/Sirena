@@ -7,8 +7,8 @@ using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SirenaIdValidationStep(
-  IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> availableSirenasMessageBuilderFactory
+public class CheckCallAbilityStep(
+  IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> availableSirenasMessageBuilderFactory
 , IGetUserRelatedSirenas getUserRelatedSirenas
 , NullableContainer<ulong> idContainer
 , int idArgNumber = 0) : CommandStep
@@ -29,15 +29,15 @@ public class SirenaIdValidationStep(
 
     Report CreateReport(IEnumerable<SirenRepresentation> sirenas)
     {
-      IMessageBuilder builder = availableSirenasMessageBuilderFactory.Create(context, sirenas);
+      ISendMessageBuilder builder = availableSirenasMessageBuilderFactory.Create(context, sirenas);
       return new Report(Result.Canceled, builder);
     };
   }
-  public class Factory(IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> availableSirenasMessageBuilderFactory
+  public class Factory(IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> availableSirenasMessageBuilderFactory
   , IGetUserRelatedSirenas getUserRelatedSirenas)
-    : IFactory<NullableContainer<ulong>, SirenaIdValidationStep>
+    : IFactory<NullableContainer<ulong>, CheckCallAbilityStep>
   {
-    public SirenaIdValidationStep Create(NullableContainer<ulong> idContainer)
-      => new SirenaIdValidationStep(availableSirenasMessageBuilderFactory, getUserRelatedSirenas, idContainer, 0);
+    public CheckCallAbilityStep Create(NullableContainer<ulong> idContainer)
+      => new CheckCallAbilityStep(availableSirenasMessageBuilderFactory, getUserRelatedSirenas, idContainer, 0);
   }
 }

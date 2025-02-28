@@ -8,7 +8,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class SendRequestStep(IRightsRequestOperation request
   , NullableContainer<SirenRepresentation> sirenaContainer
-  , IFactory<IRequestContext, IRightsRequestOperation.Result, SirenRepresentation, IMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, IRightsRequestOperation.Result, SirenRepresentation, ISendMessageBuilder> messageBuilderFactory)
   : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -25,14 +25,14 @@ public class SendRequestStep(IRightsRequestOperation request
 
     Report ProcessResult(IRightsRequestOperation.Result requestResult)
     {
-      IMessageBuilder messageBuilder = messageBuilderFactory.Create(context, requestResult, sirena);
+      ISendMessageBuilder messageBuilder = messageBuilderFactory.Create(context, requestResult, sirena);
       Result reportResult = requestResult.isSirenaFound && requestResult.isSuccess ?
         Result.Success : Result.Canceled;
       return new Report(reportResult, messageBuilder);
     }
   }
 
-  public class Factory(IFactory<IRequestContext, IRightsRequestOperation.Result, SirenRepresentation, IMessageBuilder> messageBuilderFactory
+  public class Factory(IFactory<IRequestContext, IRightsRequestOperation.Result, SirenRepresentation, ISendMessageBuilder> messageBuilderFactory
   , IRightsRequestOperation requestRights)
    : IFactory<NullableContainer<SirenRepresentation>, SendRequestStep>
   {

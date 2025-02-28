@@ -24,5 +24,5 @@ public abstract class NotificationStep : CommandStep
     return Observable.Return(report);
   }
 
-  protected abstract IMessageBuilder CreateNotification(IRequestContext context);
+  protected abstract ISendMessageBuilder CreateNotification(IRequestContext context);
 }

@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class ConfirmRemoveSirenaMessageBuilder : LocalizedMessageBuilder
+public class ConfirmRemoveSirenaMessageBuilder : MessageBuilder
 {
   private readonly SirenRepresentation sirena;
 

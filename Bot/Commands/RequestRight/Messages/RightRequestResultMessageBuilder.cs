@@ -10,7 +10,7 @@ namespace Hedgey.Sirena.Bot;
 sealed public class RightRequestResultMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, IRightsRequestOperation.Result result
   , SirenRepresentation sirena) 
-    : LocalizedMessageBuilder(chatId, info, localizationProvider)
+    : MessageBuilder(chatId, info, localizationProvider)
 {
   public override SendMessage Build()
   {
@@ -27,9 +27,9 @@ sealed public class RightRequestResultMessageBuilder(long chatId, CultureInfo in
   }
 
   public class Factory(ILocalizationProvider localizationProvider)
-  : IFactory<IRequestContext, IRightsRequestOperation.Result, SirenRepresentation, IMessageBuilder>
+  : IFactory<IRequestContext, IRightsRequestOperation.Result, SirenRepresentation, ISendMessageBuilder>
   {
-    public IMessageBuilder Create(IRequestContext context
+    public ISendMessageBuilder Create(IRequestContext context
     , IRightsRequestOperation.Result requestResult, SirenRepresentation sirena)
     {
       var chatId = context.GetChat().Id;

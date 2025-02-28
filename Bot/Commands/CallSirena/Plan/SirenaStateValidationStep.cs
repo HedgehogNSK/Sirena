@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 namespace Hedgey.Sirena.Bot;
 
 public class SirenaStateValidationStep(NullableContainer<SirenRepresentation> sirenaContainer
-  , IFactory<IRequestContext, SirenRepresentation, IMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder> messageBuilderFactory)
   : CommandStep
 {
   static public readonly TimeSpan allowedCallPeriod = TimeSpan.FromMinutes(1);
@@ -33,7 +33,7 @@ public class SirenaStateValidationStep(NullableContainer<SirenRepresentation> si
     var timePassed = DateTimeOffset.UtcNow - sirena.LastCall.Date;
     return timePassed > allowedCallPeriod;
   }
-  public class Factory(IFactory<IRequestContext, SirenRepresentation, IMessageBuilder> messageBuilderFactory)
+  public class Factory(IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder> messageBuilderFactory)
      : IFactory<NullableContainer<SirenRepresentation>, SirenaStateValidationStep>
   {
     public SirenaStateValidationStep Create(NullableContainer<SirenRepresentation> sirenaContainer)

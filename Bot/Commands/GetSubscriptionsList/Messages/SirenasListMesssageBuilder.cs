@@ -10,12 +10,14 @@ using System.Text;
 namespace Hedgey.Sirena.Bot;
 
 public class SirenasListMesssageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider localizationProvider, IEnumerable<SirenRepresentation> source
+  , ILocalizationProvider localizationProvider,long uid, IEnumerable<SirenRepresentation> source
   , IMessageStrategy headerKey
   , IMessageStrategy descriptionKey
   , IMessageStrategy emptyListKey
-  ) : LocalizedMessageBuilder(chatId, info, localizationProvider)
+  ) : MessageBuilder(chatId, info, localizationProvider)
 {
+  private readonly long uid = uid;
+
   public override SendMessage Build()
   {
     StringBuilder builder = new StringBuilder();
@@ -45,7 +47,8 @@ public class SirenasListMesssageBuilder(long chatId, CultureInfo info
     else if (source.Any())
     {
       var sirena = source.First();
-      return new SirenaInfoMessageBuilder(chatId, Info, LocalizationProvider, chatId, sirena).Build();
+      var chatID = ChatID.Identifier?? throw new ArgumentNullException(nameof(ChatID));
+      return new SirenaInfoMessageBuilder(chatID, Info, LocalizationProvider, uid, sirena).Build();
     }
     else
     {

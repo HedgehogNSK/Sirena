@@ -5,12 +5,12 @@ using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 public class WelcomeMessageStep(
-    IFactory<IRequestContext, UserStatistics, IMessageBuilder> messageBuilder
+    IFactory<IRequestContext, UserStatistics, ISendMessageBuilder> messageBuilder
     , IUserInfoOperations userInfo
     , NullableContainer<UpdateState> updateStateContainer)
  : CommandStep
 {
-  private readonly IFactory<IRequestContext, UserStatistics, IMessageBuilder> messageBuilder = messageBuilder;
+  private readonly IFactory<IRequestContext, UserStatistics, ISendMessageBuilder> messageBuilder = messageBuilder;
   private readonly IUserInfoOperations userInfo = userInfo;
   private readonly NullableContainer<UpdateState> updateStateContainer = updateStateContainer;
 
@@ -31,11 +31,11 @@ public class WelcomeMessageStep(
     return (updateStateContainer.Content & UpdateState.Exists) != 0;
   }
 
-  public class Factory(IFactory<IRequestContext, UserStatistics, IMessageBuilder> messageBuilder
+  public class Factory(IFactory<IRequestContext, UserStatistics, ISendMessageBuilder> messageBuilder
     , IUserInfoOperations userInfo) 
     : IFactory<NullableContainer<UpdateState>, WelcomeMessageStep>
   {
-    private readonly IFactory<IRequestContext, UserStatistics, IMessageBuilder> messageBuilder = messageBuilder;
+    private readonly IFactory<IRequestContext, UserStatistics, ISendMessageBuilder> messageBuilder = messageBuilder;
     private readonly IUserInfoOperations userInfo = userInfo;
 
     public WelcomeMessageStep Create(NullableContainer<UpdateState> updateState) 

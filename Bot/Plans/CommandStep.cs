@@ -25,7 +25,8 @@ public abstract class CommandStep : IObservableStep<IRequestContext, CommandStep
     Exception,
   }
 
-  public record class Report(Result Result, IMessageBuilder? MessageBuilder = null)
+  //TODO: Change IMessageBuilder<BaseRequest> -> IEnumerable<IMessageBuilder>
+  public record class Report(Result Result, ISendMessageBuilder? MessageBuilder = null)
   {
     public override string ToString()
     {

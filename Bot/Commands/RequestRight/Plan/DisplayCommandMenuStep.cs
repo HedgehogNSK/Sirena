@@ -7,7 +7,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class DisplayCommandMenuStep(IGetUserRelatedSirenas userSirenas
 ,IGetUserInformation getUserInformation 
-, IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> messageBuilderFactory)
+, IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> messageBuilderFactory)
  : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -17,8 +17,10 @@ public class DisplayCommandMenuStep(IGetUserRelatedSirenas userSirenas
     if (string.IsNullOrWhiteSpace(args))
     {
       long uid = context.GetUser().Id;
+    var info = context.GetCultureInfo();
+
       return userSirenas.GetSubscriptions(uid).SelectMany(_sirenas => _sirenas)
-       .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId)
+       .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId,info)
            .Do(_nick => _sirena.OwnerNickname = _nick)
            .Select(_ => _sirena))
        .ToArray()
@@ -39,7 +41,7 @@ public class DisplayCommandMenuStep(IGetUserRelatedSirenas userSirenas
   }
   public class Factory(
     IGetUserRelatedSirenas getSubscriptions, IGetUserInformation getUserInformation
-  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> messageBuilderFactory)
     : IFactory<DisplayCommandMenuStep>
   {
     public DisplayCommandMenuStep Create()

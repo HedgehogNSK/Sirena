@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class WrongSearchKeyFindSirenaMessageBuilder : LocalizedMessageBuilder
+public class WrongSearchKeyFindSirenaMessageBuilder : MessageBuilder
 {
   public WrongSearchKeyFindSirenaMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider  localizationProvider)

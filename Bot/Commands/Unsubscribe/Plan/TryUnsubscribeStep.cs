@@ -10,11 +10,11 @@ public class TryUnsubscribeStep : CommandStep
 {
   private readonly NullableContainer<ulong> idContainer;
   private readonly IUnsubscribeSirenaOperation unsubscribeOperation;
-  private readonly IFactory<IRequestContext, string, bool, IMessageBuilder> messageBuilderFactory;
+  private readonly IFactory<IRequestContext, string, bool, ISendMessageBuilder> messageBuilderFactory;
 
   public TryUnsubscribeStep(NullableContainer<ulong> idContainer
   , IUnsubscribeSirenaOperation unsubscribeOperation
-  , IFactory<IRequestContext, string, bool, IMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, string, bool, ISendMessageBuilder> messageBuilderFactory)
   {
     this.idContainer = idContainer;
     this.unsubscribeOperation = unsubscribeOperation;
@@ -34,13 +34,13 @@ public class TryUnsubscribeStep : CommandStep
       Result result = isSuccess ? Result.Success : Result.Canceled;
       string hash = NotBase64URL.From(id);
       hash = HashUtilities.Shortify(hash);
-      IMessageBuilder builder = messageBuilderFactory.Create(context, hash, isSuccess);
+      ISendMessageBuilder builder = messageBuilderFactory.Create(context, hash, isSuccess);
       return new Report(result, builder);
     }
   }
 
   public class Factory(IUnsubscribeSirenaOperation unsubscribeOperation
-  , IFactory<IRequestContext, string, bool, IMessageBuilder> messageBuilderFactory) : IFactory<NullableContainer<ulong>, TryUnsubscribeStep>
+  , IFactory<IRequestContext, string, bool, ISendMessageBuilder> messageBuilderFactory) : IFactory<NullableContainer<ulong>, TryUnsubscribeStep>
   {
     public TryUnsubscribeStep Create(NullableContainer<ulong> idContainer)
     => new TryUnsubscribeStep(idContainer, unsubscribeOperation, messageBuilderFactory);

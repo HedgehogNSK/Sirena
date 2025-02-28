@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 namespace Hedgey.Sirena.Bot;
 public class GetSubscriptionsListCommand(IMessageSender messageSender
   , IGetUserRelatedSirenas findSirena, IGetUserInformation getUserInformation
-  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder> messageBuilderFactory) 
+  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> messageBuilderFactory) 
   : AbstractBotCommmand(NAME, DESCRIPTION), IBotCommand//, IDisposable
 {
   public const string NAME = "subscriptions";
@@ -17,10 +17,11 @@ public class GetSubscriptionsListCommand(IMessageSender messageSender
   public override void Execute(IRequestContext context)
   {
     long uid = context.GetUser().Id;
+    var info = context.GetCultureInfo();
 
     IDisposable userSubscriptionsStream = findSirena.GetSubscriptions(uid)
       .SelectMany(_sirenas => _sirenas)
-      .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId)
+      .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId,info)
           .Do(_nick => _sirena.OwnerNickname = _nick)
           .Select(_ => _sirena))
       .ToArray()

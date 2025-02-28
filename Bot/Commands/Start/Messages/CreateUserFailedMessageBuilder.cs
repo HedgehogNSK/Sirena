@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class CreateUserFailedMessageBuilder : LocalizedMessageBuilder
+public class CreateUserFailedMessageBuilder : MessageBuilder
 {
   private readonly IRequestContext context;
 
@@ -29,9 +29,9 @@ public class CreateUserFailedMessageBuilder : LocalizedMessageBuilder
     return CreateDefault(message, markup);
   }
   public class Factory(ILocalizationProvider localizationProvider)
-   : IFactory<IRequestContext, IMessageBuilder>
+   : IFactory<IRequestContext, ISendMessageBuilder>
   {
-    public IMessageBuilder Create(IRequestContext context)
+    public ISendMessageBuilder Create(IRequestContext context)
     {
       CultureInfo info = context.GetCultureInfo();
       return new CreateUserFailedMessageBuilder(context, info, localizationProvider);

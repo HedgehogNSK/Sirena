@@ -11,7 +11,7 @@ public class GetSubscriptionsListInstaller(Container container)
   {
     base.Install();
 
-    Container.RegisterConditional<IFactory<IRequestContext, IEnumerable<SirenRepresentation>, IMessageBuilder>
+    Container.RegisterConditional<IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder>
     ,SubscriptionsMessageBuilderFactory>(Lifestyle.Singleton,
       x => x.Consumer.ImplementationType == typeof(GetSubscriptionsListCommand)
     );

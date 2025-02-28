@@ -7,7 +7,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class GetSirenaInfoStep(NullableContainer<ulong> sirenaIdContainter
   , IFindSirenaOperation findSirena
-  , IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder> notFoundMessageBuilderFactory
+  , IFactory<IRequestContext, ulong, ISendMessageBuilder> notFoundMessageBuilderFactory
   , IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder> sirenaInfoMessageBuilderFactory
   , IGetUserInformation getUserInformation
    ) : CommandStep
@@ -15,9 +15,11 @@ public class GetSirenaInfoStep(NullableContainer<ulong> sirenaIdContainter
   public override IObservable<Report> Make(IRequestContext context)
   {
     var uid = context.GetUser().Id;
+    var info = context.GetCultureInfo();
+
     var observableFind = findSirena.Find(sirenaIdContainter.Get()).Publish().RefCount();
     var observableRequestOwnerNickname = observableFind.Where(_siren => _siren != null && _siren.OwnerId != uid)
-      .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId)
+      .SelectMany(_sirena => getUserInformation.GetNickname(_sirena.OwnerId, info)
             .Do(_nick => _sirena.OwnerNickname = _nick)
             .Select(_ => _sirena));
     return observableFind.Where(_siren => _siren == null || _siren.OwnerId == uid)
@@ -30,7 +32,7 @@ public class GetSirenaInfoStep(NullableContainer<ulong> sirenaIdContainter
       var info = context.GetCultureInfo();
 
       Result result = representation == null ? Result.Canceled : Result.Success;
-      MessageBuilder builder = representation == null ?
+      ISendMessageBuilder builder = representation == null ?
           notFoundMessageBuilderFactory.Create(context, sirenaIdContainter.Get())
           : sirenaInfoMessageBuilderFactory.Create(context, uid, representation);
 
@@ -39,7 +41,7 @@ public class GetSirenaInfoStep(NullableContainer<ulong> sirenaIdContainter
   }
 
   public class Factory(IFindSirenaOperation findSirenaOperation
-  , IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder> noSirenaMessageBuilder
+  , IFactory<IRequestContext, ulong, ISendMessageBuilder> noSirenaMessageBuilder
   , IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder> sirenaInfoMessageBuilderFactory
   , IGetUserInformation getUserInformation)
     : IFactory<NullableContainer<ulong>, GetSirenaInfoStep>

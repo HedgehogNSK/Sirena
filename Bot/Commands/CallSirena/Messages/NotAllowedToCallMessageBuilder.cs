@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-public class NotAllowedToCallMessageBuilder : LocalizedMessageBuilder
+public class NotAllowedToCallMessageBuilder : MessageBuilder
 {
   private SirenRepresentation sirena;
   private long uid;

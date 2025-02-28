@@ -7,7 +7,7 @@ using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
-public class MenuMessageBuilder : LocalizedMessageBuilder
+public class MenuMessageBuilder : MessageBuilder
 {
   string menuLocalKey = "command.menu.title";
   private bool userHasSirenas = false;
@@ -63,9 +63,9 @@ public class MenuMessageBuilder : LocalizedMessageBuilder
   }
 
   public class Factory(ILocalizationProvider localizationProvider)
-   : IFactory<IRequestContext, UserStatistics, IMessageBuilder>
+   : IFactory<IRequestContext, UserStatistics, ISendMessageBuilder>
   {
-    public IMessageBuilder Create(IRequestContext context, UserStatistics userStats)
+    public ISendMessageBuilder Create(IRequestContext context, UserStatistics userStats)
     {
       CultureInfo info = context.GetCultureInfo();
       long chatId = context.GetTargetChatId();

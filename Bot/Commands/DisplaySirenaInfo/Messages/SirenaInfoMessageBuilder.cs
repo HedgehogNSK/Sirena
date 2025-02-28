@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SirenaInfoMessageBuilder : LocalizedMessageBuilder
+public class SirenaInfoMessageBuilder : MessageBuilder
 {
   private readonly long uid;
   private SirenRepresentation sirena;

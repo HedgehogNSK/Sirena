@@ -38,21 +38,57 @@ public class BotMessageSenderTimerProxy : AbstractBotMessageSender, IMessageSend
     _ = trafficController.Next().Subscribe(_ => sender.Send(message), OnException);
   }
 
+  public IObservable<T> WrapByDispatcher<T>(IObservable<T> observable)
+   => trafficController.Next().SelectMany(observable);
+
   public override IObservable<Message> ObservableSend(SendMessage message)
-  => trafficController.Next().SelectMany(sender.ObservableSend(message));
-  public override IObservable<Message> ObservableSend(IMessageBuilder messageBuilder)
-  => trafficController.Next().SelectMany(sender.ObservableSend(messageBuilder));
+  => WrapByDispatcher(sender.ObservableSend(message));
+  public override IObservable<Message> ObservableSend(ISendMessageBuilder messageBuilder)
+  => WrapByDispatcher(sender.ObservableSend(messageBuilder));
+
   public override IObservable<MessageIdObject> Copy(CopyMessage message)
-  => trafficController.Next().SelectMany(messageCopier.Copy(message));
+  => WrapByDispatcher(messageCopier.Copy(message));
   public override IObservable<MessageIdObject[]> Copy(CopyMessages messages)
-  => trafficController.Next().SelectMany(messageCopier.Copy(messages));
+  => WrapByDispatcher(messageCopier.Copy(messages));
   public override IObservable<Message> Forward(ForwardMessage message)
-  => trafficController.Next().SelectMany(messageForwarder.Forward(message));
+  => WrapByDispatcher(messageForwarder.Forward(message));
   public override IObservable<MessageIdObject[]> Forward(ForwardMessages messages)
-  => trafficController.Next().SelectMany(messageForwarder.Forward(messages));
+  => WrapByDispatcher(messageForwarder.Forward(messages));
+
+  bool _disposed = false;
 
   public void Dispose()
   {
-    trafficController.Dispose();
+    Dispose(true);
+    GC.SuppressFinalize(this);
+  }
+
+  private void Dispose(bool explicitDisposing)
+  {
+    if (!_disposed)
+    {
+      if (explicitDisposing)
+        DisposeManaged();
+
+      DisposeUnmanaged();
+      _disposed = true;
+    }
+  }
+  /// <summary>
+  /// Add external umanaged sources here
+  /// such as COM-objects and P/Invoke
+  /// </summary>
+  protected virtual void DisposeUnmanaged() { }
+  /// <summary>
+  /// Add disposables here
+  /// </summary>
+  protected virtual void DisposeManaged()
+  {
+    trafficController?.Dispose();
+  }
+
+  ~BotMessageSenderTimerProxy()
+  {
+    Dispose(false);
   }
 }

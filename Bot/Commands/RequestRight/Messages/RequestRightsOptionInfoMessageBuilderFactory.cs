@@ -5,9 +5,9 @@ using Hedgey.Structure.Factory;
 namespace Hedgey.Sirena.Bot;
 
 public class RequestRightsOptionInfoMessageBuilderFactory(ILocalizationProvider localizationProvider)
-    : IFactory<IRequestContext, SirenRepresentation, IMessageBuilder>
+    : IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder>
 {
-  public IMessageBuilder Create(IRequestContext context, SirenRepresentation sirena)
+  public ISendMessageBuilder Create(IRequestContext context, SirenRepresentation sirena)
   {
     const string notificationLocalizationKey = "command.request_rights.extra_info";
     const string skipButtonLocalizationKey = notificationLocalizationKey + ".skip";

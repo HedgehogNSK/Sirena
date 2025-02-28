@@ -11,10 +11,10 @@ namespace Hedgey.Sirena.Bot;
 public class AddExtraInformationStep : CommandStep
 {
   private readonly NullableContainer<Message> messageContainer;
-  private readonly IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory;
+  private readonly IFactory<IRequestContext, ISendMessageBuilder> messageBuilderFactory;
   private bool userNotified = false;
   public AddExtraInformationStep(NullableContainer<Message> messageContainer
-  , IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, ISendMessageBuilder> messageBuilderFactory)
   {
     this.messageContainer = messageContainer;
     this.messageBuilderFactory = messageBuilderFactory;
@@ -43,7 +43,7 @@ public class AddExtraInformationStep : CommandStep
     return Observable.Return(report);
   }
 
-  public class Factory(IFactory<IRequestContext, IMessageBuilder> messageBuilderFactory)
+  public class Factory(IFactory<IRequestContext, ISendMessageBuilder> messageBuilderFactory)
     : IFactory<NullableContainer<Message>, AddExtraInformationStep>
   {
     public AddExtraInformationStep Create(NullableContainer<Message> messageContainer)
@@ -51,9 +51,9 @@ public class AddExtraInformationStep : CommandStep
   }
 
   public class MessagBuilderFactory(ILocalizationProvider localizationProvider)
-    : IFactory<IRequestContext, IMessageBuilder>
+    : IFactory<IRequestContext, ISendMessageBuilder>
   {
-    public IMessageBuilder Create(IRequestContext context)
+    public ISendMessageBuilder Create(IRequestContext context)
     {
       const string messageKey = "command.call.extra_info";
       const string skipButtonKey = messageKey + ".skip";

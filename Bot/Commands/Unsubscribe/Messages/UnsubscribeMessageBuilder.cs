@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-internal class UnsubscribeMessageBuilder : LocalizedMessageBuilder
+internal class UnsubscribeMessageBuilder : MessageBuilder
 {
   private readonly string hash;
   private bool isSuccess;
@@ -41,9 +41,9 @@ internal class UnsubscribeMessageBuilder : LocalizedMessageBuilder
   }
 
   public class Factory(ILocalizationProvider localizationProvider)
-    : IFactory<IRequestContext, string, bool, IMessageBuilder>
+    : IFactory<IRequestContext, string, bool, ISendMessageBuilder>
   {
-    public IMessageBuilder Create(IRequestContext context, string hash, bool isSuccess)
+    public ISendMessageBuilder Create(IRequestContext context, string hash, bool isSuccess)
     {
       var chatId = context.GetTargetChatId();
       var info = context.GetCultureInfo();

@@ -8,7 +8,7 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SuccesfulSubscriptionMessageBuilder : LocalizedMessageBuilder
+public class SuccesfulSubscriptionMessageBuilder : MessageBuilder
 {
   private SirenRepresentation representation;
 

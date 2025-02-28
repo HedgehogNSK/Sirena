@@ -1,16 +1,15 @@
+using Hedgey.Localization;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
+using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
-public abstract class MessageBuilder : IMessageBuilder
+public abstract class MessageBuilder : LocalizedBaseRequestBuilder, ISendMessageBuilder
 {
-  protected long chatId;
-  public MessageBuilder(long chatId)
-  {
-    this.chatId = chatId;
-  }
-  public void SetTargetChat(long chatId) => this.chatId = chatId;
-  public abstract SendMessage Build();
+  protected MessageBuilder(long chatId, CultureInfo info, ILocalizationProvider localizationProvider)
+  : base(chatId, info, localizationProvider) { }
+
+  public override abstract SendMessage Build();
   protected SendMessage CreateDefault(string message, IReplyMarkup? replyMarkup = null)
-    => MarkupShortcuts.CreateDefaultMessage(chatId, message, replyMarkup);
+    => MarkupShortcuts.CreateDefaultMessage(ChatID, message, replyMarkup);
 }

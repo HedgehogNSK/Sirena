@@ -6,7 +6,7 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SirenaNotFoundMessageBuilder : LocalizedMessageBuilder
+public class SirenaNotFoundMessageBuilder : MessageBuilder
 {
   private readonly ulong id;
   public SirenaNotFoundMessageBuilder(long chatId, CultureInfo info
@@ -28,9 +28,9 @@ public class SirenaNotFoundMessageBuilder : LocalizedMessageBuilder
   }
   
   public class Factory(ILocalizationProvider localizationProvider)
-   : IFactory<IRequestContext, ulong, SirenaNotFoundMessageBuilder>
+   : IFactory<IRequestContext, ulong, ISendMessageBuilder>
   {
-    public SirenaNotFoundMessageBuilder Create(IRequestContext context, ulong id)
+    public ISendMessageBuilder Create(IRequestContext context, ulong id)
     {
 
       long chatId = context.GetTargetChatId();

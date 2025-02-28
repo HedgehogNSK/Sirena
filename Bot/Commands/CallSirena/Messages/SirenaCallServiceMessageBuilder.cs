@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SirenaCallServiceMessageBuilder : LocalizedMessageBuilder
+public class SirenaCallServiceMessageBuilder : MessageBuilder
 {
   private readonly User initiator;
   private readonly SirenRepresentation sirena;
@@ -36,7 +36,7 @@ public class SirenaCallServiceMessageBuilder : LocalizedMessageBuilder
     .ToReplyMarkup();
     var message = new SendMessage()
     {
-      ChatId = chatId,
+      ChatId = ChatID,
       DisableNotification = true,
       ProtectContent = false,
       Text = notification,
@@ -46,9 +46,9 @@ public class SirenaCallServiceMessageBuilder : LocalizedMessageBuilder
     return message;
   }
   public class Factory(ILocalizationProvider localizationProvider)
-    : IFactory<long,IRequestContext, SirenRepresentation, IMessageBuilder>
+    : IFactory<long,IRequestContext, SirenRepresentation, ISendMessageBuilder>
   {
-    public IMessageBuilder Create(long targetUID,IRequestContext context, SirenRepresentation sirena)
+    public ISendMessageBuilder Create(long targetUID,IRequestContext context, SirenRepresentation sirena)
     {
       var info = context.GetCultureInfo();
       var user = context.GetUser();

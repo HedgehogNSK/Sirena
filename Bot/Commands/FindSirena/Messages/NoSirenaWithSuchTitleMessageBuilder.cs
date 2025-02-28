@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class NoSirenaWithSuchTitleMessageBuilder : LocalizedMessageBuilder
+public class NoSirenaWithSuchTitleMessageBuilder : MessageBuilder
 {
   string title = string.Empty;
   public NoSirenaWithSuchTitleMessageBuilder(long chatId, CultureInfo info
