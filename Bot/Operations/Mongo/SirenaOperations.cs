@@ -4,7 +4,6 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
-
 namespace Hedgey.Sirena.Bot.Operations.Mongo;
 
 public class SirenaOperations : IDeleteSirenaOperation
@@ -77,11 +76,14 @@ public class SirenaOperations : IDeleteSirenaOperation
             && (_sirena.Listener.Length - _sirena.Muted.Count(_m => _m.MutedUID == uid)) > 0);
     return Observable.FromAsync(() => query.ToListAsync());
   }
-  public IObservable<IEnumerable<SirenRepresentation>> GetUserSirenas(long uid)
+
+  public IObservable<IEnumerable<SirenRepresentation>> GetSirenasWithRequests(long uid)
   {
-    var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.OwnerId, uid);
+    var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.OwnerId, uid)
+        & Builders<SirenRepresentation>.Filter.SizeGt(s => s.Requests, 0);
     return Observable.FromAsync(() => sirens.Find(filter).ToListAsync());
   }
+
   public IObservable<IEnumerable<SirenRepresentation>> GetSubscriptions(long uid)
   {
     var filter = Builders<SirenRepresentation>.Filter.AnyEq(x => x.Listener, uid);
@@ -100,6 +102,17 @@ public class SirenaOperations : IDeleteSirenaOperation
 
     var filterSiren = Builders<SirenRepresentation>.Filter.Eq(x => x.OwnerId, uid);
     return Observable.FromAsync(() => sirens.Find(filterSiren).Skip(number).FirstOrDefaultAsync());
+  }
+  public IObservable<IEnumerable<SirenRepresentation>> GetUserSirenas(long uid)
+  {
+    var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.OwnerId, uid);
+    return Observable.FromAsync(() => sirens.Find(filter).ToListAsync());
+  }
+  public IObservable<SirenRepresentation> GetUserSirenaOrNull(long uid, ulong sid)
+  {
+    var filter = Builders<SirenRepresentation>.Filter;
+    var filterSiren = filter.Eq(x => x.SID, sid) & filter.Eq(x => x.OwnerId, uid);
+    return Observable.FromAsync(() => sirens.Find(filterSiren).FirstOrDefaultAsync());
   }
   /// <summary>
   /// Update sirena document in a database with new date of last call
