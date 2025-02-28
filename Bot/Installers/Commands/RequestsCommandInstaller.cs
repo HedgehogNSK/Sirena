@@ -1,0 +1,28 @@
+using Hedgey.Extensions.SimpleInjector;
+using Hedgey.Structure.Factory;
+using SimpleInjector;
+
+namespace Hedgey.Sirena.Bot.DI;
+
+public class RequestsCommandInstaller(Container container)
+   : PlanBassedCommandInstaller<RequestsCommand, ReuquestsPlanFactory>(container)
+{
+  public override void Install()
+  {
+    base.Install();
+
+    RegisterStepFactoryIntoPlanFactory<IFactory<IRequestContext, SirenasListMessageBuilder>, SirenasRequestListsMessageBuilderFactory>(Lifestyle.Singleton);
+
+    Container.RegisterStepFactoryWithBuilderFactory(typeof(GetUserSirenasStep.Factory)
+    , typeof(NoRequestsMessageBuilderFactory));
+
+    RegisterStepFactoryIntoPlanFactory<IFactory<NullableContainer<ulong>, ISendMessageBuilder, ValidateSirenaIdStep2>
+    , ValidateSirenaIdStep2.Factory>(Lifestyle.Singleton);
+
+    Container.RegisterStepFactoryWithBuilderFactory(typeof(GetUserSirenaStep.Factory), typeof(SirenaNotFoundMessageBuilder.Factory));
+
+    Container.RegisterStepFactoryWithBuilderFactories(typeof(DisplaySirenaRequestsStep.Factory)
+    , [typeof(SirenaRequestsSendMessageBuilder.Factory), typeof(SirenaRequestsEditMessageBuilder.Factory)
+    , typeof(SirenaHasNoRequestsMessageBuilderFactory)]);
+  }
+}

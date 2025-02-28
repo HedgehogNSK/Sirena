@@ -111,13 +111,24 @@ static internal class Program
         })
         .Repeat()
         .Subscribe();
+
+    var editMessagesStream = schedulerTrackPublisher
+        .Where(_report => _report.StepReport.EditMessageBuilder != null)
+        .SelectMany(_report => botProxyRequests.Edit(_report.StepReport.EditMessageBuilder))
+        .Catch((Exception _ex) =>
+        {
+          ExceptionHandler.OnError(_ex);
+          return Observable.Empty<Message>();
+        })
+        .Repeat()
+        .Subscribe();
 #pragma warning restore CS8604 // Possible null reference argument.
 
     var schedulerTrackStream = schedulerTrackPublisher.Connect();
 
     IDisposable subscription = new CompositeDisposable(callbackStream
     , constexStream, approveCallbackStream, planProcessingStream
-    , sendMessagesStream, schedulerTrackStream);
+    , sendMessagesStream, schedulerTrackStream, editMessagesStream);
 
     string? input;
     do

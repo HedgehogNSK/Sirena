@@ -23,13 +23,15 @@ public static class MarkupShortcuts
   public const string unsubscribeTitle = prefix + "unsubscribe.title";
   public const string deleteTitle = prefix + "delete.title";
   public const string displaySirenasTitle = prefix + "display_sirenas.title";
-  public const string getReuqestsTitle = prefix + "get_requests.title";
+  public const string getReuqestsTitle = prefix + "requests.title";
   public const string getResponsiblesTitle = prefix + "get_responsibles.title";
   public const string requestRightTitle = prefix + "request_rights.title";
   public const string retryTitle = prefix + "anotherTry.title";
   public const string subscriptionsTitle = prefix + "subscriptions.title";
 
   public static ILocalizationProvider? LocalizationProvider { get; set; }
+  public const char Previous = '⬅';
+  public const char Next = '➡';
 
   public static IInlineKeyboardRow AddButton(this IInlineKeyboardRow inlineKeyboardRow
     , object title, string commandName, string param = "")
@@ -81,10 +83,12 @@ public static class MarkupShortcuts
   public static IInlineKeyboardRow AddFindButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info)
     => inlineKeyboardRow.AddLocalizedButton(findTitle, info, FindSirenaCommand.NAME);
   public static IInlineKeyboardRow AddMuteButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, User user, SirenRepresentation sirena)
-    => inlineKeyboardRow.AddLocalizedButton(muteTitle, info, MuteUserSignalCommand.NAME, user.Id.ToString()+' '+sirena.Hash);
+    => inlineKeyboardRow.AddLocalizedButton(muteTitle, info, MuteUserSignalCommand.NAME, user.Id.ToString() + ' ' + sirena.Hash);
   public static IInlineKeyboardRow AddRequestButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
   , string shortHash, string title = requestRightTitle)
     => inlineKeyboardRow.AddLocalizedButton(title, info, RequestRightsCommand.NAME, shortHash);
+  public static IInlineKeyboardRow AddRequestsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string title = getReuqestsTitle)
+    => inlineKeyboardRow.AddLocalizedButton(title, info, RequestsCommand.NAME);
   public static IInlineKeyboardRow AddRetryButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
   , string command, string title = retryTitle)
   {
@@ -104,14 +108,14 @@ public static class MarkupShortcuts
   public static IInlineKeyboardRow AddUnsubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, SirenRepresentation siren)
     => inlineKeyboardRow.AddLocalizedButton(unsubscribeTitle, info, UnsubscribeCommand.NAME, siren.Hash);
   public static IInlineKeyboardRow AddDisplayRequestsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string shortHash, int count)
-  {    
+  {
     if (LocalizationProvider == null)
       throw new ArgumentNullException(nameof(LocalizationProvider), $"You have to set {nameof(MarkupShortcuts.LocalizationProvider)} field manually before use localized buttons");
-    
+
     string localTitle = LocalizationProvider.Get(getReuqestsTitle, info);
     localTitle = string.Format(localTitle, count);
-    
-    return inlineKeyboardRow.AddButton(localTitle, GetRequestsListCommand.NAME, shortHash);
+
+    return inlineKeyboardRow.AddButton(localTitle, RequestsCommand.NAME, shortHash);
   }
 
   public static IInlineKeyboardRow AddDisplayResponsiblesButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string sirenaId, int count)
@@ -120,24 +124,20 @@ public static class MarkupShortcuts
       throw new ArgumentNullException(nameof(LocalizationProvider), $"You have to set {nameof(MarkupShortcuts.LocalizationProvider)} field manually before use localized buttons");
     string localTitle = LocalizationProvider.Get(getResponsiblesTitle, info);
     localTitle = string.Format(localTitle, count);
-    return inlineKeyboardRow.AddButton(localTitle, GetResponsiblesListCommand.NAME,sirenaId);
+    return inlineKeyboardRow.AddButton(localTitle, GetResponsiblesListCommand.NAME, sirenaId);
   }
 
-  public static IReplyMarkup CreateMenuButtonOnlyMarkup(CultureInfo info)
-  {
-    return new InlineKeyboardMarkup()
+  public static InlineKeyboardMarkup CreateMenuButtonOnlyMarkup(CultureInfo info)
+    => new InlineKeyboardMarkup()
     {
       InlineKeyboard = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-       .AddMenuButton(info).EndRow().Build()
+          .AddMenuButton(info).EndRow().Build()
     };
-  }
-  public static IReplyMarkup ToReplyMarkup(this IInlineKeyboardBuilder builder)
-  {
-    return new InlineKeyboardMarkup()
+  public static InlineKeyboardMarkup ToReplyMarkup(this IInlineKeyboardBuilder builder)
+    => new()
     {
       InlineKeyboard = builder.Build()
     };
-  }
 
   static public SendMessage CreateDefaultMessage(ChatId chatId, string message, IReplyMarkup? replyMarkup = null)
     => new SendMessage()

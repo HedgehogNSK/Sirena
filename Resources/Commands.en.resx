@@ -10,7 +10,7 @@
     <value>Choose *Sirena* to call</value>
   </data>
   <data name="command.call.description">
-    <value>Call Sirena by number or by id</value>
+    <value>Call Sirena by number or by ID</value>
   </data>
   <data name="command.call.error.value_not_id">
     <value>⚠️ *Value is incorrect!*
@@ -20,7 +20,7 @@
     <value>You can call Sirenas that were created by you or those Sirenas, that the owner gave you the rights to call</value>
   </data>
   <data name="command.call.extra_info">
-    <value>ℹ️You can send extra information for subscribers or just click the *Call* button.</value>
+    <value>ℹ️ You can send extra information for subscribers or just click the *Call* button.</value>
   </data>
   <data name="command.call.extra_info.skip">
     <value>🔊 Launch only</value>
@@ -30,10 +30,10 @@
   </data>
   <data name="command.call.last_call.2">
     <value>*{0}*
- _Called by_ {1}.</value>
+ _Activated by_ {1}.</value>
   </data>
   <data name="command.call.not_allowed">
-    <value>⚠️ Unsuccesful attempt to call *Sirena*: {0}
+    <value>⚠️ Unsuccesful attempt to activate *Sirena*: {0}
 </value>
   </data>
   <data name="command.call.other">
@@ -46,8 +46,8 @@
     <value>*you*</value>
   </data>
   <data name="command.create_sirena.error.limit_reached">
-    <value>⚠️ *You&apos;ve reached the limit!* You can&apos;t create new sirenas anymore.
-Please remove one of your sirenas and try again.</value>
+    <value>⚠️ *You&apos;ve reached the limit!* You can&apos;t create new Sirenas anymore.
+Please remove one of your Sirenas and try again.</value>
   </data>
   <data name="command.create_sirena.error.no_title">
     <value>Please insert title of the Sirena. Title must be between {0} and {1} symbols long.
@@ -56,7 +56,7 @@ Please remove one of your sirenas and try again.</value>
 `/create title_of_sirena`</value>
   </data>
   <data name="command.create_sirena.error.no_user">
-    <value>We can&apos;t find user with id: {0}</value>
+    <value>We can&apos;t find user with ID: {0}</value>
   </data>
   <data name="command.create_sirena.error.unknown">
     <value>⚠️ Unknown error. Sirena wasn&apos;t created.</value>
@@ -69,16 +69,16 @@ Please remove one of your sirenas and try again.</value>
     <value>Creates a Sirena</value>
   </data>
   <data name="command.delegate.description">
-    <value>Delegate rights to call Sirena to another user</value>
+    <value>Delegate rights to activate Sirena to another user</value>
   </data>
   <data name="command.delegate.error.incorrect_id">
-    <value>⚠️ {0} parameter is incorrect. First parameter has to be serial number or ID of your sirena</value>
+    <value>⚠️ {0} parameter is incorrect. First parameter has to be serial number or ID of your Sirena</value>
   </data>
   <data name="command.delegate.error.incorrect_paramters">
     <value>Please input: `/delegate {siren number or id} {user id}`</value>
   </data>
   <data name="command.delegate.error.incorrect_user_id">
-    <value>⚠️ {0} parameter is incorrect. Second parameter must be *UID* of user that will get rights to call the Sirena.</value>
+    <value>⚠️ {0} parameter is incorrect. Second parameter must be *UID* of user that will get rights to activate the Sirena.</value>
   </data>
   <data name="command.delegate.error.no_sirena">
     <value>You don&apos;t have a Sirena with ID: `{0}`</value>
@@ -147,14 +147,14 @@ Please check input ID.</value>
     <value>There is no Sirena with title that contains: \&quot;{0}\&quot;.
 Please try another key phrase.</value>
   </data>
-  <data name="command.get_requests.header">
+  <data name="command.requests.header">
     <value>Reuqests list
 </value>
   </data>
-  <data name="command.get_requests.no_requests">
+  <data name="command.requests.no_requests">
     <value>There are no requests for delegation of rights</value>
   </data>
-  <data name="command.get_requests.request_template">
+  <data name="command.requests.request_template">
     <value>. *{0}|{1}* is asking right to call Sirena:
 {2}
 </value>
@@ -167,10 +167,10 @@ Please try another key phrase.</value>
     <value>⚠️ Sirena wasn&apos;t found</value>
   </data>
   <data name="command.get_responsibles.no_sirena_id">
-    <value>⚠️ There is no sirena with id *{0}*</value>
+    <value>⚠️ There is no Sirena with ID *{0}*</value>
   </data>
   <data name="command.get_responsibles.no_sirena_number">
-    <value>⚠️ You don&apos;t have sirena with number *{0}*</value>
+    <value>⚠️ You don&apos;t have Sirena with number *{0}*</value>
   </data>
   <data name="command.get_responsibles.template">
     <value>Sirena *\&quot;{0}\&quot;* supervisors:
@@ -194,20 +194,20 @@ Please try another key phrase.</value>
     <value>🕹 Main menu 🕹</value>
   </data>
   <data name="command.mute_user.impossbile_mute">
-    <value>⚠️ *You can&apos;t mute this user for the sirena.*
- Possible causes: you aren&apos;t subscibed to this sirena, target user isn&apos;t responsible for call of this sirena.</value>
+    <value>⚠️ *You can&apos;t mute this user for the Sirena.*
+ Possible causes: you aren&apos;t subscibed to this Sirena, target user isn&apos;t responsible for call of this Sirena.</value>
   </data>
   <data name="command.mute_user.incorrect_id">
-    <value>⚠️ {0} parameter is incorrect. Second parameter has to be serial number or ID of your sirena</value>
+    <value>⚠️ {0} parameter is incorrect. Second parameter has to be serial number or ID of your Sirena</value>
   </data>
   <data name="command.mute_user.incorrect_parameters">
     <value>To mute an user please input: `/mute {user id to mute} {sirena id}`</value>
   </data>
   <data name="command.mute_user.incorrect_uid">
-    <value>⚠️ {0} parameter is incorrect. First parameter has to be *UID* of user that is already responsible for sirena. And you won&apos;t to revoke they rights.</value>
+    <value>⚠️ {0} parameter is incorrect. First parameter has to be *UID* of user that is already responsible for Sirena. And you won&apos;t to revoke they rights.</value>
   </data>
   <data name="command.mute_user.no_sirena">
-    <value>⚠️ Couldn&apos;t find sirena to mute user</value>
+    <value>⚠️ Couldn&apos;t find Sirena to mute user</value>
   </data>
   <data name="command.mute_user.success">
     <value>User {0} has been muted. Now you will not get notifications from the user for the Sirena: *{1}*
@@ -218,7 +218,7 @@ Please try another key phrase.</value>
     <value>Mute calls from certain user for certain Sirena. Calls of the Sirena from other users will be active anyway</value>
   </data>
   <data name="command.request_rights.already_sent">
-    <value>⚠️ You have *already sent* a permission request for the sirena.</value>
+    <value>⚠️ You have *already sent* a permission request for the Sirena.</value>
   </data>
   <data name="command.request_rights.available.empty">
     <value>You don&apos;t have any Sirena for which you could request call rights.</value>
@@ -229,25 +229,27 @@ Please try another key phrase.</value>
 </value>
   </data>
   <data name="command.request_rights.extra_info">
-    <value>ℹ️You are about to ask rights to call sirena: {0}.You can write extra infromation for the owner of the Sirena or you can send request as is by click on the button down bellow.</value>
+    <value>ℹ️ You are about to ask rights to call Sirena: {0}.
+You can write extra infromation for the owner of the Sirena or you can send request as is by click on the button down bellow.</value>
   </data>
   <data name="command.request_rights.extra_info.skip">
     <value>🙏 Request only</value>
   </data>
   <data name="command.request_rights.fail">
     <value>⚠️ Request failed. Possible reasons: 
-1. There is no *sirena* with ID: `{0}`
-2. You are the *owner* of the sirena
-3. You are *already responsible* for the sirena.</value>
+1. There is no *Sirena* with ID: `{0}`
+2. You are the *owner* of the Sirena
+3. You are *already responsible* for the Sirena.</value>
   </data>
   <data name="command.request_rights.incorrect_parameters">
     <value>⚠️ Incorrect parameters. Please use syntax:
  /request {sirena id} [request message]
-You can send request message or skip it. But you have to set correc sirena id</value>
+You can send request message or skip it. But you have to set correct Sirena ID</value>
   </data>
   <data name="command.request_rights.success">
-    <value>✅ Permission request has been succesfully sent for the Sirena:
-{0}</value>
+    <value>✅ Request to activate *Sirena* successfully submitted:
+{0}
+If the Sirena’s owner approves your request, you’ll be granted access to activate this *Sirena.</value>
   </data>
   <data name="command.request.description">
     <value>Request the owner of Sirena to delegate to you the right to call it.</value>
@@ -262,7 +264,9 @@ You can send request message or skip it. But you have to set correc sirena id</v
     <value>⚠️ You couldn&apos;t revoke rights from the user. Possible reasons: user doesn&apos;t have rights or you don&apos;t own this Sirena: {0}</value>
   </data>
   <data name="command.revoke_rights.incorrect_parameters">
-    <value>Please input: `/revoke {sirena number or id} {user id}`</value>
+    <value>⚠️ Incorrect parameters. Please use syntax:
+ /request {sirena ID} [request message]
+You can send request message or skip it. But you have to set correct Sirena ID</value>
   </data>
   <data name="command.revoke_rights.incorrect_sirena_param">
     <value>⚠️ {0} parameter is incorrect. First parameter must be serial number or ID of your Sirena</value>
@@ -271,7 +275,7 @@ You can send request message or skip it. But you have to set correc sirena id</v
     <value>⚠️ {0} parameter is incorrect. Second parameter must be *UID* of user that is already responsible for the Sirena.</value>
   </data>
   <data name="command.revoke_rights.success">
-    <value>The user: {0} has been deprived of his rights to call the sirena:
+    <value>The user: {0} has been deprived of his rights to call the Sirena:
  {1}</value>
   </data>
   <data name="command.revoke.description">
@@ -312,12 +316,12 @@ You have to input exact ID of Sirena that you are going to subscribe to.
 You can use *Find* command to find a Sirena by title.</value>
   </data>
   <data name="command.subscribe.description">
-    <value>Subscribes to Sirena by id</value>
+    <value>Subscribes to Sirena by ID</value>
   </data>
   <data name="command.subscribe.notExists">
     <value>*Attempt to subscribe is failed.*
 Possible reasons:
-1. There is no Sirena with such id;
+1. There is no Sirena with such ID;
 2. You are the owner of the Sirena.
 
 Try another *Sirena ID*</value>
@@ -344,22 +348,22 @@ ID: `{2}`
     <value>You don&apos;t have any subscription yet.</value>
   </data>
   <data name="command.unmute.description">
-    <value>Unmute previously muted user for certain Siren</value>
+    <value>Unmute previously muted user for certain Sirena</value>
   </data>
   <data name="command.unmute.error.not_found">
-    <value>⚠️ Couldn&apos;t find sirena to mute user</value>
+    <value>⚠️ Couldn&apos;t find Sirena to mute user</value>
   </data>
   <data name="command.unmute.error.wrong_parameter">
     <value>To unmute user please input command with parameters: /unmute {user id to mute} {sirena id}</value>
   </data>
   <data name="command.unmute.error.wrong_sirena_id">
-    <value>⚠️ {0} parameter is incorrect. Second parameter has to be serial number or *ID* of your sirena</value>
+    <value>⚠️ {0} parameter is incorrect. Second parameter has to be serial number or *ID* of your Sirena</value>
   </data>
   <data name="command.unmute.error.wrong_uid">
-    <value>⚠️ {0} parameter is incorrect. First parameter has to be *UID* of user that is already responsible for sirena.</value>
+    <value>⚠️ {0} parameter is incorrect. First parameter has to be *UID* of user that is already responsible for Sirena.</value>
   </data>
   <data name="command.unmute.success">
-    <value>User {0} has been unmuted. You will be notified if this user will call the sirena: *{1}*</value>
+    <value>User {0} has been unmuted. You will be notified if this user will call the Sirena: *{1}*</value>
   </data>
   <data name="command.unsubscribe.description">
     <value>Unsubscribes from certain Sirena</value>
@@ -393,7 +397,7 @@ ID: `{2}`
   <data name="menu.buttons.get_info.title">
     <value>ℹ️ Info</value>
   </data>
-  <data name="menu.buttons.get_requests.title">
+  <data name="menu.buttons.requests.title">
     <value>👽 Requests [{0}]</value>
   </data>
   <data name="menu.buttons.get_responsibles.title">
@@ -428,5 +432,29 @@ ID: `{2}`
   </data>
   <data name="command.start.create-user.fail">
     <value>⚠️ An error occurred while creating a new user. Please try again later.</value>
+  </data>
+  <data name="command.requests.error.no_pending_requests">
+    <value>⚠️ There are currently no requests for the right to activate any of your Sirenas.</value>
+  </data>
+  <data name="command.requests.list_title">
+    <value>🧾 The list of your Sirenas for which someone has requested the right to call:</value>
+  </data>
+  <data name="command.requests.display_by_id">
+    <value>ℹ️ *{3}Request for Sirena activation rights.*
+Sirena:   \[`{1}`] {2}
+Requestor:   {0}</value>
+  </data>
+  <data name="command.requests.accept">
+    <value>✅ Approve</value>
+  </data>
+  <data name="command.requests.decline">
+    <value>⛔️ Reject</value>
+  </data>
+  <data name="command.requests.display_by_id.user_message">
+    <value>Message from user:  </value>
+  </data>
+  <data name="command.requests.error.sirena_has_no_requests">
+    <value>⚠️ No *Sirena* activation requests are available.
+ *Sirena*: {0}</value>
   </data>
 </root>
