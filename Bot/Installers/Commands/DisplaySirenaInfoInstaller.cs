@@ -12,13 +12,14 @@ public class DisplaySirenaInfoInstaller(Container container)
   {
     base.Install();
 
-    var creationFunction = () => new ValidateSirenaIdStep.Factory(Container.GetInstance<AskSirenaIdMessageBuilder.Factory>());
+    Container.Register<AskSirenaIdForInfoMessageBuilder.Factory>();
+    var creationFunction = () => new ValidateSirenaIdStep.Factory(Container.GetInstance<AskSirenaIdForInfoMessageBuilder.Factory>());
     RegisterStepFactoryIntoPlanFactory<IFactory<NullableContainer<ulong>, ValidateSirenaIdStep>>
       (Lifestyle.Singleton, creationFunction);
 
     Container.RegisterSingleton<IFactory<NullableContainer<ulong>, GetSirenaInfoStep>, GetSirenaInfoStep.Factory>();
     Container.RegisterConditional<IFactory<IRequestContext, ulong, ISendMessageBuilder>
-    , SirenaNotFoundMessageBuilder.Factory, GetSirenaInfoStep.Factory>();
+    , SirenaInfoNotFoundMessageBuilder.Factory, GetSirenaInfoStep.Factory>();
     Container.RegisterConditional<IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder>
     , SirenaInfoMessageBuilder.Factory, GetSirenaInfoStep.Factory>();
   }

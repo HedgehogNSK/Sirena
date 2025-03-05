@@ -8,10 +8,10 @@ using System.Globalization;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SirenaNotFoundMessageBuilder : MessageBuilder
+public class SirenaInfoNotFoundMessageBuilder : MessageBuilder
 {
   private readonly ulong id;
-  public SirenaNotFoundMessageBuilder(long chatId, CultureInfo info
+  public SirenaInfoNotFoundMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, ulong id)
   : base(chatId, info, localizationProvider)
   {
@@ -24,9 +24,9 @@ public class SirenaNotFoundMessageBuilder : MessageBuilder
         .AddFindButton(Info).AddMenuButton(Info)
         .EndRow().ToReplyMarkup();
 
-    string noSirenaError = Localize("command.subscribe.not_exists");
+    string noSirenaError = Localize("command.info.not_exists");
     var shortId = HashUtilities.Shortify(NotBase64URL.From(id));
-    var message = string.Format(noSirenaError, shortId);
+    var message = string.Format(noSirenaError, shortId, Localize(MarkupShortcuts.findTitle));
     return CreateDefault(message, markup);
   }
 
@@ -38,7 +38,7 @@ public class SirenaNotFoundMessageBuilder : MessageBuilder
 
       long chatId = context.GetTargetChatId();
       CultureInfo info = context.GetCultureInfo();
-      return new SirenaNotFoundMessageBuilder(chatId, info, localizationProvider, id);
+      return new SirenaInfoNotFoundMessageBuilder(chatId, info, localizationProvider, id);
     }
   }
 }

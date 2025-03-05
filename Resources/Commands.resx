@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="command.call.ask_sirena_id">
-    <value>Please provide Sirena&apos;s ID to call. It must be Sirena that you own or you are responsible for</value>
+    <value>ℹ️ Please provide Sirena&apos;s ID to call. It must be Sirena that you own or you are responsible for</value>
   </data>
   <data name="command.call.no_available">
     <value>Your Sirenas are not being listened to yet</value>
@@ -318,8 +318,8 @@ You can use *Find* command to find a Sirena by title.</value>
   <data name="command.subscribe.description">
     <value>Subscribes to Sirena by ID</value>
   </data>
-  <data name="command.subscribe.notExists">
-    <value>*Attempt to subscribe is failed.*
+  <data name="command.subscribe.not_exists">
+    <value>⚠️ *Attempt to subscribe is failed.*
 Possible reasons:
 1. There is no Sirena with such ID;
 2. You are the owner of the Sirena.
@@ -462,5 +462,17 @@ Requestor:   {0}</value>
 ❕ Use the ID of an existing *Sirena*
 ❗️ You must be subscribed to the *Sirena*
 ❕ You have not yet requested access to this *Sirena*</value>
+  </data>
+  <data name="command.info.askSirenaId">
+    <value>ℹ️ *Please enter the Sirena ID.*
+You must enter the exact *Sirena* ID to display the available actions for it.
+
+If you don&apos;t know the *Sirena* ID, you can {0} it by its name or part of the name.</value>
+  </data>
+  <data name="command.info.not_exists">
+    <value>⚠️ *Sirena with ID* `{0}` *not found.*
+Please check the ID and try again.
+
+If you don&apos;t know the *Sirena* ID, you can {1} it by its name or part of the name.</value>
   </data>
 </root>
