@@ -13,7 +13,8 @@ public class RequestRightsInstaller(Container container)
   {
     base.Install();
 
-    var creationFunction = () => new ValidateSirenaIdStep.Factory(Container.GetInstance<AskSirenaIdMessageBuilder.Factory>());
+    Container.Register<AskSirenaIdForRequestMessageBuilder.Factory>();
+    var creationFunction = () => new ValidateSirenaIdStep.Factory(Container.GetInstance<AskSirenaIdForRequestMessageBuilder.Factory>());
     RegisterStepFactoryIntoPlanFactory<IFactory<NullableContainer<ulong>, ValidateSirenaIdStep>>
     (Lifestyle.Singleton, creationFunction);
 

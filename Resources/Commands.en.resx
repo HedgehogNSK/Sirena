@@ -221,7 +221,7 @@ Please try another key phrase.</value>
     <value>⚠️ You have *already sent* a permission request for the Sirena.</value>
   </data>
   <data name="command.request_rights.available.empty">
-    <value>You don&apos;t have any Sirena for which you could request call rights.</value>
+    <value>⚠️ You don&apos;t have any Sirena for which you could request call rights.</value>
   </data>
   <data name="command.request_rights.available.header">
     <value>*Your are able to request rights to call:*
@@ -456,5 +456,11 @@ Requestor:   {0}</value>
   <data name="command.requests.error.sirena_has_no_requests">
     <value>⚠️ No *Sirena* activation requests are available.
  *Sirena*: {0}</value>
+  </data>
+  <data name="command.request.askSirenaId">
+    <value>ℹ️ *Please enter the Sirena ID* for which you are requesting activation access.
+❕ Use the ID of an existing *Sirena*
+❗️ You must be subscribed to the *Sirena*
+❕ You have not yet requested access to this *Sirena*</value>
   </data>
 </root>
