@@ -106,7 +106,12 @@ public class SirenaOperations : IDeleteSirenaOperation
   public IObservable<IEnumerable<SirenRepresentation>> GetUserSirenas(long uid)
   {
     var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.OwnerId, uid);
-    return Observable.FromAsync(() => sirens.Find(filter).ToListAsync());
+    return Observable.FromAsync(() => sirens.Find(filter).ToListAsync())
+        .Catch((Exception _ex) =>
+            {
+              Console.WriteLine(_ex);
+              throw _ex;
+            });;
   }
   public IObservable<SirenRepresentation> GetUserSirenaOrNull(long uid, ulong sid)
   {

@@ -5,6 +5,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Hedgey.Sirena.Database;
 
+[BsonIgnoreExtraElements]
 public class SirenRepresentation
 {
   [BsonId]
@@ -24,10 +25,13 @@ public class SirenRepresentation
       ShortHash = HashUtilities.Shortify(Hash);
     }
   }
+  [BsonIgnore]
   public string Hash { get; private set; } = string.Empty;
+  [BsonIgnore]
   public string ShortHash { get; private set; } = string.Empty;
   [BsonElement("ownerid"), BsonRepresentation(BsonType.Int64)]
   public long OwnerId { get; set; }
+  [BsonIgnore]
   public string OwnerNickname { get; set; } = string.Empty;
   [BsonElement("title")]
   public string Title { get; set; } = string.Empty;
