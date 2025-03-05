@@ -9,17 +9,19 @@ public class ConfirmationRemoveSirenaStep(NullableContainer<SirenRepresentation>
   : DeleteSirenaStep(sirenaContainer)
 {
   private readonly IFactory<IRequestContext, SirenRepresentation, ConfirmRemoveSirenaMessageBuilder> messageBuilderFactory = messageBuilderFactory;
-
+  bool warningIsShown = false;
   public override IObservable<Report> Make(IRequestContext context)
   {
     Report report;
-    var info = context.GetCultureInfo();
     var param = context.GetArgsString();
-    if (!bool.TryParse(param, out bool value))
+    if (!warningIsShown)
     {
-      long chatId = context.GetTargetChatId();
       var messageBuilder = messageBuilderFactory.Create(context, sirenaContainer.Get());
       report = new Report(Result.Wait, messageBuilder);
+      warningIsShown = true;
+    }
+    else if(!bool.TryParse(param, out bool value)){
+      report = new Report(Result.Wait);
     }
     else
     {
