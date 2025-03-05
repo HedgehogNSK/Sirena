@@ -45,7 +45,7 @@ public class RequestHandler
       if (planIsSet)
       {
 #pragma warning disable CS8604 // Possible null reference argument.
-        CommandUpdateLog(context);
+        CommandUpdateLog(context,plan);
         planScheduler.Push(plan, context);
 #pragma warning restore CS8604 // Possible null reference argument.
       }
@@ -62,7 +62,7 @@ public class RequestHandler
       
       if (command.Command.Equals(plan?.commandName))
       {
-        CommandUpdateLog(context);
+        CommandUpdateLog(context,plan);
         planScheduler.Push(plan, context);
         return;
       }
@@ -82,13 +82,15 @@ public class RequestHandler
     }
   }
 
-  void CommandUpdateLog(IRequestContext context)
+  void CommandUpdateLog(IRequestContext context, CommandPlan? plan)
   {
-    string name = context.GetCommandName();
+    string name = plan?.commandName ?? string.Empty;
     var uid = context.GetUser().Id;
     var time = Shortucts.CurrentTimeLabel();
-
+    var args = context.GetArgsString();
     Console.WriteLine($"{time}{uid}: update -> {name}");
+    if (!string.IsNullOrEmpty(args))
+      Console.WriteLine($"Command args: '{args}'");
   }
   public void ProcessPlanReport(CommandPlan.Report report)
   {
