@@ -1,26 +1,19 @@
-using Hedgey.Extensions.Telegram;
 using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using MongoDB.Driver.Linq;
-using RxTelegram.Bot;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class RequestFindSirenaStep : CommandStep
+public class RequestFindSirenaStep(IFindSirenaOperation findSirenaOperation
+  , IGetUserInformation getUserInformation
+  , ILocalizationProvider localizationProvider) : CommandStep
 {
-  private readonly IFindSirenaOperation findSirenaOperation;
-  private readonly TelegramBot bot;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly IFindSirenaOperation findSirenaOperation = findSirenaOperation;
+  private readonly IGetUserInformation getUserInformation = getUserInformation;
+  private readonly ILocalizationProvider localizationProvider = localizationProvider;
 
-  public RequestFindSirenaStep(IFindSirenaOperation findSirenaOperation, TelegramBot bot
-  , ILocalizationProvider localizationProvider)
-  {
-    this.findSirenaOperation = findSirenaOperation;
-    this.bot = bot;
-    this.localizationProvider = localizationProvider;
-  }
   public override IObservable<Report> Make(IRequestContext context)
   {
     var searchKey = context.GetArgsString();
@@ -50,7 +43,7 @@ public class RequestFindSirenaStep : CommandStep
     }
   }
   private IObservable<(SirenRepresentation sirena, string ownerName)> GetOwnerNickname(SirenRepresentation sirena)
-    => Observable.FromAsync(() => BotTools.GetDisplayName(bot, sirena.OwnerId)).Select(x => (sirena, x));
+    => getUserInformation.GetNickname(sirena.OwnerId).Select(x => (sirena, x));
 
   private Report NoSirenaReport(IRequestContext context)
   {
