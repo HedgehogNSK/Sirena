@@ -1,5 +1,5 @@
-using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
+using Hedgey.Sirena.ID;
 using SimpleInjector;
 using System.Reactive.Linq;
 
@@ -20,8 +20,9 @@ namespace DatabaseUpdater
       IIDGenerator idGen = container.GetInstance<IIDGenerator>();
       var operation = container.GetInstance<IUpdateSirenaOperation>();
       var updateStream = UpdateSirenaWithBlendedflakeID(idGen,operation);
-      while(!complete);
+      while (!complete) ;
       Console.WriteLine("Finished");
+      updateStream.Dispose();
     }
     static IDisposable UpdateSirenaWithBlendedflakeID(IIDGenerator idGen, IUpdateSirenaOperation operation)
     {

@@ -1,10 +1,10 @@
-using Hedge.Sirena.ID;
-using Hedgey.Extensions;
+using Hedgey.Extensions.Blendflake;
 using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Sirena;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Bot.Operations.Mongo;
 using Hedgey.Sirena.Database;
+using Hedgey.Sirena.ID;
 using Hedgey.Structure.Factory;
 using MongoDB.Driver;
 using SimpleInjector;
@@ -21,14 +21,14 @@ namespace DatabaseUpdater
     {
       Container.RegisterSingleton<IIDGenerator>(() => new BlendflakeAdapter(EPOCH_TIMESTAMP, MACHINE_ID));
       Container.RegisterSingleton<IUpdateSirenaOperation, SirenaOperations>();
-      
+
       Container.Register<IFactory<IMongoClient>, MongoClientFactory>(Lifestyle.Transient);
-    Container.RegisterSingleton<IMongoClient>(() => Container.GetInstance<IFactory<IMongoClient>>().Create());
-    Container.RegisterSingleton<IMongoDatabase>(() => Container.GetInstance<IMongoClient>().GetDatabase("siren"));
-    Container.RegisterSingleton<IMongoCollection<SirenRepresentation>>(()
+      Container.RegisterSingleton<IMongoClient>(() => Container.GetInstance<IFactory<IMongoClient>>().Create());
+      Container.RegisterSingleton<IMongoDatabase>(() => Container.GetInstance<IMongoClient>().GetDatabase("siren"));
+      Container.RegisterSingleton<IMongoCollection<SirenRepresentation>>(()
       => Container.GetInstance<IMongoDatabase>().GetCollection<SirenRepresentation>("sirens"));
-    Container.RegisterSingleton<IMongoCollection<UserRepresentation>>(()
-      => Container.GetInstance<IMongoDatabase>().GetCollection<UserRepresentation>("users"));
+      Container.RegisterSingleton<IMongoCollection<UserRepresentation>>(()
+        => Container.GetInstance<IMongoDatabase>().GetCollection<UserRepresentation>("users"));
     }
   }
 }
