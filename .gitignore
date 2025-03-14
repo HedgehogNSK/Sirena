@@ -18,5 +18,8 @@
 *.sqlite
 *.sdf
 
+# Rider
+.idea/
+
 # Project
 Build/*
