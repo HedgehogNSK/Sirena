@@ -19,7 +19,7 @@ public class UpdateHandler : IHTTPRequestHandler
   {
     try
     {
-      Update update = HttpExtension.Parse<Update>(request);
+      Update update = Extension.ParseUpdate(request);
       observableUpdates.OnNext(update);
     }
     catch (Exception exception)
