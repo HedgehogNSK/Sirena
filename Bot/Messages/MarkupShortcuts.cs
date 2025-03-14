@@ -45,9 +45,9 @@ public static class MarkupShortcuts
   public static IInlineKeyboardRow AddLocalizedButton(this IInlineKeyboardRow inlineKeyboardRow
   , string textKey, CultureInfo info, string commandName, string param = "")
   {
-    if (LocalizationProvider == null)
-      throw new ArgumentNullException(nameof(LocalizationProvider), $"You have to set {nameof(MarkupShortcuts.LocalizationProvider)} field manually before use localized buttons");
-    string localTitle = LocalizationProvider.Get(textKey, info);
+    string localTitle = LocalizationProvider?.Get(textKey, info)
+      ?? throw new ArgumentNullException(nameof(LocalizationProvider)
+      , $"You have to set {nameof(LocalizationProvider)} field manually before use localized buttons");
     return inlineKeyboardRow.AddButton(localTitle, commandName, param);
   }
 
@@ -61,20 +61,18 @@ public static class MarkupShortcuts
     => inlineKeyboardRow.AddLocalizedButton(title, info, DeleteSirenaCommand.NAME, sirenaId);
   public static IInlineKeyboardRow AddDisplaySubscriptionsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, int count = 0, string title = subscriptionsTitle)
   {
-    if (LocalizationProvider == null)
-      throw new ArgumentNullException(nameof(LocalizationProvider));
-    string localTitle = LocalizationProvider.Get(title, info);
+    string localTitle = LocalizationProvider?.Get(title, info)
+      ?? throw new ArgumentNullException(nameof(LocalizationProvider));
     if (count != 0)
-      title += $" [{count}]";
+      _ = $" [{count}]";
     return inlineKeyboardRow.AddButton(localTitle, GetSubscriptionsListCommand.NAME);
   }
 
   public static IInlineKeyboardRow AddDisplayUserSirenasButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
     , int count = 0, string title = displaySirenasTitle)
   {
-    if (LocalizationProvider == null)
-      throw new ArgumentNullException(nameof(LocalizationProvider));
-    string localTitle = LocalizationProvider.Get(title, info);
+    string localTitle = LocalizationProvider?.Get(title, info)
+      ?? throw new ArgumentNullException(nameof(LocalizationProvider));
     if (count != 0)
       localTitle += $" [{count}]";
     return inlineKeyboardRow.AddButton(localTitle, DisplayUsersSirenasCommand.NAME);
@@ -92,9 +90,9 @@ public static class MarkupShortcuts
   public static IInlineKeyboardRow AddRetryButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
   , string command, string title = retryTitle)
   {
-    if (LocalizationProvider == null)
-      throw new ArgumentNullException(nameof(LocalizationProvider), $"You have to set {nameof(MarkupShortcuts.LocalizationProvider)} field manually before use localized buttons");
-    string localTitle = LocalizationProvider.Get(title, info);
+    string localTitle = LocalizationProvider?.Get(title, info)
+      ?? throw new ArgumentNullException(nameof(LocalizationProvider)
+        , $"You have to set {nameof(LocalizationProvider)} field manually before use localized buttons");
     return inlineKeyboardRow.AddCallbackData(localTitle, command);
   }
 
@@ -109,10 +107,8 @@ public static class MarkupShortcuts
     => inlineKeyboardRow.AddLocalizedButton(unsubscribeTitle, info, UnsubscribeCommand.NAME, siren.Hash);
   public static IInlineKeyboardRow AddDisplayRequestsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string shortHash, int count)
   {
-    if (LocalizationProvider == null)
-      throw new ArgumentNullException(nameof(LocalizationProvider), $"You have to set {nameof(MarkupShortcuts.LocalizationProvider)} field manually before use localized buttons");
-
-    string localTitle = LocalizationProvider.Get(getReuqestsTitle, info);
+     string localTitle = LocalizationProvider?.Get(getReuqestsTitle, info)
+      ?? throw new ArgumentNullException(nameof(LocalizationProvider));
     localTitle = string.Format(localTitle, count);
 
     return inlineKeyboardRow.AddButton(localTitle, RequestsCommand.NAME, shortHash);
@@ -120,9 +116,9 @@ public static class MarkupShortcuts
 
   public static IInlineKeyboardRow AddDisplayResponsiblesButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string sirenaId, int count)
   {
-    if (LocalizationProvider == null)
-      throw new ArgumentNullException(nameof(LocalizationProvider), $"You have to set {nameof(MarkupShortcuts.LocalizationProvider)} field manually before use localized buttons");
-    string localTitle = LocalizationProvider.Get(getResponsiblesTitle, info);
+     string localTitle = LocalizationProvider?.Get(getResponsiblesTitle, info)
+      ?? throw new ArgumentNullException(nameof(LocalizationProvider));
+      
     localTitle = string.Format(localTitle, count);
     return inlineKeyboardRow.AddButton(localTitle, GetResponsiblesListCommand.NAME, sirenaId);
   }
