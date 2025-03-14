@@ -9,7 +9,7 @@ namespace Hedgey.Extensions.NetCoreServer
     protected override void OnReceivedRequest(HttpRequest request)
     {
       var response = router.GetHandler(request).Handle(request);
-      // Отправка ответа
+      
       if (!SendResponseAsync(response))
         throw new Exception("Response hasn't been sent");
     }
