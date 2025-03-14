@@ -15,7 +15,6 @@ namespace DatabaseUpdater
       var installer =  new CoreInstaller(container);
       installer.Install();
       container.Verify();
-      // Вызов метода обновления базы данных
       
       IIDGenerator idGen = container.GetInstance<IIDGenerator>();
       var operation = container.GetInstance<IUpdateSirenaOperation>();
