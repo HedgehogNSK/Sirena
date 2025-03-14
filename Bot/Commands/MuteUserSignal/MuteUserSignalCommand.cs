@@ -12,8 +12,8 @@ public class MuteUserSignalCommand : AbstractBotCommmand
   public const string DESCRIPTION = "Mute calls from certain user for certain *sirena*. Calls of the *sirena* from other users will be active anyway";
   private readonly ILocalizationProvider localizationProvider;
   private readonly IMessageSender messageSender;
-  private TelegramBot bot;
-  private FacadeMongoDBRequests requests;
+  private readonly TelegramBot bot;
+  private readonly FacadeMongoDBRequests requests;
 
   public MuteUserSignalCommand(FacadeMongoDBRequests requests, TelegramBot bot
   , ILocalizationProvider localizationProvider, IMessageSender messageSender)
@@ -42,7 +42,7 @@ public class MuteUserSignalCommand : AbstractBotCommmand
     var sirenaIdString = parameters[1];
     var userIdString = parameters[0];
     ulong sirenaId = default;
-    if (!int.TryParse(sirenaIdString, out int number)
+    if (!int.TryParse(sirenaIdString, out _)
         && !HashUtilities.TryParse(sirenaIdString, out sirenaId))
     {
       string errorWrongSirenaID = localizationProvider.Get("command.mute_user.incorrect_id", info);

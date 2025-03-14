@@ -10,8 +10,8 @@ public class UnmuteUserSignalCommand : AbstractBotCommmand
 {
   public const string NAME = "unmute";
   public const string DESCRIPTION = "Unmute previously muted user for certain *Sirena";
-  private TelegramBot bot;
-  private FacadeMongoDBRequests requests;
+  private readonly TelegramBot bot;
+  private readonly FacadeMongoDBRequests requests;
   private readonly IMessageSender messageSender;
   private readonly ILocalizationProvider localizationProvider;
 
@@ -43,7 +43,7 @@ public class UnmuteUserSignalCommand : AbstractBotCommmand
     var sirenaIdString = parameters[1];
     var userIdString = parameters[0];
     ulong sirenaId = default;
-    if (!int.TryParse(sirenaIdString, out int number)
+    if (!int.TryParse(sirenaIdString, out _)
         && !HashUtilities.TryParse(sirenaIdString, out sirenaId))
     {
       var errorWrongSirenaID = localizationProvider.Get("command.unmute.error.wrong_sirena_id", cultureInfo);
