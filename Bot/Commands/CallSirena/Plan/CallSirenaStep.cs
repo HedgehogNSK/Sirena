@@ -113,7 +113,7 @@ public class CallSirenaStep : CommandStep
       var observableSendMessage = messageSender.ObservableSend(sirenaMessage)
             .Select(x => (long)x.MessageId);
 
-      if (messageContainer.IsSet())
+      if (messageContainer.IsSet)
       {
         Message message = messageContainer.Get();
         CopyMessage copyMessage = new CopyMessage

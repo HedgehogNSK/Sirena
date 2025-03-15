@@ -8,11 +8,10 @@ public class NullableContainer<T>
   {
     Content = newObject;
   }
-  public bool IsSet() => Content != null;
+  public bool IsSet => !EqualityComparer<T?>.Default.Equals(Content, default);
   public T Get()
   {
     return Content??
-       throw new ArgumentNullException("Value were not initialized yet",typeof(T?).Name);
+       throw new ArgumentNullException(typeof(T?).Name,"Value were not initialized yet");
   }
-  public bool IsEmpty => Content == null;
 }
