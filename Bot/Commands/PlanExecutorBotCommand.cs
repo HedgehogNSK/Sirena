@@ -15,9 +15,11 @@ public class PlanExecutorBotCommand : AbstractBotCommmand
     this.planScheduler = planScheduler;
   }
 
-  public override void Execute(IRequestContext context)
+   public sealed override void Execute(IRequestContext context)
   {
-    var plan = planFactory.Create(context);
+    var plan = Create(context);
     planScheduler.Push(plan, context);
   }
+  protected virtual CommandPlan Create(IRequestContext context)
+    => planFactory.Create(context);
 }
