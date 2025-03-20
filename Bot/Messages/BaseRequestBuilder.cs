@@ -14,3 +14,16 @@ public abstract class BaseRequestBuilder : IBaseRequestBuilder
 
   public abstract BaseRequest Build();
 }
+public abstract class BaseRequestBuilder<T> : IBaseRequestBuilder
+where T : BaseRequestBuilder<T>
+{
+  protected long ChatID { get; private set; }
+
+  public T Set(long chatId)
+  {
+    this.ChatID = chatId;
+    return (T)this;
+  }
+
+  public abstract BaseRequest Build();
+}
