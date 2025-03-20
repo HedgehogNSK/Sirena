@@ -49,7 +49,7 @@ static internal class Program
     var observableMessages = bot.Updates.Message
         .Catch((Exception _ex) =>
         {
-          Console.WriteLine("Updates.Messages exception: {0}", _ex);
+          Console.WriteLine("Exception on observing Update.Message");
           ExceptionHandler.OnError(_ex);
           return Observable.Empty<Message>().Delay(TimeSpan.FromSeconds(1));
         })
@@ -59,8 +59,7 @@ static internal class Program
     var observableCallbackPublisher = bot.Updates.CallbackQuery
         .Catch((Exception _ex) =>
         {
-          Console.WriteLine("Updates.CallbackQuery exception: {0}", _ex);
-
+          Console.WriteLine("Exception on observing Updates.CallbackQuery");
           ExceptionHandler.OnError(_ex);
           return Observable.Empty<CallbackQuery>().Delay(TimeSpan.FromSeconds(1));
         })
@@ -77,7 +76,7 @@ static internal class Program
         .SelectMany(SendCallbackApprove)
         .Catch((Exception _ex) =>
         {
-          Console.WriteLine("Send callback approve exception:\n");
+          Console.WriteLine("Exception on sending Callback Approve");
           ExceptionHandler.OnError(_ex);
           return Observable.Empty<bool>();
         })
@@ -138,7 +137,7 @@ static internal class Program
       {
         case "set wh": { await SwitchToWebHook(); } break;
         case "set lp": { await SwitchToLongpolling(); } break;
-        default: { }; break;
+        default: break;
       }
     } while (input != "exit");
 
@@ -158,7 +157,7 @@ static internal class Program
       return Observable.FromAsync(() => bot.AnswerCallbackQuery(callbackAnswer))
         .Catch((ApiException _ex) =>
         {
-          throw new Exception($"Error on callback answer to user {query.From.Id} on request: \"{query.Data}\"", _ex);
+          throw new InvalidOperationException($"Error on callback answer to user {query.From.Id} on request: \"{query.Data}\"", _ex);
         });
     }
 
@@ -166,8 +165,9 @@ static internal class Program
     {
       Console.WriteLine("Switching to Longpolling requests");
       await bot.DeleteWebhook();
-      server.Stop();
-      var tracker = new LongpollingUpdateTracker(bot);
+      if (server.IsStarted)
+        server.Stop();
+      var tracker = new LongPollingUpdateTracker(bot);
       bot.Updates.Set(tracker);
     }
 
