@@ -24,7 +24,7 @@ public class SirenasListMessageBuilder(long chatId, CultureInfo info
   public override SendMessage Build()
   {
     if (sirenas == null)
-      throw new ArgumentNullException(nameof(sirenas));
+      throw new ArgumentNotInitializedException(nameof(sirenas));
 
     StringBuilder builder = new StringBuilder();
 
@@ -58,24 +58,20 @@ public class SirenasListMessageBuilder(long chatId, CultureInfo info
 }
 public struct ElemTableDistributor
 {
-  private readonly int total;
-  float maxPerLine;
   private int extra;
   private int buttonsPerLine;
   private int number;
   private int prevNumber;
   public ElemTableDistributor(int total, int maxPerLine)
   {
-    this.total = total;
-    this.maxPerLine = maxPerLine;
     number = 0;
     prevNumber = 0;
-    CalcDivisionParams(total);
+    CalcDivisionParams(total,maxPerLine);
   }
   //Evaluate buttons per line
-  private void CalcDivisionParams(int total)
+  private void CalcDivisionParams(int total, int maxPerLine)
   {
-    int lines = (int)MathF.Ceiling(total / maxPerLine);
+    int lines = (int)MathF.Ceiling((float)total / maxPerLine);
     if (total > 2 && lines == 1) lines = 2;
     extra = total % lines;
     buttonsPerLine = total / lines + 1;
