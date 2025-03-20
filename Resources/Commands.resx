@@ -447,8 +447,8 @@ Requestor:   {0}</value>
   <data name="command.requests.accept">
     <value>✅ Approve</value>
   </data>
-  <data name="command.requests.decline">
-    <value>⛔️ Reject</value>
+  <data name="menu.buttons.decline.title">
+    <value>⛔️ Decline</value>
   </data>
   <data name="command.requests.display_by_id.user_message">
     <value>Message from user:  </value>
@@ -474,5 +474,20 @@ If you don&apos;t know the *Sirena* ID, you can {0} it by its name or part of th
 Please check the ID and try again.
 
 If you don&apos;t know the *Sirena* ID, you can {1} it by its name or part of the name.</value>
+  </data>
+  <data name="menu.buttons.delegate.title">
+    <value>🤝 Delegate</value>
+  </data>
+  <data name="command.decline_request.error.not_owner">
+    <value>⚠️ You do not have permission to view delegation requests for *Sirena*: {0}, as you are not the owner.</value>
+  </data>
+  <data name="command.decline_request.error.no_requests">
+    <value>⚠️ There are currently no delegation requests for *Sirena*: {0}.</value>
+  </data>
+  <data name="command.decline_request.error.no_requestor">
+    <value>⚠️ User {1} has not requested activation rights for *Sirena*: {0}.</value>
+  </data>
+  <data name="command.decline_request.success">
+    <value>✅🚫 User {1} delegation request for *Sirena*: {0} has been declined.</value>
   </data>
 </root>
