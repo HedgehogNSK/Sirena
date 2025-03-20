@@ -19,6 +19,7 @@ public abstract class SirenaRequestsMessageBuilder(IRequestContext context
 
   protected InlineKeyboardMarkup CreateReplyMarkup()
   {
+    var info = context.GetCultureInfo();
     var request = sirena.Requests[requestID];
     var lastRequestId = sirena.Requests.Length - 1;
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
@@ -28,13 +29,9 @@ public abstract class SirenaRequestsMessageBuilder(IRequestContext context
 
     if (context.GetUser().Id == sirena.OwnerId)
     {
-      string delegateCallback = $"/{DelegateRightsCommand.NAME} {sirena.ShortHash} {request.UID}";
-      string agree = Localize("command.requests.accept");
-      keyboardBuilder = keyboardBuilder.AddCallbackData(agree, delegateCallback);
-
-      string declineCallback = "CALLBACK NOT READY " + GetType().Name;
-      string decline = Localize("command.requests.decline");
-      keyboardBuilder = keyboardBuilder.AddCallbackData(decline, declineCallback);
+      keyboardBuilder = keyboardBuilder.AddDelegateRightsButton(info, sirena
+        , request.UID, "command.requests.accept");
+      keyboardBuilder = keyboardBuilder.AddDeclineRequestButton(info, sirena, request.UID);
     }
 
     if (lastRequestId != 0)
