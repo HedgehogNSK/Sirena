@@ -16,4 +16,13 @@ public class CommandInstaller<T>(Container container) : Installer(container)
       dict[_command.Command] = _command;
     });
   }
+  protected void RegisterStepFactoryIntoCommand<TStepInterface>(
+    Lifestyle lifestyle
+    , Func<TStepInterface> instanceCreator)
+  where TStepInterface : class
+  {
+    var registration = lifestyle.CreateRegistration(instanceCreator, Container);
+    Container.RegisterConditional<TStepInterface>(registration
+      , (_context) => _context.Consumer.ImplementationType == typeof(T));
+  }
 }
