@@ -14,6 +14,11 @@ public class PlanExecutorBotCommand : AbstractBotCommmand
     this.planFactory = planFactory;
     this.planScheduler = planScheduler;
   }
+  public PlanExecutorBotCommand(string name, string description,  PlanScheduler planScheduler)
+   : base(name, description)
+  {
+    this.planScheduler = planScheduler;
+  }
 
    public sealed override void Execute(IRequestContext context)
   {
