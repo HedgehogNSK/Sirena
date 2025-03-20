@@ -4,12 +4,13 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System.Reactive.Linq;
 using System.Text.RegularExpressions;
+
 namespace Hedgey.Sirena.Bot.Operations.Mongo;
 
 public class SirenaOperations : IDeleteSirenaOperation
 , ISubscribeToSirenaOperation, IUnsubscribeSirenaOperation
 , IFindSirenaOperation, IGetUserRelatedSirenas
-, IUpdateSirenaOperation, IRightsRequestOperation
+, IUpdateSirenaOperation, IRightsRequestOperation, IRightsManageOperation
 {
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly IMongoCollection<UserRepresentation> users;
@@ -111,7 +112,7 @@ public class SirenaOperations : IDeleteSirenaOperation
             {
               Console.WriteLine(_ex);
               throw _ex;
-            });;
+            });
   }
   public IObservable<SirenRepresentation> GetUserSirenaOrNull(long uid, ulong sid)
   {
@@ -160,6 +161,16 @@ public class SirenaOperations : IDeleteSirenaOperation
     var update = Builders<SirenRepresentation>.Update.Set(s => s.SID, sirenaId);
 
     return Observable.FromAsync(() => sirens.UpdateOneAsync(filter, update))
+    .Select(x => x.IsAcknowledged && x.IsModifiedCountAvailable && x.ModifiedCount > 0);
+  }
+
+  public IObservable<bool> Decline(ulong sirenaId, long requestorId)
+  {
+    var sirenaFilter = Builders<SirenRepresentation>.Filter.Eq(_sirena => _sirena.SID, sirenaId);
+    var requestFilter = Builders<SirenRepresentation.Request>.Filter.Eq(s => s.UID, requestorId);
+    var update = Builders<SirenRepresentation>.Update.PullFilter(s => s.Requests, requestFilter);
+
+    return Observable.FromAsync(() => sirens.UpdateOneAsync(sirenaFilter, update))
     .Select(x => x.IsAcknowledged && x.IsModifiedCountAvailable && x.ModifiedCount > 0);
   }
 }
