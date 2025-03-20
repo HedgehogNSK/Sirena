@@ -11,7 +11,8 @@ public class RequestsCommandInstaller(Container container)
   {
     base.Install();
 
-    RegisterStepFactoryIntoPlanFactory<IFactory<IRequestContext, SirenasListMessageBuilder>, SirenasRequestListsMessageBuilderFactory>(Lifestyle.Singleton);
+    RegisterStepFactoryIntoPlanFactory<IFactory<IRequestContext, SirenasListMessageBuilder>
+    , SirenasRequestListsMessageBuilderFactory>(Lifestyle.Singleton);
 
     Container.RegisterStepFactoryWithBuilderFactory(typeof(GetUserSirenasStep.Factory)
     , typeof(NoRequestsMessageBuilderFactory));
@@ -19,7 +20,8 @@ public class RequestsCommandInstaller(Container container)
     RegisterStepFactoryIntoPlanFactory<IFactory<NullableContainer<ulong>, ISendMessageBuilder, ValidateSirenaIdStep2>
     , ValidateSirenaIdStep2.Factory>(Lifestyle.Singleton);
 
-    Container.RegisterStepFactoryWithBuilderFactory(typeof(GetUserSirenaStep.Factory), typeof(SirenaNotFoundMessageBuilder.Factory));
+    Container.RegisterStepFactoryWithBuilderFactory(typeof(GetUserSirenaStep.Factory)
+    , typeof(SirenaNotFoundMessageBuilder.Factory));
 
     Container.RegisterStepFactoryWithBuilderFactories(typeof(DisplaySirenaRequestsStep.Factory)
     , [typeof(SirenaRequestsSendMessageBuilder.Factory), typeof(SirenaRequestsEditMessageBuilder.Factory)

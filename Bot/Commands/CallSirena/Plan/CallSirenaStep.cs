@@ -46,8 +46,6 @@ public class CallSirenaStep : CommandStep
   public override IObservable<Report> Make(IRequestContext context)
   {
     var sirena = sirenaContainer.Get();
-    var chatId = context.GetTargetChatId();
-    var info = context.GetCultureInfo();
     var uid = context.GetUser().Id;
     Stack<long> receiversStack = GetReceiversStack(sirena, uid);
     SirenRepresentation.CallInfo callInfo = new(uid, DateTimeOffset.Now);

@@ -15,7 +15,6 @@ public class GetUserSirenasStep(IGetUserRelatedSirenas getUserSirenas
 
   public override IObservable<Report> Make(IRequestContext context)
   {
-    var searchKey = context.GetArgsString();
     var uid = context.GetUser().Id;
 
     return getUserSirenas.GetSirenasWithRequests(uid).Select(CreateReport);

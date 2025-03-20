@@ -5,8 +5,7 @@ using Hedgey.Structure.Plan;
 namespace Hedgey.Sirena.Bot;
 
 public class RequestRightsPlanFactory(IFactory<NullableContainer<ulong>, ValidateSirenaIdStep> validateIdStepFactory
-  , IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>
-  , SirenaExistensValidationStep> sirenExistensValidationStepFactory
+  , IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep> sirenExistensValidationStepFactory
   , IFactory<NullableContainer<SirenRepresentation>, AddRequestMessageStep> addRequestMessageStepFactory
   , IFactory<NullableContainer<SirenRepresentation>, SendRequestStep> sendRequestStepFactory
   ,  IFactory<DisplayCommandMenuStep> displayCommandMenuStepFactory) 

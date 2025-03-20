@@ -20,9 +20,9 @@ public class ValidateSirenaIdStep2(NullableContainer<ulong> sirenaIdContainter
   }
 
   public class Factory()
-    : IFactory<NullableContainer<ulong>,ISendMessageBuilder , ValidateSirenaIdStep2>
+    : IFactory<NullableContainer<ulong>, ISendMessageBuilder, ValidateSirenaIdStep2>
   {
-    public ValidateSirenaIdStep2 Create(NullableContainer<ulong> sirenaContainer,ISendMessageBuilder messageBuilder)
+    public ValidateSirenaIdStep2 Create(NullableContainer<ulong> sirenaContainer, ISendMessageBuilder messageBuilder)
       => new ValidateSirenaIdStep2(sirenaContainer, messageBuilder);
   }
 }
