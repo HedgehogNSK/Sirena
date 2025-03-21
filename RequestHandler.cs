@@ -83,7 +83,7 @@ public class RequestHandler
     }
   }
 
-  void CommandUpdateLog(IRequestContext context, CommandPlan? plan)
+  private static void CommandUpdateLog(IRequestContext context, CommandPlan? plan)
   {
     string name = plan?.commandName ?? string.Empty;
     var uid = context.GetUser().Id;
@@ -102,12 +102,12 @@ public class RequestHandler
         {
           if (report.Plan.IsComplete)
             planDictionary.Remove(uid);
-        }; break;
+        } break;
       case CommandStep.Result.Canceled:
       case CommandStep.Result.Exception: planDictionary.Remove(uid); break;
       case CommandStep.Result.Wait: planDictionary[uid] = report.Plan; break;
       default:
-        throw new ArgumentOutOfRangeException(nameof(report.StepReport.Result));
+        throw new NotSupportedException(nameof(report.StepReport.Result));
     }
   }
 }
