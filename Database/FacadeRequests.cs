@@ -119,14 +119,10 @@ public class FacadeMongoDBRequests
 
   internal async Task<SirenRepresentation> UnmuteUser(long initiatorID, long mutedUserID, ulong sirenaID)
   {
-    var muted = new SirenRepresentation.MutedInfo(initiatorID,mutedUserID);
     var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.SID, sirenaID);
     var update = Builders<SirenRepresentation>.Update.PullFilter(x => 
       x.Muted, _muted => _muted.UID == initiatorID && _muted.MutedUID == mutedUserID);
-    var options = new FindOneAndUpdateOptions<SirenRepresentation>
-    {
-      ReturnDocument = ReturnDocument.After
-    };
+
     var userUpdate = await sirens.FindOneAndUpdateAsync(filter, update);
     return userUpdate;
   }
