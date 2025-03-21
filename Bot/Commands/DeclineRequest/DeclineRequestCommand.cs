@@ -1,5 +1,6 @@
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 

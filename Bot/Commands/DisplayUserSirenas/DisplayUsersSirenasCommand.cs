@@ -2,6 +2,7 @@ using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using System.Reactive.Linq;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 public class DisplayUsersSirenasCommand : AbstractBotCommmand, IBotCommand

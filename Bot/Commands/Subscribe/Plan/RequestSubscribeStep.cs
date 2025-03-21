@@ -3,6 +3,7 @@ using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using MongoDB.Driver;
 using System.Reactive.Linq;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 

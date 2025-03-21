@@ -1,5 +1,6 @@
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 public class PlanScheduler : IDisposable

@@ -1,4 +1,5 @@
 using Hedgey.Structure.Plan;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 

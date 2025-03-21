@@ -1,3 +1,4 @@
+using Hedgey.Telegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 
 namespace Hedgey.Sirena.Bot

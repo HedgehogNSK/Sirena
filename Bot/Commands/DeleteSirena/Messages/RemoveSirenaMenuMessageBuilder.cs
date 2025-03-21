@@ -8,6 +8,7 @@ using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
 using System.Reactive.Linq;
 using System.Text;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 

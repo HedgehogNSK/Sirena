@@ -16,6 +16,7 @@ using RxTelegram.Bot.Interface.Setup;
 using SimpleInjector;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena;
 static internal class Program

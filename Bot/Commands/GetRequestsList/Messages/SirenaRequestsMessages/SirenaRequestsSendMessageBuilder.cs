@@ -1,6 +1,7 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
+using Hedgey.Telegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 

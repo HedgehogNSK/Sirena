@@ -2,27 +2,29 @@ using Hedgey.Extensions;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Globalization;
 
-namespace Hedgey.Sirena.Bot;
-public record class MessageRequestContext : IRequestContext
+namespace Hedgey.Telegram.Bot;
+public record MessageRequestContext : IRequestContext
 {
-  private Message message;
-  private bool commandIsSet;
-  private string commandName;
-  private string argString;
+  public Message Message { get; }
+  private readonly bool commandIsSet;
+  private readonly string commandName;
+  private readonly string argString;
+  private readonly CultureInfo cultureInfo;
 
   public MessageRequestContext(Message message)
   {
-    this.message = message;
+    Message = message;
     commandIsSet = TextTools.ExtractCommandAndArgs(message.Text, out commandName, out argString);
+    cultureInfo = new(message.From.LanguageCode);
   }
 
   public string GetArgsString() => argString;
-  public Chat GetChat() => message.Chat;
+  public Chat GetChat() => Message.Chat;
   public string GetCommandName() => commandName;
-  public CultureInfo GetCultureInfo() => new(GetUser().LanguageCode);
-  public Message GetMessage() => message;
-  public string GetQuery() => message.Text;
-  public long GetTargetChatId() => message.From.Id;
-  public User GetUser() => message.From;
+  public CultureInfo GetCultureInfo() => cultureInfo; 
+  public Message GetMessage() => Message;
+  public string GetQuery() => Message.Text;
+  public long GetTargetChatId() => GetChat().Id;
+  public User GetUser() => Message.From;
   public bool IsCommandSet() => commandIsSet;
 }

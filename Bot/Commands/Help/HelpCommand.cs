@@ -2,6 +2,7 @@ using Hedgey.Localization;
 using RxTelegram.Bot.Interface.BaseTypes.Enums;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using System.Text;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 

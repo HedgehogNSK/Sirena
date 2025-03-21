@@ -5,6 +5,7 @@ using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using Hedgey.Utilities;
 using System.Reactive.Linq;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 

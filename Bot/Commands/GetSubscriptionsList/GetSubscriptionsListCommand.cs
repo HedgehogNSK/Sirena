@@ -3,6 +3,7 @@ using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 public class GetSubscriptionsListCommand(IMessageSender messageSender

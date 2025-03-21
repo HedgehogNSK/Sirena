@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Text;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 

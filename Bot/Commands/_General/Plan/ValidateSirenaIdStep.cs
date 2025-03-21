@@ -2,6 +2,7 @@ using Hedgey.Blendflake;
 using Hedgey.Extensions;
 using Hedgey.Structure.Factory;
 using System.Reactive.Linq;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 

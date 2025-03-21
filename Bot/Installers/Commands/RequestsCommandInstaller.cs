@@ -1,5 +1,6 @@
 using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Structure.Factory;
+using Hedgey.Telegram.Bot;
 using SimpleInjector;
 
 namespace Hedgey.Sirena.Bot.DI;

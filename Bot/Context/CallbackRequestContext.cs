@@ -1,25 +1,27 @@
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Globalization;
 
-namespace Hedgey.Sirena;
+namespace Hedgey.Telegram.Bot;
 
-public record class CallbackRequestContext : IRequestContext
+public record CallbackRequestContext : IRequestContext
 {
   public CallbackQuery Query { get; }
-  private string argString;
-  private string commandName;
+  private readonly string argString;
+  private readonly string commandName;
+  private readonly CultureInfo cultureInfo;
 
   public CallbackRequestContext(CallbackQuery query)
   {
-    this.Query = query;
+    Query = query;
     Extensions.TextTools.ExtractCommandAndArgs(query.Data, out commandName, out argString);
+    cultureInfo = new(Query.From.LanguageCode);
   }
   public string GetArgsString() => argString;
   public Chat GetChat() => Query.Message.Chat;
   public string GetCommandName() => commandName;
-  public CultureInfo GetCultureInfo() => new(GetUser().LanguageCode);
+  public CultureInfo GetCultureInfo() => cultureInfo;
   public Message GetMessage() => Query.Message;
   public string GetQuery() => Query.Data;
-  public long GetTargetChatId() => Query.Message.Chat.Id;
+  public long GetTargetChatId() => GetChat().Id;
   public User GetUser() => Query.From;
 }

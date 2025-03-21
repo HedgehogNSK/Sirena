@@ -2,6 +2,7 @@ using Hedgey.Localization;
 using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Reactive.Linq;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 

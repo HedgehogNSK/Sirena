@@ -2,6 +2,7 @@ using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Bot.Operations.Mongo;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot.DI
 {

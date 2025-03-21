@@ -4,6 +4,7 @@ using Hedgey.Sirena.Database;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Utils.Keyboard;
 using System.Text;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 public abstract class SirenaRequestsMessageBuilder(IRequestContext context

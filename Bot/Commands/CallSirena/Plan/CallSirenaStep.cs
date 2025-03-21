@@ -4,6 +4,7 @@ using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using System.Reactive.Linq;
+using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 public class CallSirenaStep : CommandStep
