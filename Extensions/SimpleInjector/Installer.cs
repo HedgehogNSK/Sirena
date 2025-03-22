@@ -4,7 +4,7 @@ namespace Hedgey.Extensions.SimpleInjector;
 
 public abstract class Installer
 {
-  public Installer(Container container)
+  protected Installer(Container container)
   {
     Container = container;
   }
