@@ -8,10 +8,10 @@ public sealed class DeclineRequestValidateSirenaIdStep(
   : ValidateSirenaIdBaseStep(sirenaIdContainter)
 {
   protected override Report EmptyKeyReport(IRequestContext context, string key)
-    => new Report(Result.Wait, Fallback: new FallbackRequestContext(context, RequestsCommand.NAME));
+    => new Report(Result.Canceled, Fallback: new FallbackRequestContext(context, RequestsCommand.NAME));
 
   protected override Report IsNotIdReport(IRequestContext context, string key)
-    => new Report(Result.Wait, Fallback: new FallbackRequestContext(context, RequestsCommand.NAME));
+    => new Report(Result.Canceled, Fallback: new FallbackRequestContext(context, RequestsCommand.NAME));
 
   protected override Report SuccessReport(IRequestContext context, string key)
     => new Report(Result.Success);
