@@ -1,6 +1,6 @@
 using Hedgey.Structure.Plan;
-using System.Text;
 using Hedgey.Telegram.Bot;
+using System.Text;
 
 namespace Hedgey.Sirena.Bot;
 
@@ -29,7 +29,7 @@ public abstract class CommandStep : IObservableStep<IRequestContext, CommandStep
 
   //TODO: Change IMessageBuilder<BaseRequest> -> IEnumerable<IMessageBuilder>
   public record class Report(Result Result, ISendMessageBuilder? MessageBuilder = null
-  , IEditMessageBuilder? EditMessageBuilder = null)
+  , IEditMessageBuilder? EditMessageBuilder = null, IRequestContext? Fallback = null)
   {
     public override string ToString()
     {

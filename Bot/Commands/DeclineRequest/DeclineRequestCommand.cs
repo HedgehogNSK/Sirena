@@ -8,11 +8,11 @@ public class DeclineRequestCommand : PlanExecutorBotCommand
 {
   public const string NAME = "decline_request";
   const string DESCRIPTION = "Declines a user's request for Siren activation rights.";
-  private readonly IFactory<NullableContainer<ulong>, ValidateSirenaIdStep> validateIdStepFactory;
+  private readonly IFactory<NullableContainer<ulong>, DeclineRequestValidateSirenaIdStep> validateIdStepFactory;
   private readonly IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep> sirenExistensValidationStepFactory;
   private readonly IFactory<NullableContainer<SirenRepresentation>, DeclineRequestStep> declineRequestStepFactory;
 
-  public DeclineRequestCommand(IFactory<NullableContainer<ulong>, ValidateSirenaIdStep> validateIdStepFactory
+  public DeclineRequestCommand(IFactory<NullableContainer<ulong>, DeclineRequestValidateSirenaIdStep> validateIdStepFactory
   , IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep> sirenExistensValidationStepFactory
   , IFactory<NullableContainer<SirenRepresentation>, DeclineRequestStep> declineRequestStepFactory
   , PlanScheduler planScheduler)

@@ -25,4 +25,12 @@ public class CommandInstaller<T>(Container container) : Installer(container)
     Container.RegisterConditional<TStepInterface>(registration
       , (_context) => _context.Consumer.ImplementationType == typeof(T));
   }
+  protected void RegisterStepFactoryIntoCommand<TStepInterface, TStepImpl>(
+    Lifestyle lifestyle)
+  where TStepImpl : class, TStepInterface
+  {
+    var registration = lifestyle.CreateRegistration<TStepImpl>(Container);
+    Container.RegisterConditional<TStepInterface>(registration
+      , (_context) => _context.Consumer.ImplementationType == typeof(T));
+  }
 }
