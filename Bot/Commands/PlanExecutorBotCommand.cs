@@ -5,7 +5,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class PlanExecutorBotCommand : AbstractBotCommmand
  {
-  private readonly IFactory<IRequestContext, CommandPlan> planFactory;
+  private readonly IFactory<IRequestContext, CommandPlan>? planFactory;
   private readonly PlanScheduler planScheduler;
 
   public PlanExecutorBotCommand(string name, string description
@@ -27,5 +27,5 @@ public class PlanExecutorBotCommand : AbstractBotCommmand
     planScheduler.Push(plan, context);
   }
   protected virtual CommandPlan Create(IRequestContext context)
-    => planFactory.Create(context);
+    => planFactory?.Create(context) ?? throw new NotImplementedException();
 }

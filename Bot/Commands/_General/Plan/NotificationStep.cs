@@ -6,9 +6,6 @@ namespace Hedgey.Sirena.Bot;
 public abstract class NotificationStep : CommandStep
 {
   private bool userNotified = false;
-  public NotificationStep()
-  { }
-
   public override IObservable<Report> Make(IRequestContext context)
   {
     var message = context.GetMessage();
