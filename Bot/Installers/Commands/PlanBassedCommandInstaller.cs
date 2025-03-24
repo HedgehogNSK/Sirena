@@ -13,8 +13,10 @@ public class PlanBassedCommandInstaller<TCommand, TPlanFactory>(Container contai
   {
     base.Install();
 
-    Container.RegisterConditional<IFactory<IRequestContext, CommandPlan>, TPlanFactory>((_predicate)
-      => _predicate.Consumer.ImplementationType == typeof(TCommand));
+    Container.RegisterConditional<IFactory<IRequestContext, CommandPlan>, TPlanFactory>(
+      Lifestyle.Singleton
+    ,(_predicate) => _predicate.Consumer.ImplementationType == typeof(TCommand)
+    );
   }
   protected void RegisterStepFactoryIntoPlanFactory<TStepInterface>
   (Lifestyle lifestyle, Func<TStepInterface> instanceCreator)

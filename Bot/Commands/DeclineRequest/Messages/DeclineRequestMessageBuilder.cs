@@ -41,4 +41,14 @@ public sealed class DeclineRequestMessageBuilder(
     var getter = textGetterFactory.Create(info, sirena, extra);
     _ = Set(context).Set(getter);
   }
+  public sealed class Factory(NotAllowedTextGetter.Factory notAllowed
+  , NoRequestsTextGetter.Factory noRequests
+  , NoRequestorTextGetter.Factory noRequestor
+  , SuccesfulDeclineTextGetter.Factory success)
+  : IFactory<DeclineRequestMessageBuilder>
+  {
+    public DeclineRequestMessageBuilder Create()
+      => new DeclineRequestMessageBuilder(notAllowed, noRequests, noRequestor
+        , success);
+  }
 }

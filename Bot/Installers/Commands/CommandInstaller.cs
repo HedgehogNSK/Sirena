@@ -6,7 +6,7 @@ namespace Hedgey.Sirena.Bot.DI;
 public class CommandInstaller<T>(Container container) : Installer(container)
  where T : AbstractBotCommmand
 {
-  protected Lifestyle lifestyle = Lifestyle.Transient;
+  protected Lifestyle lifestyle = Lifestyle.Singleton;
   public override void Install()
   {
     Container.Register<T>(lifestyle);

@@ -16,8 +16,8 @@ public class DeclineRequestInstaller(Container container)
     (Lifestyle.Singleton);
 
     Container.Register<IFactory<NullableContainer<SirenRepresentation>, DeclineRequestStep>
-      , DeclineRequestStep.Factory>(Lifestyle.Transient);
-    Container.Register<DeclineRequestMessageBuilder>(Lifestyle.Transient);
+      , DeclineRequestStep.Factory>(Lifestyle.Singleton);
+    Container.Register<DeclineRequestMessageBuilder.Factory>(Lifestyle.Singleton);
     Container.Register<NotAllowedTextGetter.Factory>(Lifestyle.Singleton);
     Container.Register<NoRequestsTextGetter.Factory>(Lifestyle.Singleton);
     Container.Register<NoRequestorTextGetter.Factory>(Lifestyle.Singleton);
