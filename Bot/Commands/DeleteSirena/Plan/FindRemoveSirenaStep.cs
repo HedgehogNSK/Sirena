@@ -33,10 +33,8 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
   {
     User botUser = context.GetUser();
     long uid = botUser.Id;
-    var info = context.GetCultureInfo();
     string param = context.GetArgsString().GetParameterByNumber(0);
     IObservable<SirenRepresentation?> observableSirena;
-    int number = 0;
     if (string.IsNullOrEmpty(param))
     {
       return getUserSirenasOperation.GetUserSirenas(uid)
@@ -47,7 +45,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     {
       observableSirena = findSirenaOperation.Find(id);
     }
-    else if (int.TryParse(param, out number))
+    else if (int.TryParse(param, out int number))
     {
       observableSirena = getUserSirenasOperation.GetUserSirena(uid, number);
     }

@@ -28,9 +28,7 @@ public class GetSirenaInfoStep(NullableContainer<ulong> sirenaIdContainter
 
     Report CreateReport(SirenRepresentation representation)
     {
-      var chatId = context.GetTargetChatId();
       long uid = context.GetUser().Id;
-      var info = context.GetCultureInfo();
 
       Result result = representation == null ? Result.Canceled : Result.Success;
       ISendMessageBuilder builder = representation == null ?
