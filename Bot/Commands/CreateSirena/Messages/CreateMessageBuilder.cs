@@ -13,8 +13,8 @@ public class CreateMessageBuilder : MessageBuilder, ISendMessageBuilder
   private bool userIsSet;
   private bool isAllowed;
   private bool isTitleValid;
-  private int minSymbols;
-  private int maxSymbols;
+  private readonly int minSymbols;
+  private readonly int maxSymbols;
   private SirenRepresentation? sirena;
   private readonly string botName;
 

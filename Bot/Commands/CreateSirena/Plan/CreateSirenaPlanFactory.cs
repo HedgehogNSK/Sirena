@@ -28,10 +28,10 @@ public class CreateSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
     NullableContainer<string> titleContainer = new();
     NullableContainer<UserStatistics> statsContainer = new();
 
-    var validation = new CompositeCommandStep([
+    var validation = new CompositeCommandStep(
       new CheckAbilityToCreateSirenaStep(statsContainer,messageBuilder),
-      new ValidateTitleCommandStep(messageBuilder,titleContainer),
-    ]);
+      new ValidateTitleCommandStep(messageBuilder,titleContainer)
+    );
 
     IObservableStep<IRequestContext, CommandStep.Report>[] steps = [
       new GetUserCommandStep(userInfo,messageBuilder,statsContainer),

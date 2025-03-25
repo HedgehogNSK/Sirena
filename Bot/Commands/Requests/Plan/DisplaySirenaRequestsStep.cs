@@ -2,8 +2,8 @@ using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
-using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
+using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
@@ -11,13 +11,12 @@ public class DisplaySirenaRequestsStep(IGetUserInformation getUserInfromation
 , NullableContainer<SirenRepresentation> sirenaContainer
 , IFactory<IRequestContext, SirenRepresentation, int, string, ISendMessageBuilder> sendMessageBuilderFactory
 , IFactory<IRequestContext, SirenRepresentation, int, string, IEditMessageBuilder> editMessageBuilderFactory
-, IFactory<IRequestContext,SirenRepresentation, ISendMessageBuilder> noRequestsMessageBuilderFactory)
+, IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder> noRequestsMessageBuilderFactory)
  : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
   {
     var info = context.GetCultureInfo();
-    var chatID = context.GetTargetChatId();
     var sirena = sirenaContainer.Get();
 
     if (sirena.Requests.Length == 0)
@@ -54,10 +53,10 @@ public class DisplaySirenaRequestsStep(IGetUserInformation getUserInfromation
   public class Factory(IGetUserInformation getUserInfromation
     , IFactory<IRequestContext, SirenRepresentation, int, string, ISendMessageBuilder> sendMessageBuilderFactory
     , IFactory<IRequestContext, SirenRepresentation, int, string, IEditMessageBuilder> editMessageBuilderFactory
-    , IFactory<IRequestContext,SirenRepresentation, ISendMessageBuilder> noRequestsMessageBuilderFactory)
+    , IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder> noRequestsMessageBuilderFactory)
  : IFactory<NullableContainer<SirenRepresentation>, DisplaySirenaRequestsStep>
   {
     public DisplaySirenaRequestsStep Create(NullableContainer<SirenRepresentation> sirenaContainer)
-     => new DisplaySirenaRequestsStep(getUserInfromation, sirenaContainer, sendMessageBuilderFactory, editMessageBuilderFactory,noRequestsMessageBuilderFactory);
+     => new DisplaySirenaRequestsStep(getUserInfromation, sirenaContainer, sendMessageBuilderFactory, editMessageBuilderFactory, noRequestsMessageBuilderFactory);
   }
 }
