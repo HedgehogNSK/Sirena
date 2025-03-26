@@ -12,7 +12,7 @@ public class StartInstaller(Container container)
     base.Install();
 
     var creationFunction = () => new ValidateSirenaIdStep.Factory(Container.GetInstance<AskSirenaIdMessageBuilder.Factory>());
-    RegisterStepFactoryIntoPlanFactory<IFactory<NullableContainer<ulong>, ValidateSirenaIdStep>>
+    RegisterIntoPlanFactory<IFactory<NullableContainer<ulong>, ValidateSirenaIdStep>>
     (Lifestyle.Singleton, creationFunction);
 
     Container.RegisterStepFactoryWithBuilderFactory(typeof(WelcomeMessageStep.Factory), typeof(WelcomeMessageBuilderFactory));

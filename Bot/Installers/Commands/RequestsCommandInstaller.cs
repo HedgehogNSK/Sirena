@@ -12,13 +12,13 @@ public class RequestsCommandInstaller(Container container)
   {
     base.Install();
 
-    RegisterStepFactoryIntoPlanFactory<IFactory<IRequestContext, SirenasListMessageBuilder>
+    RegisterIntoPlanFactory<IFactory<IRequestContext, SirenasListMessageBuilder>
     , SirenasRequestListsMessageBuilderFactory>(Lifestyle.Singleton);
 
     Container.RegisterStepFactoryWithBuilderFactory(typeof(GetUserSirenasStep.Factory)
     , typeof(NoRequestsMessageBuilderFactory));
 
-    RegisterStepFactoryIntoPlanFactory<IFactory<NullableContainer<ulong>, ISendMessageBuilder, ValidateSirenaIdStep2>
+    RegisterIntoPlanFactory<IFactory<NullableContainer<ulong>, ISendMessageBuilder, ValidateSirenaIdStep2>
     , ValidateSirenaIdStep2.Factory>(Lifestyle.Singleton);
 
     Container.RegisterStepFactoryWithBuilderFactory(typeof(GetUserSirenaStep.Factory)

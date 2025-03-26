@@ -13,7 +13,7 @@ public class SubscribeInstaller(Container container)
 
     Container.Register<AskSirenaIdMessageBuilder.Factory>();
     var creationFunction = () => new ValidateSirenaIdStep.Factory(Container.GetInstance<AskSirenaIdMessageBuilder.Factory>());
-    RegisterStepFactoryIntoPlanFactory<IFactory<NullableContainer<ulong>, ValidateSirenaIdStep>>
+    RegisterIntoPlanFactory<IFactory<NullableContainer<ulong>, ValidateSirenaIdStep>>
     (Lifestyle.Singleton, creationFunction);
 
     Container.RegisterStepFactoryWithBuilderFactories(typeof(RequestSubscribeStep.Factory)
