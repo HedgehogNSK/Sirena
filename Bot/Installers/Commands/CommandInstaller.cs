@@ -16,7 +16,7 @@ public class CommandInstaller<T>(Container container) : Installer(container)
       dict[_command.Command] = _command;
     });
   }
-  protected void RegisterStepFactoryIntoCommand<TStepInterface>(
+  protected void RegisterIntoCommand<TStepInterface>(
     Lifestyle lifestyle
     , Func<TStepInterface> instanceCreator)
   where TStepInterface : class
@@ -25,7 +25,7 @@ public class CommandInstaller<T>(Container container) : Installer(container)
     Container.RegisterConditional<TStepInterface>(registration
       , (_context) => _context.Consumer.ImplementationType == typeof(T));
   }
-  protected void RegisterStepFactoryIntoCommand<TStepInterface, TStepImpl>(
+  protected void RegisterIntoCommand<TStepInterface, TStepImpl>(
     Lifestyle lifestyle)
   where TStepImpl : class, TStepInterface
   {
