@@ -8,6 +8,8 @@ namespace Hedgey.Sirena.Bot;
 public abstract class ValidateSirenaIdBaseStep(NullableContainer<ulong> sirenaIdContainter)
 : CommandStep
 {
+  private readonly NullableContainer<ulong> sirenaIdContainter = sirenaIdContainter;
+
   public override IObservable<Report> Make(IRequestContext context)
   {
     Report report;
@@ -17,7 +19,7 @@ public abstract class ValidateSirenaIdBaseStep(NullableContainer<ulong> sirenaId
       report = EmptyKeyReport(context, key);
       return Observable.Return(report);
     }
-    if (string.IsNullOrEmpty(key) || !HashUtilities.TryParse(key, out var id))
+    if (!HashUtilities.TryParse(key, out var id))
     {
       report = IsNotIdReport(context, key);
       return Observable.Return(report);
