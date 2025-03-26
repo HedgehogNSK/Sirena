@@ -1,4 +1,5 @@
 using Hedgey.Extensions.SimpleInjector;
+using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using SimpleInjector;
@@ -6,20 +7,20 @@ using SimpleInjector;
 namespace Hedgey.Sirena.Bot.DI;
 
 public class RequestsCommandInstaller(Container container)
-   : PlanBassedCommandInstaller<RequestsCommand, ReuquestsPlanFactory>(container)
+   : CommandInstaller<RequestsCommand>(container)
 {
   public override void Install()
   {
     base.Install();
 
-    RegisterIntoPlanFactory<IFactory<IRequestContext, SirenasListMessageBuilder>
+    RegisterIntoCommand<IFactory<IRequestContext, SirenasListMessageBuilder>
     , SirenasRequestListsMessageBuilderFactory>(Lifestyle.Singleton);
 
-    Container.RegisterStepFactoryWithBuilderFactory(typeof(GetUserSirenasStep.Factory)
-    , typeof(NoRequestsMessageBuilderFactory));
+    Container.RegisterStepFactoryWithBuilderFactories(typeof(GetUserSirenasStep.Factory)
+    , [typeof(NoRequestsMessageBuilderFactory), typeof(SirenaRequestsSendMessageBuilder.Factory)]);
 
-    RegisterIntoPlanFactory<IFactory<NullableContainer<ulong>, ISendMessageBuilder, ValidateSirenaIdStep2>
-    , ValidateSirenaIdStep2.Factory>(Lifestyle.Singleton);
+    RegisterIntoCommand<IFactory<NullableContainer<ulong>, ISendMessageBuilder, RequestsValidateSirenaIdStep>
+    , RequestsValidateSirenaIdStep.Factory>(Lifestyle.Singleton);
 
     Container.RegisterStepFactoryWithBuilderFactory(typeof(GetUserSirenaStep.Factory)
     , typeof(SirenaNotFoundMessageBuilder.Factory));
@@ -27,5 +28,9 @@ public class RequestsCommandInstaller(Container container)
     Container.RegisterStepFactoryWithBuilderFactories(typeof(DisplaySirenaRequestsStep.Factory)
     , [typeof(SirenaRequestsSendMessageBuilder.Factory), typeof(SirenaRequestsEditMessageBuilder.Factory)
     , typeof(SirenaHasNoRequestsMessageBuilderFactory)]);
+
+    RegisterIntoCommand<IFactory<NullableContainer<SirenRepresentation>
+      , NullableContainer<RequestsCommand.RequestInfo>, CreateRequestInfoStep>
+      , CreateRequestInfoStep.Factory>(Lifestyle.Singleton);
   }
 }
