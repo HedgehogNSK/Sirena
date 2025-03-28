@@ -2,8 +2,8 @@ using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
-using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
+using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
@@ -34,8 +34,8 @@ public sealed class DeclineRequestStep(IRightsManageOperation rightsManager, IGe
     var key = context.GetArgsString().GetParameterByNumber(1);
     if (!long.TryParse(key, out var requestorId))
     {
-      declineMessageBuilder.NoRequestor(context, sirena, key);
-      return Observable.Return(new Report(Result.Canceled, declineMessageBuilder));
+      var fallback = new FallbackRequestContext(context, RequestsCommand.NAME, sirena.ShortHash);
+      return Observable.Return(new Report(fallback));
     }
 
     var getUsername = getUser.GetNickname(requestorId);

@@ -19,7 +19,10 @@ public class RequestsCommandInstaller(Container container)
     Container.RegisterStepFactoryWithBuilderFactories(typeof(GetUserSirenasStep.Factory)
     , [typeof(NoRequestsMessageBuilderFactory), typeof(SirenaRequestsSendMessageBuilder.Factory)]);
 
-    RegisterIntoCommand<IFactory<NullableContainer<ulong>, ISendMessageBuilder, RequestsValidateSirenaIdStep>
+    RegisterIntoCommand<IFactory<NullableContainer<IEnumerable<SirenRepresentation>>, LoadUserSirenasWithRequestsStep>
+    , LoadUserSirenasWithRequestsStep.Factory>(Lifestyle.Singleton);
+
+    RegisterIntoCommand<IFactory<NullableContainer<ulong>, RequestsValidateSirenaIdStep>
     , RequestsValidateSirenaIdStep.Factory>(Lifestyle.Singleton);
 
     Container.RegisterStepFactoryWithBuilderFactory(typeof(GetUserSirenaStep.Factory)

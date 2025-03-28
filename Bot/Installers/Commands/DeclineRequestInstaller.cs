@@ -11,10 +11,9 @@ public class DeclineRequestInstaller(Container container)
   {
     base.Install();
 
-    RegisterIntoCommand<IFactory<NullableContainer<ulong>, DeclineRequestValidateSirenaIdStep>
-    , DeclineRequestValidateSirenaIdStep.Factory>
-    (Lifestyle.Singleton);
-
+    RegisterIntoCommand<IFactory<NullableContainer<ulong>, RequestsValidateSirenaIdStep>
+    , RequestsValidateSirenaIdStep.Factory>(Lifestyle.Singleton);
+    
     Container.Register<IFactory<NullableContainer<SirenRepresentation>, DeclineRequestStep>
       , DeclineRequestStep.Factory>(Lifestyle.Singleton);
     Container.Register<DeclineRequestMessageBuilder.Factory>(Lifestyle.Singleton);

@@ -54,7 +54,7 @@ public abstract class SirenaRequestsMessageBuilder(IRequestContext context
       const string messageKey = "command.requests.display_by_id.user_message";
       requestMessage = Localize(messageKey);
       var userMessage = request.Message.EscapeMarkdownChars();
-      builder.Append(requestMessage).Append(userMessage);
+      builder.AppendLine().Append(requestMessage).Append(userMessage);
     }
 
     return builder.ToString();

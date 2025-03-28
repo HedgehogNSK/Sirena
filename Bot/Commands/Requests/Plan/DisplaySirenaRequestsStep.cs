@@ -22,7 +22,8 @@ public class DisplaySirenaRequestsStep(IGetUserInformation getUserInfromation
     if (sirena.Requests.Length == 0)
     {
       var noRequestsForSirenaBuilder = noRequestsMessageBuilderFactory.Create(context, sirena);
-      return Observable.Return(new Report(Result.Canceled, noRequestsForSirenaBuilder));
+      var fallback = new FallbackRequestContext(context, RequestsCommand.NAME);
+      return Observable.Return(new Report(fallback , noRequestsForSirenaBuilder));
     }
 
     return getUserInfromation.GetNickname(requestInfo.RequestorID, info)

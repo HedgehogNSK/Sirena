@@ -132,7 +132,7 @@ static internal class Program
 
     IDisposable subscription = new CompositeDisposable(callbackStream
     , constexStream, approveCallbackStream, planProcessingStream
-    , sendMessagesStream, schedulerTrackStream, editMessagesStream);
+    , sendMessagesStream, schedulerTrackStream, editMessagesStream,fallbackStream);
 
     string? input;
     do
