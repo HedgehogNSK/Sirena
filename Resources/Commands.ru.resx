@@ -247,7 +247,8 @@
   <data name="command.request_rights.success">
     <value>✅ Успешно отправлен запрос на право вызова *Сирены*:
 {0}
-Если владелец *Сирены* одобрит ваш запрос, вы получите право на вызов этой *Сирены*.</value>
+
+_Если владелец_ Сирены _одобрит ваш запрос, вы получите право на вызов этой_ *Сирены*.</value>
   </data>
   <data name="command.request.description">
     <value>Запросите у владельца Сирены делегировать вам право на её вызов.</value>
@@ -434,7 +435,7 @@ _{0}_</value>
   <data name="command.requests.display_by_id">
     <value>ℹ️ *{3}Запрос прав на активацию сирены*.
 _Сирена_:   \[`{1}`] {2}
-_Запрашивает_:   {0} </value>
+_Запрашивает_:  {0} </value>
   </data>
   <data name="command.requests.accept">
     <value>✅ Выдать</value>
@@ -443,7 +444,7 @@ _Запрашивает_:   {0} </value>
     <value>⛔️ Отказать</value>
   </data>
   <data name="command.requests.display_by_id.user_message">
-    <value>_Комментарий:_</value>
+    <value>_Комментарий:_  </value>
   </data>
   <data name="command.requests.error.sirena_has_no_requests">
     <value>⚠️ Запросы на активацию Сирены отсутствуют.

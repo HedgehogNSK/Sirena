@@ -249,7 +249,8 @@ You can send request message or skip it. But you have to set correct Sirena ID</
   <data name="command.request_rights.success">
     <value>✅ Request to activate *Sirena* successfully submitted:
 {0}
-If the Sirena’s owner approves your request, you’ll be granted access to activate this *Sirena.</value>
+
+_If the Sirena’s owner approves your request, you’ll be granted access to activate this_ *Sirena*.</value>
   </data>
   <data name="command.request.description">
     <value>Request the owner of Sirena to delegate to you the right to call it.</value>
@@ -442,7 +443,7 @@ ID: `{2}`
   <data name="command.requests.display_by_id">
     <value>ℹ️ *{3}Request for Sirena activation rights.*
 Sirena:   \[`{1}`] {2}
-Requestor:   {0}</value>
+Requestor:  {0}</value>
   </data>
   <data name="command.requests.accept">
     <value>✅ Approve</value>
@@ -451,7 +452,7 @@ Requestor:   {0}</value>
     <value>⛔️ Decline</value>
   </data>
   <data name="command.requests.display_by_id.user_message">
-    <value>_Comment:_ </value>
+    <value>_Comment:_  </value>
   </data>
   <data name="command.requests.error.sirena_has_no_requests">
     <value>⚠️ No *Sirena* activation requests are available.
