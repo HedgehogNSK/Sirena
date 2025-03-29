@@ -122,13 +122,17 @@ static internal class Program
         })
         .Repeat()
         .Subscribe();
+
+    var fallbackStream = schedulerTrackPublisher
+        .Where(_report => _report.StepReport.Fallback != null)
+        .Subscribe(_report => requestHandler.Process(_report.StepReport.Fallback), ExceptionHandler.OnError);
 #pragma warning restore CS8604 // Possible null reference argument.
 
     var schedulerTrackStream = schedulerTrackPublisher.Connect();
 
     IDisposable subscription = new CompositeDisposable(callbackStream
     , constexStream, approveCallbackStream, planProcessingStream
-    , sendMessagesStream, schedulerTrackStream, editMessagesStream);
+    , sendMessagesStream, schedulerTrackStream, editMessagesStream,fallbackStream);
 
     string? input;
     do
@@ -192,7 +196,7 @@ static internal class Program
     bool httpStarted = server.Start();
     Console.WriteLine($"Starting HTTP server on port {server.Port}...");
     if (!httpStarted)
-      throw new Exception("Server is not started");
+      throw new ActivationException("Server is not started");
   }
 
   private static void InstallCommands(Container container)

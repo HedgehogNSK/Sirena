@@ -11,13 +11,12 @@ public class DeclineRequestInstaller(Container container)
   {
     base.Install();
 
-    var creationFunction = () => new ValidateSirenaIdStep.Factory(Container.GetInstance<AskSirenaIdForRequestMessageBuilder.Factory>());
-    RegisterStepFactoryIntoCommand<IFactory<NullableContainer<ulong>, ValidateSirenaIdStep>>
-    (Lifestyle.Singleton, creationFunction);
-
-    Container.Register< IFactory< NullableContainer<SirenRepresentation>, DeclineRequestStep>
-      , DeclineRequestStep.Factory>(Lifestyle.Transient);
-    Container.Register<DeclineRequestMessageBuilder>(Lifestyle.Transient);
+    RegisterIntoCommand<IFactory<NullableContainer<ulong>, RequestsValidateSirenaIdStep>
+    , RequestsValidateSirenaIdStep.Factory>(Lifestyle.Singleton);
+    
+    Container.Register<IFactory<NullableContainer<SirenRepresentation>, DeclineRequestStep>
+      , DeclineRequestStep.Factory>(Lifestyle.Singleton);
+    Container.Register<DeclineRequestMessageBuilder.Factory>(Lifestyle.Singleton);
     Container.Register<NotAllowedTextGetter.Factory>(Lifestyle.Singleton);
     Container.Register<NoRequestsTextGetter.Factory>(Lifestyle.Singleton);
     Container.Register<NoRequestorTextGetter.Factory>(Lifestyle.Singleton);

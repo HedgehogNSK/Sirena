@@ -1,5 +1,4 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
@@ -8,12 +7,8 @@ using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 namespace Hedgey.Sirena.Bot;
 
 public class SirenaRequestsSendMessageBuilder(IRequestContext context
-  , ILocalizationProvider localizationProvider
-  , SirenRepresentation sirena
-  , int requestID
-  , string userName)
- : SirenaRequestsMessageBuilder(context, localizationProvider, sirena
-  , requestID, userName)
+  , ILocalizationProvider localizationProvider, RequestsCommand.RequestInfo requestInfo)
+ : SirenaRequestsMessageBuilder(context, localizationProvider, requestInfo)
   , ISendMessageBuilder
 {
 
@@ -25,9 +20,9 @@ public class SirenaRequestsSendMessageBuilder(IRequestContext context
   }
 
   public class Factory(ILocalizationProvider localizationProvider)
-    : IFactory<IRequestContext, SirenRepresentation, int, string, ISendMessageBuilder>
+    : IFactory<IRequestContext, RequestsCommand.RequestInfo, ISendMessageBuilder>
   {
-    public ISendMessageBuilder Create(IRequestContext context, SirenRepresentation sirena, int requestNumber, string userName)
-      => new SirenaRequestsSendMessageBuilder(context, localizationProvider, sirena, requestNumber, userName);
+    public ISendMessageBuilder Create(IRequestContext context, RequestsCommand.RequestInfo info)
+      => new SirenaRequestsSendMessageBuilder(context, localizationProvider, info);
   }
 }

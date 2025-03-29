@@ -443,7 +443,7 @@ _Запрашивает_:   {0} </value>
     <value>⛔️ Отказать</value>
   </data>
   <data name="command.requests.display_by_id.user_message">
-    <value>Сообщение от пользователя:  </value>
+    <value>_Комментарий:_</value>
   </data>
   <data name="command.requests.error.sirena_has_no_requests">
     <value>⚠️ Запросы на активацию Сирены отсутствуют.

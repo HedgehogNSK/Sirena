@@ -15,7 +15,7 @@ public class DisplaySirenaInfoInstaller(Container container)
 
     Container.Register<AskSirenaIdForInfoMessageBuilder.Factory>();
     var creationFunction = () => new ValidateSirenaIdStep.Factory(Container.GetInstance<AskSirenaIdForInfoMessageBuilder.Factory>());
-    RegisterStepFactoryIntoPlanFactory<IFactory<NullableContainer<ulong>, ValidateSirenaIdStep>>
+    RegisterIntoPlanFactory<IFactory<NullableContainer<ulong>, ValidateSirenaIdStep>>
       (Lifestyle.Singleton, creationFunction);
 
     Container.RegisterSingleton<IFactory<NullableContainer<ulong>, GetSirenaInfoStep>, GetSirenaInfoStep.Factory>();

@@ -13,10 +13,12 @@ public class PlanBassedCommandInstaller<TCommand, TPlanFactory>(Container contai
   {
     base.Install();
 
-    Container.RegisterConditional<IFactory<IRequestContext, CommandPlan>, TPlanFactory>((_predicate)
-      => _predicate.Consumer.ImplementationType == typeof(TCommand));
+    Container.RegisterConditional<IFactory<IRequestContext, CommandPlan>, TPlanFactory>(
+      Lifestyle.Singleton
+    ,(_predicate) => _predicate.Consumer.ImplementationType == typeof(TCommand)
+    );
   }
-  protected void RegisterStepFactoryIntoPlanFactory<TStepInterface>
+  protected void RegisterIntoPlanFactory<TStepInterface>
   (Lifestyle lifestyle, Func<TStepInterface> instanceCreator)
   where TStepInterface : class
   {
@@ -24,7 +26,7 @@ public class PlanBassedCommandInstaller<TCommand, TPlanFactory>(Container contai
     Container.RegisterConditional<TStepInterface>(registration
       , (_context) => _context.Consumer.ImplementationType == typeof(TPlanFactory));
   }
-  protected void RegisterStepFactoryIntoPlanFactory<TStepInterface>
+  protected void RegisterIntoPlanFactory<TStepInterface>
   (Lifestyle lifestyle, Type concretteType)
   where TStepInterface : class
   {
@@ -32,9 +34,9 @@ public class PlanBassedCommandInstaller<TCommand, TPlanFactory>(Container contai
     Container.RegisterConditional<TStepInterface>(registration
       , (_context) => _context.Consumer.ImplementationType == typeof(TPlanFactory));
   }
-  protected void RegisterStepFactoryIntoPlanFactory<TStepInterface, TStepImpl>
+  protected void RegisterIntoPlanFactory<TStepInterface, TStepImpl>
   (Lifestyle lifestyle)
   where TStepInterface : class
   where TStepImpl : TStepInterface
-  => RegisterStepFactoryIntoPlanFactory<TStepInterface>(lifestyle, typeof(TStepImpl));
+  => RegisterIntoPlanFactory<TStepInterface>(lifestyle, typeof(TStepImpl));
 }

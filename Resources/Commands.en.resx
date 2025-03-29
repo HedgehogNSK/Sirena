@@ -451,7 +451,7 @@ Requestor:   {0}</value>
     <value>⛔️ Decline</value>
   </data>
   <data name="command.requests.display_by_id.user_message">
-    <value>Message from user:  </value>
+    <value>_Comment:_ </value>
   </data>
   <data name="command.requests.error.sirena_has_no_requests">
     <value>⚠️ No *Sirena* activation requests are available.

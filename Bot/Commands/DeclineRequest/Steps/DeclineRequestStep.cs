@@ -2,15 +2,15 @@ using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
-using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
+using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
 public sealed class DeclineRequestStep(IRightsManageOperation rightsManager, IGetUserInformation getUser
-, DeclineRequestMessageBuilder declineMessageBuilder
-, NullableContainer<SirenRepresentation> sirenContainer
-  ) : CommandStep
+  , DeclineRequestMessageBuilder declineMessageBuilder
+  , NullableContainer<SirenRepresentation> sirenContainer
+) : CommandStep
 {
   private readonly IRightsManageOperation rightsManager = rightsManager;
   private readonly IGetUserInformation getUser = getUser;
@@ -34,8 +34,8 @@ public sealed class DeclineRequestStep(IRightsManageOperation rightsManager, IGe
     var key = context.GetArgsString().GetParameterByNumber(1);
     if (!long.TryParse(key, out var requestorId))
     {
-      declineMessageBuilder.NoRequestor(context, sirena, key);
-      return Observable.Return(new Report(Result.Canceled, declineMessageBuilder));
+      var fallback = new FallbackRequestContext(context, RequestsCommand.NAME, sirena.ShortHash);
+      return Observable.Return(new Report(fallback));
     }
 
     var getUsername = getUser.GetNickname(requestorId);
@@ -49,6 +49,7 @@ public sealed class DeclineRequestStep(IRightsManageOperation rightsManager, IGe
       .Select((_result) =>
       {
         if (!_result.First)
+          //TODO: Change to Report(Result.Exception..)
           throw new InvalidOperationException($"Attempt to decline Sirena request failed. Parameters: (SID: {sirena.SID}, UID: {requestorId})");
         declineMessageBuilder.Success(context, sirena, _result.Second);
         return new Report(Result.Success, declineMessageBuilder);
@@ -61,10 +62,14 @@ public sealed class DeclineRequestStep(IRightsManageOperation rightsManager, IGe
     }
   }
 
-  public class Factory(IRightsManageOperation rightsManager, IGetUserInformation getUser, DeclineRequestMessageBuilder declineMessageBuilder)
+  public class Factory(IRightsManageOperation rightsManager, IGetUserInformation getUser
+    , DeclineRequestMessageBuilder.Factory declineMessageBuilderFactory)
     : IFactory<NullableContainer<SirenRepresentation>, DeclineRequestStep>
   {
     public DeclineRequestStep Create(NullableContainer<SirenRepresentation> sirenaContainer)
-      => new DeclineRequestStep(rightsManager, getUser, declineMessageBuilder, sirenaContainer);
+    {
+      var declineMessageBuilder = declineMessageBuilderFactory.Create();
+      return new DeclineRequestStep(rightsManager, getUser, declineMessageBuilder, sirenaContainer);
+    }
   }
 }

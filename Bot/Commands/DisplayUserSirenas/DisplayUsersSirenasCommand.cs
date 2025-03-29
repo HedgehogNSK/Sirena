@@ -5,30 +5,29 @@ using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
-public class DisplayUsersSirenasCommand : AbstractBotCommmand, IBotCommand
+public sealed class DisplayUsersSirenasCommand(IGetUserRelatedSirenas getUserSirenas
+  , IMessageSender messageSender
+  , ILocalizationProvider localizationProvider)
+  : AbstractBotCommmand(NAME, DESCRIPTION), IBotCommand, IDisposable
 {
   public const string NAME = "list";
   public const string DESCRIPTION = "Shows a list of sirenas that are being tracked.";
-  private IGetUserRelatedSirenas getUserSirenas;
-  private readonly IMessageSender messageSender;
-  private readonly ILocalizationProvider localizationProvider;
+  private readonly IGetUserRelatedSirenas getUserSirenas = getUserSirenas;
+  private readonly IMessageSender messageSender = messageSender;
+  private readonly ILocalizationProvider localizationProvider = localizationProvider;
+  private IDisposable? displaySirenasStream;
 
-  public DisplayUsersSirenasCommand(IGetUserRelatedSirenas getUserSirenas,
-  IMessageSender messageSender,
-  ILocalizationProvider localizationProvider)
-  : base(NAME, DESCRIPTION)
+  public void Dispose()
   {
-    this.getUserSirenas = getUserSirenas;
-    this.messageSender = messageSender;
-    this.localizationProvider = localizationProvider;
+    displaySirenasStream?.Dispose();
   }
 
   public override void Execute(IRequestContext context)
   {
     long uid = context.GetUser().Id;
 
-    IDisposable displaySirenasStream = getUserSirenas.GetUserSirenas(uid)
-     .Subscribe(x => DisplaySirenas(x, context));
+    displaySirenasStream = getUserSirenas.GetUserSirenas(uid)
+    .Subscribe(x => DisplaySirenas(x, context));
   }
 
   private void DisplaySirenas(IEnumerable<SirenRepresentation> userSirenas, IRequestContext context)

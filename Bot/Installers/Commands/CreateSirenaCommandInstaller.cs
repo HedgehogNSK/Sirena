@@ -13,8 +13,8 @@ namespace Hedgey.Sirena.Bot.DI
     {
       base.Install();
 
-      Container.Register<IGetUserOperationAsync, GetUserOperationAsync>();
-      Container.Register<ICreateSirenaOperationAsync, CreateSirenaOperationAsync>();
+      Container.RegisterSingleton<IGetUserOperationAsync, GetUserOperationAsync>();
+      Container.RegisterSingleton<ICreateSirenaOperationAsync, CreateSirenaOperationAsync>();
 
       Container.RegisterSingleton<IFactory<IRequestContext, CreateMessageBuilder>, CreateMessageBuilder.Factory>();
 
