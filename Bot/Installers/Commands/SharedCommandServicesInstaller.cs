@@ -19,8 +19,8 @@ public class SharedCommandServicesInstaller(Container container) : Installer(con
     Container.RegisterSingleton<IUpdateSirenaOperation, SirenaOperations>();
     Container.RegisterSingleton<IUnsubscribeSirenaOperation, SirenaOperations>();
     Container.RegisterSingleton<IGetUserInformation, GetUserInformation>();
-    Container.RegisterSingleton<IGetUserOverviewAsync, GetUserStatsOperationAsync>();
     Container.RegisterSingleton<IRightsManageOperation, SirenaOperations>();
+    Container.RegisterSingleton<IGetUserOverviewAsync, UserOperations>();
     Container.RegisterSingleton<IUserInfoOperations, UserOperations>();
     Container.RegisterSingleton<IUserEditOperations, UserOperations>();
 

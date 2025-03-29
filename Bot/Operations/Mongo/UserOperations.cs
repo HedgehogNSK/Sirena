@@ -7,7 +7,7 @@ namespace Hedgey.Sirena.Bot.Operations.Mongo;
 
 public class UserOperations(IMongoCollection<UserRepresentation> users
   , IMongoCollection<SirenRepresentation> sirens)
- : IUserEditOperations, IUserInfoOperations
+ : IUserEditOperations, IUserInfoOperations, IGetUserOverviewAsync
 {
   private readonly IMongoCollection<UserRepresentation> users = users;
   private readonly IMongoCollection<SirenRepresentation> sirens = sirens;
@@ -18,7 +18,6 @@ public class UserOperations(IMongoCollection<UserRepresentation> users
     var update = Builders<UserRepresentation>.Update
         .SetOnInsert(x => x.UID, userID)
         .SetOnInsert(x => x.ChatID, chatID);
-    UserRepresentation newUser = new() { UID = userID, ChatID = chatID };
     var options = new UpdateOptions { IsUpsert = true };
     return Observable.FromAsync(() => users.UpdateOneAsync(filter, update, options))
       .Select(x =>
@@ -32,20 +31,23 @@ public class UserOperations(IMongoCollection<UserRepresentation> users
       });
   }
 
-  public IObservable<UserStatistics> Get(long userID)
+  public IObservable<UserStatistics> Get(long uid) 
+    => Observable.FromAsync(() => (this as IGetUserOverviewAsync).Get(uid));
+
+  Task<UserStatistics> IGetUserOverviewAsync.Get(long uid)
   {
     var query = sirens.AsQueryable()
-    .Where(_sirena => _sirena.OwnerId == userID
-                      || _sirena.Listener.Any(x => x == userID)
-                      || _sirena.Responsible.Any(x => x == userID))
+    .Where(_sirena => _sirena.OwnerId == uid
+                      || _sirena.Listener.Any(x => x == uid)
+                      || _sirena.Responsible.Any(x => x == uid))
     .GroupBy(keySelector: x => true,
       resultSelector: (_, _sirens) => new UserStatistics
       {
-        SirenasCount = _sirens.Sum(x => x.OwnerId == userID ? 1 : 0),
-        Subscriptions = _sirens.Sum(_sirena => (Mql.Exists(_sirena.Listener) && _sirena.Listener.Contains(userID)) ? 1 : 0),
-        Responsible = _sirens.Sum(_sirena => (Mql.Exists(_sirena.Responsible) && _sirena.Responsible.Contains(userID)) ? 1 : 0)
+        Requests = _sirens.Sum(_sirena => (_sirena.OwnerId == uid && Mql.Exists(_sirena.Requests) ) ? _sirena.Requests.Length : 0),
+        Responsible = _sirens.Sum(_sirena => (Mql.Exists(_sirena.Responsible) && _sirena.Responsible.Contains(uid)) ? 1 : 0),
+        SirenasCount = _sirens.Sum(x => x.OwnerId == uid ? 1 : 0),
+        Subscriptions = _sirens.Sum(_sirena => (Mql.Exists(_sirena.Listener) && _sirena.Listener.Contains(uid)) ? 1 : 0),
       });
-
-    return Observable.FromAsync(() => query.FirstOrDefaultAsync());
+      return query.FirstOrDefaultAsync();
   }
 }

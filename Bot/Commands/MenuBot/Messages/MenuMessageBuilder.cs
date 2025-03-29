@@ -11,13 +11,11 @@ namespace Hedgey.Sirena.Bot;
 public class MenuMessageBuilder : MessageBuilder
 {
   string menuLocalKey = "command.menu.title";
-  private bool userHasSirenas = false;
-  private bool userSubscribed = false;
-  private UserStatistics? result = null;
+  UserStatistics result = new();
 
   public MenuMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider  localizationProvider)
-  : base(chatId, info,localizationProvider)
+  , ILocalizationProvider localizationProvider)
+  : base(chatId, info, localizationProvider)
   { }
 
   public MenuMessageBuilder SetText(string localizationKey)
@@ -25,21 +23,9 @@ public class MenuMessageBuilder : MessageBuilder
     menuLocalKey = localizationKey;
     return this;
   }
-  public MenuMessageBuilder UserHasSirenas(bool userHasSirenas)
-  {
-    this.userHasSirenas = userHasSirenas;
-    return this;
-  }
-  public MenuMessageBuilder UserHasSubcriptions(bool userSubscribed)
-  {
-    this.userSubscribed = userSubscribed;
-    return this;
-  }
   internal MenuMessageBuilder AddUserStatistics(UserStatistics result)
   {
     this.result = result;
-    UserHasSirenas(result.SirenasCount != 0);
-    UserHasSubcriptions(result.Subscriptions != 0);
     return this;
   }
   public override SendMessage Build()
@@ -48,15 +34,24 @@ public class MenuMessageBuilder : MessageBuilder
     .AddFindButton(Info)
     .AddSubscribeButton(Info);
 
-    if (userSubscribed)
-      keyboardBuilder.EndRow().BeginRow().AddDisplaySubscriptionsButton(Info, result?.Subscriptions ?? 0);
+    if (result.Subscriptions != 0)
+      keyboardBuilder.EndRow().BeginRow().AddDisplaySubscriptionsButton(Info, result.Subscriptions);
+
+    if (result.SirenasCount != 0 || result.Requests != 0)
+    {
+      keyboardBuilder.EndRow()
+     .BeginRow();
+
+      if (result.SirenasCount != 0)
+        keyboardBuilder.AddDisplayUserSirenasButton(Info, result.SirenasCount);
+
+      if (result.Requests != 0)
+        keyboardBuilder.AddRequestsButton(Info, result.Requests);
+    }
 
     keyboardBuilder.EndRow()
-    .BeginRow()
-    .AddCreateButton(Info);
-
-    if (userHasSirenas)
-      keyboardBuilder.AddDisplayUserSirenasButton(Info,result?.SirenasCount ?? 0);
+   .BeginRow()
+   .AddCreateButton(Info);
 
     IReplyMarkup markup = keyboardBuilder.EndRow().ToReplyMarkup();
     string localizedMessage = Localize(menuLocalKey);

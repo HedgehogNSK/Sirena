@@ -13,7 +13,7 @@ namespace Hedgey.Sirena.Bot;
 public class SirenaInfoMessageBuilder : MessageBuilder
 {
   private readonly long uid;
-  private SirenRepresentation sirena;
+  private readonly SirenRepresentation sirena;
 
   public SirenaInfoMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, long uid, SirenRepresentation sirena)
@@ -39,7 +39,7 @@ public class SirenaInfoMessageBuilder : MessageBuilder
       if (canCall)
         keyboardBuilder.AddCallSirenaButton(Info, sirena.ShortHash).EndRow().BeginRow();
       if (sirena.Requests.Length != 0)
-        keyboardBuilder.AddDisplayRequestsButton(Info, sirena.ShortHash, sirena.Requests.Length);
+        keyboardBuilder.AddRequestsButton(Info, sirena.Requests.Length, sirena.ShortHash);
       if (sirena.Responsible.Length != 0)
         keyboardBuilder.AddDisplayResponsiblesButton(Info, sirena.ShortHash, sirena.Responsible.Length);
       if (sirena.Requests.Length != 0 || sirena.Responsible.Length != 0)

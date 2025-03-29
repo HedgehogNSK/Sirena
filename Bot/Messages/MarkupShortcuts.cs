@@ -95,8 +95,16 @@ public static class MarkupShortcuts
   public static IInlineKeyboardRow AddRequestButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
   , string shortHash, string title = requestRightTitle)
     => inlineKeyboardRow.AddLocalizedButton(title, info, RequestRightsCommand.NAME, shortHash);
-  public static IInlineKeyboardRow AddRequestsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string title = getReuqestsTitle)
-    => inlineKeyboardRow.AddLocalizedButton(title, info, RequestsCommand.NAME);
+  public static IInlineKeyboardRow AddRequestsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
+    , int count, string shortHash = "")
+  {
+     string localTitle = LocalizationProvider?.Get(getReuqestsTitle, info)
+      ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
+    localTitle = string.Format(localTitle, count);
+
+    return inlineKeyboardRow.AddButton(localTitle, RequestsCommand.NAME, shortHash);
+  }
+
   public static IInlineKeyboardRow AddRetryButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
   , string command, string title = retryTitle)
   {
@@ -114,14 +122,6 @@ public static class MarkupShortcuts
    => inlineKeyboardRow.AddLocalizedButton(subscribeTitle, info, SubscribeCommand.NAME, shortHash);
   public static IInlineKeyboardRow AddUnsubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, SirenRepresentation siren)
     => inlineKeyboardRow.AddLocalizedButton(unsubscribeTitle, info, UnsubscribeCommand.NAME, siren.Hash);
-  public static IInlineKeyboardRow AddDisplayRequestsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string shortHash, int count)
-  {
-     string localTitle = LocalizationProvider?.Get(getReuqestsTitle, info)
-      ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
-    localTitle = string.Format(localTitle, count);
-
-    return inlineKeyboardRow.AddButton(localTitle, RequestsCommand.NAME, shortHash);
-  }
 
   public static IInlineKeyboardRow AddDisplayResponsiblesButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string sirenaId, int count)
   {
