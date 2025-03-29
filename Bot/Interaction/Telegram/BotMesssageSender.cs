@@ -22,7 +22,7 @@ namespace Hedgey.Sirena.Bot
     {
       return Observable.Defer(() => Observable.FromAsync(() => bot.CopyMessage(message)))
       .Catch((Exception _exception)
-        => throw new Exception(string.Format(copyErrorMessage, message.FromChatId.Identifier, message.MessageId, message.ChatId.Identifier), _exception));
+        => throw new InvalidOperationException(string.Format(copyErrorMessage, message.FromChatId.Identifier, message.MessageId, message.ChatId.Identifier), _exception));
     }
 
     public override IObservable<MessageIdObject[]> Copy(CopyMessages messages)
@@ -31,7 +31,7 @@ namespace Hedgey.Sirena.Bot
         .Catch((Exception _ex) =>
         {
           var stringOfIds = string.Join(';', messages.MessageIds.Select(x => x.ToString()));
-          throw new Exception(string.Format(copyErrorMessage
+          throw new InvalidOperationException(string.Format(copyErrorMessage
           , messages.FromChatId.Identifier, stringOfIds, messages.ChatId.Identifier)
           , _ex);
         });
@@ -42,7 +42,7 @@ namespace Hedgey.Sirena.Bot
           .Catch((Exception _ex) =>
           {
             const string editErrorMessage = "Exception on edit message {0} in chat: {1}";
-            throw new Exception(string.Format(editErrorMessage
+            throw new InvalidOperationException(string.Format(editErrorMessage
               , message.MessageId, message.ChatId.Identifier)
             , _ex);
           });
@@ -52,7 +52,7 @@ namespace Hedgey.Sirena.Bot
           .Catch((Exception _ex) =>
           {
             const string editErrorMessage = "Exception on edit message caption {0} in chat: {1}";
-            throw new Exception(string.Format(editErrorMessage
+            throw new InvalidOperationException(string.Format(editErrorMessage
               , message.MessageId, message.ChatId.Identifier)
             , _ex);
           });
@@ -62,7 +62,7 @@ namespace Hedgey.Sirena.Bot
           .Catch((Exception _ex) =>
           {
             const string editErrorMessage = "Exception on edit message reply markup {0} in chat: {1}";
-            throw new Exception(string.Format(editErrorMessage
+            throw new InvalidOperationException(string.Format(editErrorMessage
               , message.MessageId, message.ChatId.Identifier)
             , _ex);
           });
@@ -72,7 +72,7 @@ namespace Hedgey.Sirena.Bot
           .Catch((Exception _ex) =>
           {
             const string editErrorMessage = "Exception on edit message {0} in chat: {1}";
-            throw new Exception(string.Format(editErrorMessage
+            throw new InvalidOperationException(string.Format(editErrorMessage
               , message.MessageId, message.ChatId.Identifier)
             , _ex);
           });
@@ -80,7 +80,7 @@ namespace Hedgey.Sirena.Bot
     public override IObservable<Message> Edit(IEditMessageBuilder messageBuilder)
     {
       return Edit(messageBuilder.Build()).Catch((Exception _exception)
-        => throw new Exception($"Exception on edit message made by builder {messageBuilder.GetType().Name}", _exception));
+        => throw new InvalidOperationException($"Exception on edit message made by builder {messageBuilder.GetType().Name}", _exception));
     }
 
     const string forwardErrorMessage = "Exception on forward message [{0}|{1}] to chat: {2}";
@@ -88,47 +88,34 @@ namespace Hedgey.Sirena.Bot
     public override IObservable<Message> Forward(ForwardMessage message)
       => Observable.Defer(() => Observable.FromAsync(() => bot.ForwardMessage(message)))
           .Catch((Exception _ex)
-            => throw new Exception(string.Format(forwardErrorMessage, message.FromChatId.Identifier
+            => throw new InvalidOperationException(string.Format(forwardErrorMessage, message.FromChatId.Identifier
             , message.MessageId, message.ChatId.Identifier), _ex));
 
-    public IObservable<MessageIdObject[]> Forward(ForwardMessages messages, params long[] targetArray)
-    {
-      return targetArray.Select(CreateForwardToUser).Concat();
-
-      IObservable<MessageIdObject[]> CreateForwardToUser(long chatId, int index)
-      {
-        return Observable.Defer(() =>
-            {
-              messages.ChatId = chatId;
-              return Forward(messages);
-            });
-      }
-    }
     public override IObservable<MessageIdObject[]> Forward(ForwardMessages messages)
       => Observable.Defer(() => Observable.FromAsync(() => bot.ForwardMessages(messages)))
           .Catch((Exception _ex) =>
             {
               var stringOfIds = string.Join(';', messages.MessageIds.Select(x => x.ToString()));
-              throw new Exception(string.Format(forwardErrorMessage
+              throw new InvalidOperationException(string.Format(forwardErrorMessage
               , messages.FromChatId.Identifier, stringOfIds, messages.ChatId.Identifier)
               , _ex);
             });
 
     public override IObservable<Message> ObservableSend(SendMessage message)
     {
-
       return Observable.FromAsync(() => bot.SendMessage(message))
       .Catch((Exception _exception)
-        => throw new Exception($"Exception on sending message to chat: {message.ChatId.Identifier}", _exception));
+        => throw new InvalidOperationException($"Exception on sending message to chat: {message.ChatId.Identifier}", _exception));
     }
     public override IObservable<Message> ObservableSend(ISendMessageBuilder messageBuilder)
     {
-      return ObservableSend(messageBuilder.Build())
+      var message = messageBuilder.Build();
+      return ObservableSend(message)
         .Catch((Exception _exception)
-          => throw new Exception($"Exception on sending message made by builder {messageBuilder.GetType().Name}", _exception));
+          => throw new InvalidOperationException($"Exception on sending message made by builder {messageBuilder.GetType().Name}", _exception));
     }
 
-    public override void Send(ChatId chatId, string text, IReplyMarkup? markup, bool silent)
+    public override void Send(ChatId chatId, string text, IReplyMarkup? markup = null, bool silent = true)
     {
 
       var sendMessage = new SendMessage
@@ -143,16 +130,15 @@ namespace Hedgey.Sirena.Bot
       Send(sendMessage);
     }
 
-    public async override void Send(SendMessage sendMessage)
+    public async override void Send(SendMessage message)
     {
       try
       {
-        Message message = await bot.SendMessage(sendMessage);
-        var result = message;
+        _ = await bot.SendMessage(message);
       }
       catch (ApiException ex)
       {
-        var sendException = new Exception($"Exception on sending text to chat: {sendMessage.ChatId.Identifier} reason: {ex.StatusCode}\n{ex.Description}", ex);
+        var sendException = new InvalidOperationException($"Exception on sending text to chat: {message.ChatId.Identifier} reason: {ex.StatusCode}\n{ex.Description}", ex);
         Console.WriteLine(sendException);
       }
     }
