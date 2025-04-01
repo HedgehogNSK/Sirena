@@ -1,3 +1,4 @@
+using System.Text;
 using Hedgey.Extensions;
 using RxTelegram.Bot.Exceptions;
 
@@ -14,18 +15,28 @@ static public class ExceptionHandler
     do
     {
       string? name = current.GetType().FullName;
+      StringBuilder builder = new StringBuilder($"<{i}> {name}: {current.Message}\n");
       switch (current)
       {
         case ApiException apiException:
           {
-            string message = $"<{i}> {name}: {current.Message}\nDescription: {apiException.Description}\n{current.StackTrace}";
-            Console.WriteLine(message);
+            builder.Append($"Description: {apiException.Description}\n{current.StackTrace}");
+            Console.WriteLine(builder);
           }
           break;
-        default: Console.WriteLine($"<{i}> {name}: {current.Message}\n{current.StackTrace}"); break;
+        case RequestValidationException validationException:
+          {
+            builder.AppendLine("validateion errors:");
+             foreach(var error in validationException.ValidationErrors)
+              builder.AppendLine(error.GetMessage);
+             Console.WriteLine(builder); 
+          }
+          break;
+        default: Console.WriteLine(builder.AppendLine(current.StackTrace)); break;
       }
       current = current.InnerException;
       ++i;
+      builder.Clear();
     }
     while (current != null);
   }

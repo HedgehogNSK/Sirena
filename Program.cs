@@ -1,4 +1,4 @@
-using Hedgey.Extensions.NetCoreServer;
+﻿using Hedgey.Extensions.NetCoreServer;
 using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Extensions.Telegram;
 using Hedgey.Extensions.Types;
@@ -44,8 +44,17 @@ static internal class Program
     StartServer(server);
 
     SetWebhook setWebhook = container.GetInstance<SetWebhook>();
+    try{
     await bot.SetWebhook(setWebhook);
     await bot.DisplayWebhookInfo();
+    }
+    catch (Exception ex)
+    {
+      ExceptionHandler.OnError(ex);
+      if (server.IsStarted)
+        server.Stop();
+      await SwitchToLongpolling();
+    }
 
     var observableMessages = bot.Updates.Message
         .Catch((Exception _ex) =>
