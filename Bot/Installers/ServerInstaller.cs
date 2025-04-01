@@ -1,13 +1,16 @@
 using Hedgey.Extensions;
 using Hedgey.Extensions.NetCoreServer;
 using Hedgey.Extensions.SimpleInjector;
-using Hedgey.Security.x509Certificates;
 using Hedgey.Sirena.HTTP.Server;
 using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Enums;
 using RxTelegram.Bot.Interface.Setup;
 using SimpleInjector;
 using System.Reactive.Subjects;
+
+using Hedgey.Security.x509Certificates;
+using System.Security.Cryptography.X509Certificates;
+using System.Runtime.InteropServices;
 
 namespace Hedgey.Sirena.Bot.DI.HTTP;
 
@@ -19,7 +22,8 @@ public class ServerInstaller(Container container) : Installer(container)
     Container.RegisterSingleton(() => Container.GetInstance<IFactory<NetCoreServer.HttpServer>>().Create());
     Container.Register<IFactory<NetCoreServer.HttpServer, NetCoreServer.TcpSession>, HttpSession.Factory>();
 
-    Container.Register<ICertificateProvider, X509StoreCertificateProvider>();
+    RegisterCertificateProvider();
+
     Container.Register<IFactory<HttpsServer>, ServerFactory>();
     Container.RegisterSingleton(() => Container.GetInstance<IFactory<HttpsServer>>().Create());
     Container.Register<IFactory<NetCoreServer.HttpsServer, NetCoreServer.SslSession>, HttpsSession.Factory>();
@@ -51,5 +55,16 @@ public class ServerInstaller(Container container) : Installer(container)
         AllowedUpdates = [UpdateType.Message, UpdateType.CallbackQuery],
       };
     });
+  }
+
+  private void RegisterCertificateProvider()
+  {
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+    {
+      Container.Register<ICertificateProvider>(() => new X509StoreCertificateProvider(StoreName.My, StoreLocation.CurrentUser));
+      return;
+    }
+
+    throw new NotImplementedException("No behavior");
   }
 }
