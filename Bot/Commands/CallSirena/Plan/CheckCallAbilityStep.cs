@@ -32,7 +32,7 @@ public class CheckCallAbilityStep(
     {
       ISendMessageBuilder builder = availableSirenasMessageBuilderFactory.Create(context, sirenas);
       return new Report(Result.Canceled, builder);
-    };
+    }
   }
   public class Factory(IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> availableSirenasMessageBuilderFactory
   , IGetUserRelatedSirenas getUserRelatedSirenas)

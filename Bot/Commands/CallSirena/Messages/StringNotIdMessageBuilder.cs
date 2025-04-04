@@ -12,7 +12,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class StringNotIdMessageBuilder : MessageBuilder
 {
-  private IEnumerable<SirenRepresentation> sirens;
+  private readonly IEnumerable<SirenRepresentation> sirens;
 
   public StringNotIdMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider
@@ -29,53 +29,7 @@ public class StringNotIdMessageBuilder : MessageBuilder
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
     if (sirens.Any())
     {
-      const string template = ". `{0}` *{1}*\n";
-      string subscribers = Localize("command.display_sirenas.subscribers");
-      string listIntroduction = Localize("command.call.available.description");
-
-      //Evaluate buttons per line
-      const float maxPerLine = 5f;
-      int total = sirens.Count();
-      int lines = (int)MathF.Ceiling(total / maxPerLine);
-      if (total > 2 && lines == 1) lines = 2;
-      int extra = total % lines;
-      int buttonsPerLine = total / lines + 1;
-      if (extra > 0)
-        ++buttonsPerLine;
-
-      int number = 0;
-      int prevNumber = 0;
-      builder.AppendLine(listIntroduction).AppendLine();
-      foreach (var sirena in sirens)
-      {
-        ++number;
-        //If the row is full
-        if ((number - prevNumber) % buttonsPerLine == 0)
-        {
-          //If long rows not null
-          if (extra > 0)
-          {
-            --extra;
-            //When extras ends up decrease buttonsPerLine
-            if (extra == 0)
-            {
-              --buttonsPerLine;
-              prevNumber = number;
-            }
-          }
-          keyboardBuilder.EndRow().BeginRow();
-        }
-        keyboardBuilder.AddButton(number, CallSirenaCommand.NAME, sirena.ShortHash);
-
-        builder.Append(number).AppendFormat(template, sirena.ShortHash, sirena.Title);
-        if (sirena.Listener.Length != 0)
-          builder.AppendFormat(subscribers, sirena.Listener.Length);
-        builder.AppendLine();
-      }
-      IReplyMarkup replyMarkup = keyboardBuilder.EndRow().ToReplyMarkup();
-
-      var messageText = builder.ToString();
-      return CreateDefault(messageText, replyMarkup);
+      return DisplayAvailableSirenas(builder, keyboardBuilder);
     }
     else
     {
@@ -85,6 +39,58 @@ public class StringNotIdMessageBuilder : MessageBuilder
       return CreateDefault(noAvailable, markup);
     }
   }
+
+  private SendMessage DisplayAvailableSirenas(StringBuilder builder, RxTelegram.Bot.Utils.Keyboard.Interfaces.IInlineKeyboardRow keyboardBuilder)
+  {
+    const string template = ". `{0}` *{1}*\n";
+    string subscribers = Localize("command.display_sirenas.subscribers");
+    string listIntroduction = Localize("command.call.available.description");
+
+    //Evaluate buttons per line
+    const float maxPerLine = 5f;
+    int total = sirens.Count();
+    int lines = (int)MathF.Ceiling(total / maxPerLine);
+    if (total > 2 && lines == 1) lines = 2;
+    int extra = total % lines;
+    int buttonsPerLine = total / lines + 1;
+    if (extra > 0)
+      ++buttonsPerLine;
+
+    int number = 0;
+    int prevNumber = 0;
+    builder.AppendLine(listIntroduction).AppendLine();
+    foreach (var sirena in sirens)
+    {
+      ++number;
+      //If the row is full
+      if ((number - prevNumber) % buttonsPerLine == 0)
+      {
+        //If long rows not null
+        if (extra > 0)
+        {
+          --extra;
+          //When extras ends up decrease buttonsPerLine
+          if (extra == 0)
+          {
+            --buttonsPerLine;
+            prevNumber = number;
+          }
+        }
+        keyboardBuilder.EndRow().BeginRow();
+      }
+      keyboardBuilder.AddButton(number, CallSirenaCommand.NAME, sirena.ShortHash);
+
+      builder.Append(number).AppendFormat(template, sirena.ShortHash, sirena.Title);
+      if (sirena.Listener.Length != 0)
+        builder.AppendFormat(subscribers, sirena.Listener.Length);
+      builder.AppendLine();
+    }
+    IReplyMarkup replyMarkup = keyboardBuilder.EndRow().ToReplyMarkup();
+
+    var messageText = builder.ToString();
+    return CreateDefault(messageText, replyMarkup);
+  }
+
   public class Factory(ILocalizationProvider localizationProvider)
     : IFactory<IRequestContext, IEnumerable<SirenRepresentation>, StringNotIdMessageBuilder>
   {
