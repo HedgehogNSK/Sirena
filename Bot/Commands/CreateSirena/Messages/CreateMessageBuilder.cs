@@ -20,7 +20,7 @@ public class CreateMessageBuilder : MessageBuilder, ISendMessageBuilder
 
   public CreateMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, int minSymbols, int maxSymbols
-  ,string botName)
+  , string botName)
    : base(chatId, info, localizationProvider)
   {
     this.minSymbols = minSymbols;
@@ -70,7 +70,7 @@ public class CreateMessageBuilder : MessageBuilder, ISendMessageBuilder
     {
       message = Localize("command.create_sirena.success");
       var link = Localize("miscellaneous.link");
-      message = string.Format(message, sirena.ShortHash)+string.Format(link, sirena.ShortHash,botName);
+      message = string.Format(message, sirena.ShortHash) + string.Format(link, sirena.ShortHash, botName);
     }
     var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
     return CreateDefault(message, markup);
@@ -83,7 +83,7 @@ public class CreateMessageBuilder : MessageBuilder, ISendMessageBuilder
     public Factory(ILocalizationProvider localizationProvider, TelegramBot bot)
     {
       this.localizationProvider = localizationProvider;
-      botName = bot.GetMe().GetAwaiter().GetResult().Username.Replace("_","\\_"); 
+      botName = bot.GetMe().GetAwaiter().GetResult().Username.Replace("_", "\\_");
     }
 
     public CreateMessageBuilder Create(IRequestContext context)
