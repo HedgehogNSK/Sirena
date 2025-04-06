@@ -11,8 +11,8 @@ namespace Hedgey.Sirena.Bot;
 
 public class NotAllowedToCallMessageBuilder : MessageBuilder
 {
-  private SirenRepresentation sirena;
-  private long uid;
+  private readonly SirenRepresentation sirena;
+  private readonly long uid;
 
   public NotAllowedToCallMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, SirenRepresentation sirena, long uid)
