@@ -58,7 +58,9 @@ public class AddExtraInformationStep : CommandStep
     {
       const string messageKey = "command.call.extra_info";
       const string skipButtonKey = messageKey + ".skip";
-      return new OptionalDataRequireMessageBuilder(context, localizationProvider, messageKey, skipButtonKey);
+      var info = context.GetCultureInfo();
+      var message = string.Format(localizationProvider.Get(messageKey, info), skipButtonKey);
+      return new OptionalDataRequireMessageBuilder(context, localizationProvider, message, skipButtonKey);
     }
   }
 }

@@ -7,15 +7,15 @@ namespace Hedgey.Sirena.Bot;
 
 public class OptionalDataRequireMessageBuilder(IRequestContext context
   , ILocalizationProvider localizationProvider
-  , string notificationLocalizationKey
+  , string notificationMessage
   , string skipButtonLocalizationKey)
    : MessageBuilder(context.GetChat().Id, context.GetCultureInfo(), localizationProvider)
 {
-  protected string SkipButtonCallback => '/'+context.GetCommandName();
+  protected string SkipButtonCallback => '/' + context.GetCommandName();
 
   public override SendMessage Build()
   {
-    string notification = Localize(notificationLocalizationKey);
+    string notification = notificationMessage;
     string skipTitle = Localize(skipButtonLocalizationKey);
 
     var markup = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
