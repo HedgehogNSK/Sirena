@@ -44,9 +44,10 @@ static internal class Program
     StartServer(server);
 
     SetWebhook setWebhook = container.GetInstance<SetWebhook>();
-    try{
-    await bot.SetWebhook(setWebhook);
-    await bot.DisplayWebhookInfo();
+    try
+    {
+      await bot.SetWebhook(setWebhook);
+      await bot.DisplayWebhookInfo();
     }
     catch (Exception ex)
     {
@@ -132,6 +133,18 @@ static internal class Program
         .Repeat()
         .Subscribe();
 
+    var editReplyMarkupStream = schedulerTrackPublisher
+        .Where(_report => _report.StepReport.EditMessageReplyMarkupBuilder != null)
+        .SelectMany(_report => botProxyRequests.Edit(_report.StepReport.EditMessageReplyMarkupBuilder))
+        .Catch((Exception _ex) =>
+        {
+          ExceptionHandler.OnError(_ex);
+          return Observable.Empty<Message>();
+        })
+        .Repeat()
+        .Subscribe();
+
+
     var fallbackStream = schedulerTrackPublisher
         .Where(_report => _report.StepReport.Fallback != null)
         .Subscribe(_report => requestHandler.Process(_report.StepReport.Fallback), ExceptionHandler.OnError);
@@ -141,7 +154,8 @@ static internal class Program
 
     IDisposable subscription = new CompositeDisposable(callbackStream
     , constexStream, approveCallbackStream, planProcessingStream
-    , sendMessagesStream, schedulerTrackStream, editMessagesStream,fallbackStream);
+    , sendMessagesStream, schedulerTrackStream, editMessagesStream
+    , editReplyMarkupStream, fallbackStream);
 
     string? input;
     do
@@ -170,9 +184,8 @@ static internal class Program
 
       return Observable.FromAsync(() => bot.AnswerCallbackQuery(callbackAnswer))
         .Catch((ApiException _ex) =>
-        {
-          throw new InvalidOperationException($"Error on callback answer to user {query.From.Id} on request: \"{query.Data}\"", _ex);
-        });
+          throw new InvalidOperationException($"Error on callback answer to user {query.From.Id} on request: \"{query.Data}\"", _ex)
+        );
     }
 
     async Task SwitchToLongpolling()

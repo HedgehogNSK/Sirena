@@ -29,12 +29,16 @@ public abstract class CommandStep : IObservableStep<IRequestContext, CommandStep
 
   //TODO: Change IMessageBuilder<BaseRequest> -> IEnumerable<IMessageBuilder>
   public record class Report(Result Result, ISendMessageBuilder? MessageBuilder = null
-  , IEditMessageBuilder? EditMessageBuilder = null, IRequestContext? Fallback = null)
+  , IEditMessageBuilder? EditMessageBuilder = null
+  , IEditMessageReplyMarkupBuilder? EditMessageReplyMarkupBuilder = null
+  , IRequestContext? Fallback = null)
   {
     public Report(IRequestContext Fallback, ISendMessageBuilder? MessageBuilder = null
-  , IEditMessageBuilder? EditMessageBuilder = null) : this(Result.Canceled, MessageBuilder
-  , EditMessageBuilder, Fallback)
-    {}
+    , IEditMessageBuilder? EditMessageBuilder = null
+    , IEditMessageReplyMarkupBuilder? EditMessageReplyMarkupBuilder = null)
+    : this(Result.Canceled, MessageBuilder, EditMessageBuilder
+      , EditMessageReplyMarkupBuilder, Fallback)
+    { }
 
     public override string ToString()
     {

@@ -15,7 +15,7 @@ public class BotMessageSenderTimerProxy : AbstractBotMessageSender, IMessageSend
   private readonly IMessageCopier messageCopier;
   private readonly IMessageForwarder messageForwarder;
   private readonly IMessageEditor messageEditor;
-  BottleNeck trafficController;
+  readonly BottleNeck trafficController;
   public BotMessageSenderTimerProxy(AbstractBotMessageSender sender)
   {
     this.sender = sender;
@@ -26,14 +26,14 @@ public class BotMessageSenderTimerProxy : AbstractBotMessageSender, IMessageSend
     trafficController = new BottleNeck(observableLimitReset, MAX_SENDS_PER_SECOND);
   }
 
-  private void OnException(Exception exception)
+  static private void OnException(Exception exception)
   {
     Console.WriteLine(exception);
   }
 
-  public override void Send(ChatId chatId, string text, IReplyMarkup? inlineMarkup = default, bool silent = true)
+  public override void Send(ChatId chatId, string text, IReplyMarkup? markup = default, bool silent = true)
   {
-    _ = trafficController.Next().Subscribe(_ => sender.Send(chatId, text, inlineMarkup, silent), OnException);
+    _ = trafficController.Next().Subscribe(_ => sender.Send(chatId, text, markup, silent), OnException);
   }
 
   public override void Send(SendMessage message)
@@ -60,6 +60,8 @@ public class BotMessageSenderTimerProxy : AbstractBotMessageSender, IMessageSend
   => WrapByDispatcher(messageEditor.Edit(message));
   public override IObservable<Message> Edit(EditMessageReplyMarkup message)
   => WrapByDispatcher(messageEditor.Edit(message));
+  public override IObservable<Message> Edit(IEditMessageReplyMarkupBuilder message)
+  => WrapByDispatcher(messageEditor.Edit(message));
   public override IObservable<Message> Edit(EditMessageText message)
   => WrapByDispatcher(messageEditor.Edit(message));
   public override IObservable<Message> Edit(IEditMessageBuilder messageBuilder)
@@ -78,7 +80,7 @@ public class BotMessageSenderTimerProxy : AbstractBotMessageSender, IMessageSend
     GC.SuppressFinalize(this);
   }
 
-  private void Dispose(bool explicitDisposing)
+  protected virtual void Dispose(bool explicitDisposing)
   {
     if (!_disposed)
     {
@@ -101,6 +103,7 @@ public class BotMessageSenderTimerProxy : AbstractBotMessageSender, IMessageSend
   {
     trafficController?.Dispose();
   }
+
 
   ~BotMessageSenderTimerProxy()
   {

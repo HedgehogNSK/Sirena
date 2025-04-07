@@ -13,6 +13,7 @@ namespace Hedgey.Sirena.Bot
     public abstract IObservable<bool> Edit(EditMessageMedia message);
     public abstract IObservable<Message> Edit(EditMessageCaption message);
     public abstract IObservable<Message> Edit(EditMessageReplyMarkup message);
+    public abstract IObservable<Message> Edit(IEditMessageReplyMarkupBuilder message);
     public abstract IObservable<Message> Edit(EditMessageText message);
     public abstract IObservable<Message> Edit(IEditMessageBuilder messageBuilder);
 

@@ -31,9 +31,9 @@ namespace Hedgey.Sirena.Bot
         .Catch((Exception _ex) =>
         {
           var stringOfIds = string.Join(';', messages.MessageIds.Select(x => x.ToString()));
-          throw new InvalidOperationException(string.Format(copyErrorMessage
-          , messages.FromChatId.Identifier, stringOfIds, messages.ChatId.Identifier)
-          , _ex);
+          var errorMessage = string.Format(copyErrorMessage
+          , messages.FromChatId.Identifier, stringOfIds, messages.ChatId.Identifier);
+          throw new InvalidOperationException(errorMessage, _ex);
         });
     }
 
@@ -81,6 +81,11 @@ namespace Hedgey.Sirena.Bot
     {
       return Edit(messageBuilder.Build()).Catch((Exception _exception)
         => throw new InvalidOperationException($"Exception on edit message made by builder {messageBuilder.GetType().Name}", _exception));
+    }
+    public override IObservable<Message> Edit(IEditMessageReplyMarkupBuilder message)
+    {
+      return Edit(message.Build()).Catch((Exception _exception)
+        => throw new InvalidOperationException($"Exception on edit message made by builder {message.GetType().Name}", _exception));
     }
 
     const string forwardErrorMessage = "Exception on forward message [{0}|{1}] to chat: {2}";
