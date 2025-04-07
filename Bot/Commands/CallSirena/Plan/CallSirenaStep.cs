@@ -1,10 +1,10 @@
 using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
+using Hedgey.Telegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using System.Reactive.Linq;
-using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 public class CallSirenaStep : CommandStep
@@ -13,9 +13,9 @@ public class CallSirenaStep : CommandStep
   private readonly NullableContainer<Message> messageContainer;
   private readonly IMessageSender messageSender;
   private readonly IMessageCopier messageCopier;
-  private readonly IUpdateSirenaOperation updateSirenaOperation;
+  private readonly ISirenaActivationOperation activationOperation;
   private readonly IFactory<IRequestContext, int, SirenRepresentation, ISendMessageBuilder> callReportMessageBuilderFactory;
-  private readonly IFactory<long, IRequestContext, SirenRepresentation, ISendMessageBuilder> callServiceMessageBuilderFactory;
+  private readonly IFactory<IRequestContext, ServiceMessageData, ISendMessageBuilder> callServiceMessageBuilderFactory;
 
   /// <summary>
   ///
@@ -25,19 +25,20 @@ public class CallSirenaStep : CommandStep
   /// <param name="messageSender"></param>
   /// <param name="messageCopier"></param>
   /// <param name="updateSirenaOperation"></param>
+  /// <param name="activationOperation"></param>
   /// <param name="callReportMessageBuilderFactory">Factory that creates message information to caller about notified users</param>
   /// <param name="callServiceMessageBuilderFactory">Factory that creates service message for subscribers</param>
   public CallSirenaStep(NullableContainer<SirenRepresentation> sirenaContainer
   , NullableContainer<Message> messageContainer
   , IMessageSender messageSender
   , IMessageCopier messageCopier
-  , IUpdateSirenaOperation updateSirenaOperation
+  , ISirenaActivationOperation activationOperation
   , IFactory<IRequestContext, int, SirenRepresentation, ISendMessageBuilder> callReportMessageBuilderFactory
-  , IFactory<long, IRequestContext, SirenRepresentation, ISendMessageBuilder> callServiceMessageBuilderFactory)
+  , IFactory<IRequestContext, ServiceMessageData, ISendMessageBuilder> callServiceMessageBuilderFactory)
   {
     this.sirenaContainer = sirenaContainer;
     this.messageSender = messageSender;
-    this.updateSirenaOperation = updateSirenaOperation;
+    this.activationOperation = activationOperation;
     this.callReportMessageBuilderFactory = callReportMessageBuilderFactory;
     this.callServiceMessageBuilderFactory = callServiceMessageBuilderFactory;
     this.messageContainer = messageContainer;
@@ -48,17 +49,28 @@ public class CallSirenaStep : CommandStep
   {
     var sirena = sirenaContainer.Get();
     var uid = context.GetUser().Id;
-    Stack<long> receiversStack = GetReceiversStack(sirena, uid);
-    SirenRepresentation.CallInfo callInfo = new(uid, DateTimeOffset.Now);
+    var cid = context.GetChat().Id;
+    Queue<long> receiversQueue = GetReceiversQueue(sirena, uid, cid);
 
-    var observableNotification = updateSirenaOperation.UpdateLastCall(sirena.SID, callInfo)
-      .SelectMany(NotifySubscriber(context, receiversStack, sirena)).Publish().RefCount();
+    var observableCallInfo = activationOperation.LogInfo(sirena.SID, uid)
+      .Publish()
+      .RefCount(2);
 
-    return observableNotification
-      .SelectMany(copyMessages => BroadcastNotification(copyMessages, receiversStack))
-      .Count()
-      .Zip(observableNotification, (_forwards, _copy) => _forwards + 1)
-      .Select(CreateReport);
+    var observableNotification = observableCallInfo
+      .SelectMany(_callInfo => NotifyFirstSubscriber(context, sirena, receiversQueue, _callInfo))
+      .SelectMany(_pair => BroadcastNotification(_pair.CopyMessage, receiversQueue)
+        .Do(_receiverIds => _pair.CurrentReceivers.AddRange(_receiverIds))
+        .Select(_ => _pair.CurrentReceivers)
+      )
+      .Publish()
+      .RefCount(2);
+
+    _ = observableCallInfo.Zip(observableNotification)
+      .SelectMany((_pair) => activationOperation.SetReceivers(_pair.First, _pair.Second))
+      .Subscribe();
+
+    return observableNotification.Select(_receivers => CreateReport(_receivers.Count));
+
 
     Report CreateReport(int notifications)
     {
@@ -69,11 +81,12 @@ public class CallSirenaStep : CommandStep
     }
   }
 
-  private IObservable<MessageIdObject[]> BroadcastNotification(CopyMessages copyMessages, Stack<long> receiversStack)
+  private IObservable<long[]> BroadcastNotification(CopyMessages copyMessages
+    , Queue<long> receiversStack)
   {
-    return receiversStack.Select(ReplaceTargetId).Concat();
+    return receiversStack.Select(ReplaceTargetId).Concat().ToArray();
 
-    IObservable<MessageIdObject[]> ReplaceTargetId(long uid)
+    IObservable<long> ReplaceTargetId(long uid)
       => Observable.Defer(() =>
           {
             copyMessages.ChatId = uid;
@@ -83,34 +96,38 @@ public class CallSirenaStep : CommandStep
           {
             var messageIds = copyMessages.MessageIds.Select(_id => _id.ToString());
             var idsString = string.Join(';', messageIds);
-            var message = $"Resend copy messages exception\nFrom: {copyMessages.FromChatId}; To: {copyMessages.ChatId}; Messages:[{idsString}]";
-            var wrapException = new Exception(message, _ex);
-            Console.WriteLine(wrapException);
+            var message = $"Couldn't send copy messages\nFrom: {copyMessages.FromChatId}; To: {copyMessages.ChatId}; Messages:[{idsString}]";
+            Console.WriteLine(message);
+            ExceptionHandler.OnError(_ex);
             return Observable.Empty<MessageIdObject[]>();
-          });
+          })
+          .Select(_ => uid);
   }
 
   ///<summary>
-  ///We have to notify users when Sirena called
-  ///First user will get copy message from caller and new system message
-  ///Other users will get copy messages from first user
-  ///If first user can't be notified (e.g. user blocked the bot), bot takes next user
-  ///from stack and tryies to notified him
+  /// We need to notify users when Sirena is called.
+  /// The first user will receive a copy of the message from the caller and a new system message.
+  /// Other users will receive copies of the messages from the first user.
+  /// If the first user can't be notified (e.g., the user blocked the bot),
+  /// the bot takes the next user from the stack and tries to notify them.
   /// </summary>
   /// <param name="receivers">Stack of users to notify</param>
   /// <param name="sirena">called Sirena</param>
   /// <returns></returns>
-  private IObservable<CopyMessages> NotifySubscriber(IRequestContext context, Stack<long> receivers, SirenRepresentation sirena)
+  private IObservable<(CopyMessages CopyMessage, List<long> CurrentReceivers)> NotifyFirstSubscriber(IRequestContext context
+    , SirenRepresentation sirena
+    , Queue<long> receivers
+    , SirenaActivation callInfo)
   {
     return Observable.Defer(() =>
     {
-      if (!receivers.TryPop(out var uid))
+      if (!receivers.TryDequeue(out var uid))
         return Observable.Empty<CopyParams>();
-
-      ISendMessageBuilder sirenaMessage = callServiceMessageBuilderFactory.Create(uid,context, sirena);
+      ServiceMessageData data = new(uid, sirena, callInfo);
+      ISendMessageBuilder sirenaMessage = callServiceMessageBuilderFactory.Create(context, data);
 
       var observableSendMessage = messageSender.ObservableSend(sirenaMessage)
-            .Select(x => (long)x.MessageId);
+        .Select(x => (long)x.MessageId);
 
       if (messageContainer.IsSet)
       {
@@ -128,39 +145,118 @@ public class CallSirenaStep : CommandStep
 
         observableSendMessage = observableSendMessage.Concat(sendCopyToFirstSubscriber);
       }
-      return observableSendMessage.ToArray().Select(_messagesIds => new CopyParams(_messagesIds, uid));
-    }).Retry().Select(CreateCopyMessages);
+      return observableSendMessage.ToArray()
+        .Select(_messagesIds => new CopyParams(_messagesIds.ToList(), uid));
+    }).Retry()
+    .Select(x => (CreateCopyMessages(x), new List<long>() { x.fromUID }));
   }
-  record struct CopyParams(long[] messageIDs, long fromUID);
+  record struct CopyParams(List<long> messageIDs, long fromUID);
 
   private static CopyMessages CreateCopyMessages(CopyParams copyParams)
-    => CreateCopyMessages(copyParams.messageIDs, copyParams.fromUID);
-  private static CopyMessages CreateCopyMessages(long[] messageIDs, long current)
     => new CopyMessages()
     {
-      FromChatId = current,
-      MessageIds = messageIDs.ToList(),
+      FromChatId = copyParams.fromUID,
+      MessageIds = copyParams.messageIDs,
       DisableNotification = false,
       ProtectContent = true,
     };
 
-  private static long[] GetReceiversArray(SirenRepresentation sirena, long uid)
+  private unsafe static IEnumerable<long> GetReceiversArrayViaPtr(long[] listeners, long ownerId, long userId, long chatId)
   {
-    long[] target = sirena.Listener;
-    if (uid != sirena.OwnerId)
+    int length = listeners.Length;
+    var array = new long[length];
+    fixed (long* sourceBegin = listeners)
+    fixed (long* resultBegin = array)
     {
-      int index = Array.IndexOf(target, uid);
-      target[index] = sirena.OwnerId;
+      long* result = resultBegin;
+      if (userId != ownerId)
+      {
+        *result = ownerId;
+        ++result;
+      }
+      for (long* source = sourceBegin; source != sourceBegin + length; ++source)
+      {
+        if (*source == userId)
+          continue;
+        else if (*source == chatId)
+          continue;
+
+        *result = *source;
+        ++result;
+      }
+      length -= (int)(result - resultBegin);
+      return array.SkipLast(length);
+    }
+  }
+  private static IEnumerable<long> GetReceiversArrayViaArray(long[] listeners, long ownerId, long userId, long chatId)
+  {
+    long[] result;
+    if (chatId != userId)
+    {
+      result = new long[listeners.Length];
+      int rd = 0;
+      if (userId != ownerId)
+        result[rd++] = ownerId;
+
+      for (int id = 0; id != listeners.Length; ++id)
+      {
+        var value = listeners[id];
+        if (value == chatId)
+          continue;
+        else if (value == userId)
+          continue;
+
+        result[rd] = value;
+        ++rd;
+      }
+      Array.Resize(ref result, rd);
+    }
+    else
+    {
+      result = (long[])listeners.Clone();
+
+      if (userId != ownerId)
+      {
+        int id = Array.IndexOf(result, userId);
+        result[id] = ownerId;
+      }
     }
 
-    return target;
+    return result;
   }
-  private static Stack<long> GetReceiversStack(SirenRepresentation sirena, long uid)
-    => new(GetReceiversArray(sirena, uid).Reverse());
-  public record CopySettings(CopyMessages copyMessages, long[] recieverIds);
-
-  public class Factory(IMessageSender messageSender, IMessageCopier messageCopier, IUpdateSirenaOperation updateSirenaOperation, IFactory<IRequestContext, int, SirenRepresentation, ISendMessageBuilder> callReportMessageBuilderFactory, IFactory<long,IRequestContext, SirenRepresentation, ISendMessageBuilder> callServiceMessageBuilderFactory) : IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep>
+  private static IEnumerable<long> GetReceiversArrayViaList(long[] listeners, long ownerId, long userId, long chatId)
   {
-    public CallSirenaStep Create(NullableContainer<SirenRepresentation> sirenaContainer, NullableContainer<Message> messageContainer) => new CallSirenaStep(sirenaContainer, messageContainer, messageSender, messageCopier, updateSirenaOperation, callReportMessageBuilderFactory, callServiceMessageBuilderFactory);
+    List<long> receivers = new(listeners);
+
+    if (userId != chatId)
+      receivers.Remove(chatId);
+
+    if (userId != ownerId)
+    {
+      receivers.Remove(userId);
+      receivers.Add(ownerId);
+    }
+
+    return receivers;
+  }
+  /// <summary>
+  /// Evaluates target chats to send message from caller
+  /// </summary>
+  /// <param name="sirena"></param>
+  /// <param name="userId">Caller ID</param>
+  /// <param name="chatId">The ID of the chat where Sirena was called from.</param>
+  /// <returns></returns>
+  unsafe public static IEnumerable<long> GetReceiversArray(SirenRepresentation sirena, long userId, long chatId)
+    => GetReceiversArrayViaList(sirena.Listener, sirena.OwnerId, userId, chatId);
+  private static Queue<long> GetReceiversQueue(SirenRepresentation sirena, long uid, long cid)
+    => new(GetReceiversArray(sirena, uid, cid));
+  public record CopySettings(CopyMessages copyMessages, long[] recieverIds);
+  public class Factory(IMessageSender messageSender, IMessageCopier messageCopier
+    , ISirenaActivationOperation activationInformation
+    , IFactory<IRequestContext, int, SirenRepresentation, ISendMessageBuilder> callReportMessageBuilderFactory
+    , IFactory<IRequestContext, ServiceMessageData, ISendMessageBuilder> callServiceMessageBuilderFactory)
+    : IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep>
+  {
+    public CallSirenaStep Create(NullableContainer<SirenRepresentation> sirenaContainer, NullableContainer<Message> messageContainer) => new CallSirenaStep(sirenaContainer, messageContainer, messageSender, messageCopier, activationInformation, callReportMessageBuilderFactory, callServiceMessageBuilderFactory);
   }
 }

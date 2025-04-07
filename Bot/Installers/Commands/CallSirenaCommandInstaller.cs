@@ -25,7 +25,7 @@ public class CallSirenaCommandInstaller : PlanBassedCommandInstaller<CallSirenaC
 
     Container.RegisterSingleton<IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep>, CallSirenaStep.Factory>();
     Container.RegisterConditional<IFactory<IRequestContext, int, SirenRepresentation, ISendMessageBuilder>, SirenaCallReportMessageBuilder.Factory, CallSirenaStep.Factory>();
-    Container.RegisterConditional<IFactory<long,IRequestContext, SirenRepresentation, ISendMessageBuilder>, SirenaCallServiceMessageBuilder.Factory, CallSirenaStep.Factory>();
+    Container.RegisterConditional<IFactory<IRequestContext, ServiceMessageData, ISendMessageBuilder>, SirenaCallServiceMessageBuilder.Factory, CallSirenaStep.Factory>();
 
     Container.RegisterSingleton<IFactory<NullableContainer<SirenRepresentation>, SirenaStateValidationStep>, SirenaStateValidationStep.Factory>();
     Container.RegisterConditional<IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder>, NotAllowedToCallMessageBuilder.Factory, SirenaStateValidationStep.Factory>();

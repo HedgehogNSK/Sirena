@@ -20,7 +20,7 @@
     <value>You can call Sirenas that were created by you or those Sirenas, that the owner gave you the rights to call</value>
   </data>
   <data name="command.call.extra_info">
-    <value>ℹ️ You can send extra information for subscribers or just click the *Call* button.</value>
+    <value>ℹ️ You can send extra information for subscribers or just click the *{0}* button.</value>
   </data>
   <data name="command.call.extra_info.skip">
     <value>🔊 Launch only</value>
@@ -490,5 +490,17 @@ If you don&apos;t know the *Sirena* ID, you can {1} it by its name or part of th
   </data>
   <data name="command.decline_request.success">
     <value>✅🚫 User {1} delegation request for *Sirena*: {0} has been declined.</value>
+  </data>
+  <data name="menu.buttons.reaction.128591">
+    <value>🙏Thank you</value>
+  </data>
+  <data name="menu.buttons.reaction.128591.unset">
+    <value>😑 Take back thanks</value>
+  </data>
+  <data name="menu.buttons.reaction.128175">
+    <value>💢 Reproach</value>
+  </data>
+  <data name="menu.buttons.reaction.128175.unset">
+    <value>😑 Back down</value>
   </data>
 </root>

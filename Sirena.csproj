@@ -8,6 +8,7 @@
     <Nullable>enable</Nullable>
     <OutputPath>bin\Sirena\</OutputPath>
     <IntermediateOutputPath>obj\Sirena\</IntermediateOutputPath>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

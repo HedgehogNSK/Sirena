@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System.Reactive.Linq;
+using System.Reactive.Threading.Tasks;
 using System.Text.RegularExpressions;
 
 namespace Hedgey.Sirena.Bot.Operations.Mongo;
@@ -11,17 +12,38 @@ public class SirenaOperations : IDeleteSirenaOperation
 , ISubscribeToSirenaOperation, IUnsubscribeSirenaOperation
 , IFindSirenaOperation, IGetUserRelatedSirenas
 , IUpdateSirenaOperation, IRightsRequestOperation, IRightsManageOperation
+, ISirenaActivationOperation
 {
   private readonly IMongoCollection<SirenRepresentation> sirens;
   private readonly IMongoCollection<UserRepresentation> users;
+  private readonly IMongoCollection<SirenaActivation> calls;
 
   public SirenaOperations(IMongoCollection<SirenRepresentation> sirenCollection
-  , IMongoCollection<UserRepresentation> usersCollection)
+  , IMongoCollection<UserRepresentation> usersCollection
+  , IMongoCollection<SirenaActivation> callsCollection)
   {
     this.sirens = sirenCollection;
     this.users = usersCollection;
+    this.calls = callsCollection;
   }
+  public IObservable<SirenaActivation> LogInfo(ulong sirenaId, long userId)
+  {
+    var call = new SirenaActivation(sirenaId, userId);
 
+    return calls.InsertOneAsync(call).ToObservable()
+      .Select(_ => call);
+  }
+  public IObservable<bool> SetReceivers(SirenaActivation call, IEnumerable<long> receiversIds)
+  {
+    SirenaActivation.Receiver[] receivers = receiversIds
+      .Select(_userId => new SirenaActivation.Receiver(_userId))
+      .ToArray();
+    var filter = Builders<SirenaActivation>.Filter.Eq(x => x.Id, call.Id);
+    var update = Builders<SirenaActivation>.Update.Set(x => x.Receivers, receivers);
+    return calls.UpdateOneAsync(filter, update).ToObservable()
+      .SelectMany(_result => UpdateLastCall(call)
+      .Select(_ => _result.IsAcknowledged && _result.IsModifiedCountAvailable));
+  }
   public IObservable<SirenRepresentation> Delete(long userId, ulong sirenaId)
   {
     return DeleteSirenaDocument(sirenaId)
@@ -126,11 +148,12 @@ public class SirenaOperations : IDeleteSirenaOperation
   /// <param name="sirenaId"></param>
   /// <param name="callInfo"></param>
   /// <returns></returns>
-  public IObservable<SirenRepresentation> UpdateLastCall(ulong sirenaId, SirenRepresentation.CallInfo callInfo)
+  private IObservable<SirenRepresentation> UpdateLastCall(SirenaActivation callInfo)
   {
-    var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.SID, sirenaId);
-    var update = Builders<SirenRepresentation>.Update.Set(x => x.LastCall, callInfo);
-    return Observable.FromAsync(() => sirens.FindOneAndUpdateAsync(filter, update));
+    SirenRepresentation.CallInfo lastCallInfo = new(callInfo);
+    var filter = Builders<SirenRepresentation>.Filter.Eq(_sirena => _sirena.SID, callInfo.SirenaId);
+    var update = Builders<SirenRepresentation>.Update.Set(_sirena => _sirena.LastCall, lastCallInfo);
+    return sirens.FindOneAndUpdateAsync(filter, update).ToObservable();
   }
 
   public IObservable<IRightsRequestOperation.Result> Send(ulong sirenaId, long requestorId, string message)
@@ -152,6 +175,22 @@ public class SirenaOperations : IDeleteSirenaOperation
     return sirens.UpdateOneAsync(filter, update);
   }
 
+  public IObservable<SirenaActivation> SetReaction(ObjectId callId, long userId, int emojiCode)
+  {
+    var filter = Builders<SirenaActivation>.Filter.Eq(_call => _call.Id, callId)
+      & Builders<SirenaActivation>.Filter.ElemMatch(_call => _call.Receivers, x => x.UserId == userId);
+    UpdateDefinition<SirenaActivation> update;
+    if (emojiCode > 0)
+      update = Builders<SirenaActivation>.Update.Set(_call => _call.Receivers.FirstMatchingElement().Reaction, emojiCode);
+    else
+      update = Builders<SirenaActivation>.Update.Unset(_call => _call.Receivers.FirstMatchingElement().Reaction);
+    var sort = Builders<SirenaActivation>.Sort.Descending(_call => _call.Date);
+    var options = new FindOneAndUpdateOptions<SirenaActivation>()
+    {
+      Sort = sort
+    };
+    return Observable.FromAsync(() => calls.FindOneAndUpdateAsync(filter, update, options));
+  }
   //Update function. Do not use for real database
   public IObservable<bool> UpdateDefault(ulong sirenaId)
   {

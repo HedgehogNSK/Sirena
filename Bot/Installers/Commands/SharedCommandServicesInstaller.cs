@@ -16,10 +16,11 @@ public class SharedCommandServicesInstaller(Container container) : Installer(con
     Container.RegisterSingleton<IFindSirenaOperation, SirenaOperations>();
     Container.RegisterSingleton<IGetUserRelatedSirenas, SirenaOperations>();
     Container.RegisterSingleton<ISubscribeToSirenaOperation, SirenaOperations>();
+    Container.RegisterSingleton<IRightsManageOperation, SirenaOperations>();
     Container.RegisterSingleton<IUpdateSirenaOperation, SirenaOperations>();
     Container.RegisterSingleton<IUnsubscribeSirenaOperation, SirenaOperations>();
+    Container.RegisterSingleton<ISirenaActivationOperation, SirenaOperations>();
     Container.RegisterSingleton<IGetUserInformation, GetUserInformation>();
-    Container.RegisterSingleton<IRightsManageOperation, SirenaOperations>();
     Container.RegisterSingleton<IGetUserOverviewAsync, UserOperations>();
     Container.RegisterSingleton<IUserInfoOperations, UserOperations>();
     Container.RegisterSingleton<IUserEditOperations, UserOperations>();
@@ -32,5 +33,7 @@ public class SharedCommandServicesInstaller(Container container) : Installer(con
       => Container.GetInstance<IMongoDatabase>().GetCollection<SirenRepresentation>("sirens"));
     Container.RegisterSingleton<IMongoCollection<UserRepresentation>>(()
       => Container.GetInstance<IMongoDatabase>().GetCollection<UserRepresentation>("users"));
+    Container.RegisterSingleton<IMongoCollection<SirenaActivation>>(()
+      => Container.GetInstance<IMongoDatabase>().GetCollection<SirenaActivation>("calls"));
   }
 }

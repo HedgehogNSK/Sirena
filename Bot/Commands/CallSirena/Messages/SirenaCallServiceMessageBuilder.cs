@@ -2,27 +2,23 @@ using Hedgey.Extensions.Telegram;
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
 using Hedgey.Structure.Factory;
+using Hedgey.Telegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Enums;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
-using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SirenaCallServiceMessageBuilder : MessageBuilder
+public class SirenaCallServiceMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider localizationProvider, User initiator
+  , SirenRepresentation sirena, SirenaActivation callInfo)
+  : MessageBuilder(chatId, info, localizationProvider)
 {
-  private readonly User initiator;
-  private readonly SirenRepresentation sirena;
-
-  public SirenaCallServiceMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider localizationProvider, User initiator, SirenRepresentation sirena)
-  : base(chatId, info, localizationProvider)
-  {
-    this.initiator = initiator;
-    this.sirena = sirena;
-  }
+  private readonly User initiator = initiator;
+  private readonly SirenRepresentation sirena = sirena;
+  private readonly SirenaActivation callInfo = callInfo;
 
   public override SendMessage Build()
   {
@@ -30,11 +26,20 @@ public class SirenaCallServiceMessageBuilder : MessageBuilder
     string userName = BotTools.GetDisplayName(initiator);
     long uid = initiator.Id;
     string notification = string.Format(notificationBase, sirena.Title, userName, uid);
+    int[] reaction = [
+       128591, //code for: 🙏
+      128175, //code for: 💢
+    ];
     var markupBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
-    .AddUnsubscribeButton(Info, sirena)
-    .AddMuteButton(Info, initiator, sirena)
-    .EndRow()
-    .ToReplyMarkup();
+      .AddReactButton(Info, callInfo.Id, reaction[0])
+      .AddReactButton(Info, callInfo.Id, reaction[1])
+      .EndRow()
+      .BeginRow()
+      .AddUnsubscribeButton(Info, sirena)
+      .AddMuteButton(Info, initiator, sirena)
+      .EndRow()
+      .ToReplyMarkup();
+
     var message = new SendMessage()
     {
       ChatId = ChatID,
@@ -47,13 +52,14 @@ public class SirenaCallServiceMessageBuilder : MessageBuilder
     return message;
   }
   public class Factory(ILocalizationProvider localizationProvider)
-    : IFactory<long,IRequestContext, SirenRepresentation, ISendMessageBuilder>
+    : IFactory<IRequestContext, ServiceMessageData, ISendMessageBuilder>
   {
-    public ISendMessageBuilder Create(long targetUID,IRequestContext context, SirenRepresentation sirena)
+    public ISendMessageBuilder Create(IRequestContext context, ServiceMessageData data)
     {
       var info = context.GetCultureInfo();
-      var user = context.GetUser();
-      return new SirenaCallServiceMessageBuilder(targetUID, info, localizationProvider, user, sirena);
+      var initiator = context.GetUser();
+      return new SirenaCallServiceMessageBuilder(data.receiverId, info
+        , localizationProvider, initiator, data.sirena, data.callInfo);
     }
   }
 }

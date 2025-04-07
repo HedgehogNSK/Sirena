@@ -1,5 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Database;
+using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Enums;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Base.Interfaces;
@@ -27,6 +28,7 @@ public static class MarkupShortcuts
   public const string displaySirenasTitle = prefix + "display_sirenas.title";
   public const string getReuqestsTitle = prefix + "requests.title";
   public const string getResponsiblesTitle = prefix + "get_responsibles.title";
+  public const string reactionTitle = prefix + "reaction.{0}";
   public const string requestRightTitle = prefix + "request_rights.title";
   public const string retryTitle = prefix + "anotherTry.title";
   public const string subscriptionsTitle = prefix + "subscriptions.title";
@@ -43,7 +45,6 @@ public static class MarkupShortcuts
       command += ' ' + param;
     return inlineKeyboardRow.AddCallbackData(title.ToString(), command);
   }
-
   public static IInlineKeyboardRow AddLocalizedButton(this IInlineKeyboardRow inlineKeyboardRow
   , string textKey, CultureInfo info, string commandName, string param = "")
   {
@@ -59,11 +60,11 @@ public static class MarkupShortcuts
   public static IInlineKeyboardRow AddCreateButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info)
     => inlineKeyboardRow.AddLocalizedButton(createTitle, info, CreateSirenaCommand.NAME);
   public static IInlineKeyboardRow AddDeclineRequestButton(this IInlineKeyboardRow inlineKeyboardRow
-  , CultureInfo info, SirenRepresentation sirena, long userId, string title = declineRequestTitle) 
+  , CultureInfo info, SirenRepresentation sirena, long userId, string title = declineRequestTitle)
   => inlineKeyboardRow.AddLocalizedButton(title, info, DeclineRequestCommand.NAME
       , sirena.ShortHash + ' ' + userId);
   public static IInlineKeyboardRow AddDelegateRightsButton(this IInlineKeyboardRow inlineKeyboardRow
-  , CultureInfo info, SirenRepresentation sirena, long userId, string title = delegateTitle) 
+  , CultureInfo info, SirenRepresentation sirena, long userId, string title = delegateTitle)
   => inlineKeyboardRow.AddLocalizedButton(title, info, DelegateRightsCommand.NAME
       , sirena.ShortHash + ' ' + userId);
 
@@ -95,11 +96,18 @@ public static class MarkupShortcuts
   public static IInlineKeyboardRow AddRequestButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
   , string shortHash, string title = requestRightTitle)
     => inlineKeyboardRow.AddLocalizedButton(title, info, RequestRightsCommand.NAME, shortHash);
+  public static IInlineKeyboardRow AddReactButton(this IInlineKeyboardRow inlineKeyboardRow
+    , CultureInfo info, ObjectId callId, int reaction)
+  {
+    string param = $"{callId} {reaction}";
+    string title = string.Format(reactionTitle, reaction);
+    return inlineKeyboardRow.AddLocalizedButton(title, info, ReactToSirenaCommand.NAME, param);
+  }
   public static IInlineKeyboardRow AddRequestsButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
     , int count, string shortHash = "")
   {
-     string localTitle = LocalizationProvider?.Get(getReuqestsTitle, info)
-      ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
+    string localTitle = LocalizationProvider?.Get(getReuqestsTitle, info)
+     ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
     localTitle = string.Format(localTitle, count);
 
     return inlineKeyboardRow.AddButton(localTitle, RequestsCommand.NAME, shortHash);
@@ -125,9 +133,9 @@ public static class MarkupShortcuts
 
   public static IInlineKeyboardRow AddDisplayResponsiblesButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string sirenaId, int count)
   {
-     string localTitle = LocalizationProvider?.Get(getResponsiblesTitle, info)
-      ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
-      
+    string localTitle = LocalizationProvider?.Get(getResponsiblesTitle, info)
+     ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
+
     localTitle = string.Format(localTitle, count);
     return inlineKeyboardRow.AddButton(localTitle, GetResponsiblesListCommand.NAME, sirenaId);
   }
@@ -138,6 +146,13 @@ public static class MarkupShortcuts
       InlineKeyboard = KeyboardBuilder.CreateInlineKeyboard().BeginRow()
           .AddMenuButton(info).EndRow().Build()
     };
+
+  public static string GetEmojiDecription(int emojiCode, CultureInfo info)
+  {
+    string key = $"{prefix}reaction.{Math.Abs(emojiCode)}{(emojiCode < 0 ? ".unset" : string.Empty)}";
+    return LocalizationProvider?.Get(key, info)
+      ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
+  }
   public static InlineKeyboardMarkup ToReplyMarkup(this IInlineKeyboardBuilder builder)
     => new()
     {

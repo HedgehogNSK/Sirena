@@ -4,7 +4,6 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Hedgey.Sirena.Database;
-
 [BsonIgnoreExtraElements]
 public class SirenRepresentation
 {
@@ -90,10 +89,15 @@ public class SirenRepresentation
       return false;
     }
   }
-  public record class CallInfo(
-    [property: BsonElement("caller"), BsonRepresentation(BsonType.Int64)] long Caller
-    , [property: BsonElement("date"), BsonRepresentation(BsonType.DateTime)] DateTimeOffset Date)
-  { }
+  public record CallInfo(
+    [property: BsonElement("call_id"), BsonRepresentation(BsonType.ObjectId)] ObjectId Id,
+    [property: BsonElement("date"), BsonRepresentation(BsonType.DateTime)] DateTimeOffset Date,
+    [property: BsonElement("caller_id"), BsonRepresentation(BsonType.Int64)] long Caller,
+    [property: BsonElement("receivers_count")] int ReceiversCount)
+  {
+    public CallInfo(SirenaActivation callInfo)
+    : this(callInfo.Id, callInfo.Date, callInfo.Caller, callInfo.Receivers?.Length ?? 0) { }
+  }
 
   public record class MutedInfo(
     [property: BsonElement("user_id"), BsonRepresentation(BsonType.Int64)] long UID,
