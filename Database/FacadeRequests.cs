@@ -86,14 +86,6 @@ public class FacadeMongoDBRequests
     return sirena;
   }
 
-  internal async Task<SirenRepresentation> SetCallDate(ulong id, SirenRepresentation.CallInfo callInfo)
-  {
-    var filter = Builders<SirenRepresentation>.Filter.Eq(x => x.SID, id);
-    var update = Builders<SirenRepresentation>.Update.Set(x => x.LastCall, callInfo);
-    var sirena = await sirens.FindOneAndUpdateAsync(filter, update);
-    return sirena;
-  }
-
   internal async Task<SirenRepresentation> SetUserMute(long initiatorID, long targetID, ulong sirenaId)
   {
     var muted = new SirenRepresentation.MutedInfo(initiatorID,targetID);
