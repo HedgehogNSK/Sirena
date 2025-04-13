@@ -16,21 +16,25 @@ public class CommandInstaller<T>(Container container) : Installer(container)
       dict[_command.Command] = _command;
     });
   }
-  protected void RegisterIntoCommand<TStepInterface>(
+  protected void RegisterIntoCommand<TInterface>(
     Lifestyle lifestyle
-    , Func<TStepInterface> instanceCreator)
-  where TStepInterface : class
+    , Func<TInterface> instanceCreator)
+  where TInterface : class
   {
     var registration = lifestyle.CreateRegistration(instanceCreator, Container);
-    Container.RegisterConditional<TStepInterface>(registration
+    Container.RegisterConditional<TInterface>(registration
       , (_context) => _context.Consumer.ImplementationType == typeof(T));
   }
-  protected void RegisterIntoCommand<TStepInterface, TStepImpl>(
+  protected void RegisterIntoCommand<TInterface, TImpl>(
     Lifestyle lifestyle)
-  where TStepImpl : class, TStepInterface
+  where TImpl : class, TInterface
   {
-    var registration = lifestyle.CreateRegistration<TStepImpl>(Container);
-    Container.RegisterConditional<TStepInterface>(registration
+    var registration = lifestyle.CreateRegistration<TImpl>(Container);
+    Container.RegisterConditional<TInterface>(registration
       , (_context) => _context.Consumer.ImplementationType == typeof(T));
   }
+  protected void RegisterIntoCommand<TImpl>(Lifestyle lifestyle)
+  where TImpl : class
+    =>Container.RegisterConditional<TImpl,TImpl>(lifestyle,
+      (_context) => _context.Consumer.ImplementationType == typeof(T));
 }
