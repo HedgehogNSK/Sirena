@@ -17,27 +17,28 @@ public class GetUserInformation : IGetUserInformation
     this.bot = bot;
     this.localizationProvider = localizationProvider;
   }
-  public IObservable<string> GetNickname(long uid)
-    => GetNickname(uid, CultureInfo.InvariantCulture);
-  public IObservable<string> GetNickname(long userID, CultureInfo info)
-    => GetNickname(userID, userID, info);
+  public IObservable<string> GetNickname(long userId)
+    => GetNickname(userId, CultureInfo.InvariantCulture);
+  public IObservable<string> GetNickname(long userId, CultureInfo info)
+    => GetNickname(userId, userId, info);
   /// <summary>
   /// Get user name by id from certain chat
   /// DO NOT user this function for private chats
   /// USE this function only for group chats
   /// For private chats user id must be equal to chat id
   /// </summary>
-  /// <param name="uid"></param>
-  /// <param name="cid"></param>
+  /// <param name="userId"></param>
+  /// <param name="chatId"></param>
   /// <param name="info"></param>
   /// <returns></returns>
-  public IObservable<string> GetNickname(long uid, long cid, CultureInfo info)
+  public IObservable<string> GetNickname(long userId, long chatId, CultureInfo info)
   {
     var getChatMember = new GetChatMember()
     {
-      UserId = uid,
-      ChatId = cid
+      UserId = userId,
+      ChatId = chatId
     };
+
     return Observable.FromAsync(() => bot.GetChatMember(getChatMember))
     .Select(_chatMember =>
     {
@@ -45,7 +46,7 @@ public class GetUserInformation : IGetUserInformation
     })
     .Catch((Exception ex) =>
     {
-      Console.WriteLine($"Exception happen on attempt to get user nickname of user:{uid} in chat:{cid}");
+      Console.WriteLine($"Exception happen on attempt to get user nickname of user:{userId} in chat:{chatId}");
       switch (ex)
       {
         case RxTelegram.Bot.Exceptions.ApiException apiEx:
