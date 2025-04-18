@@ -1,5 +1,5 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using MongoDB.Bson;
 using RxTelegram.Bot.Interface.BaseTypes;
 using RxTelegram.Bot.Interface.BaseTypes.Enums;
@@ -60,11 +60,11 @@ public static class MarkupShortcuts
   public static IInlineKeyboardRow AddCreateButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info)
     => inlineKeyboardRow.AddLocalizedButton(createTitle, info, CreateSirenaCommand.NAME);
   public static IInlineKeyboardRow AddDeclineRequestButton(this IInlineKeyboardRow inlineKeyboardRow
-  , CultureInfo info, SirenRepresentation sirena, long userId, string title = declineRequestTitle)
+  , CultureInfo info, SirenaData sirena, long userId, string title = declineRequestTitle)
   => inlineKeyboardRow.AddLocalizedButton(title, info, DeclineRequestCommand.NAME
       , sirena.ShortHash + ' ' + userId);
   public static IInlineKeyboardRow AddDelegateRightsButton(this IInlineKeyboardRow inlineKeyboardRow
-  , CultureInfo info, SirenRepresentation sirena, long userId, string title = delegateTitle)
+  , CultureInfo info, SirenaData sirena, long userId, string title = delegateTitle)
   => inlineKeyboardRow.AddLocalizedButton(title, info, DelegateRightsCommand.NAME
       , sirena.ShortHash + ' ' + userId);
 
@@ -91,7 +91,7 @@ public static class MarkupShortcuts
 
   public static IInlineKeyboardRow AddFindButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info)
     => inlineKeyboardRow.AddLocalizedButton(findTitle, info, FindSirenaCommand.NAME);
-  public static IInlineKeyboardRow AddMuteButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, User user, SirenRepresentation sirena)
+  public static IInlineKeyboardRow AddMuteButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, User user, SirenaData sirena)
     => inlineKeyboardRow.AddLocalizedButton(muteTitle, info, MuteUserSignalCommand.NAME, user.Id.ToString() + ' ' + sirena.Hash);
   public static IInlineKeyboardRow AddRequestButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
   , string shortHash, string title = requestRightTitle)
@@ -128,7 +128,7 @@ public static class MarkupShortcuts
    => inlineKeyboardRow.AddLocalizedButton(subscribeTitle, info, SubscribeCommand.NAME);
   public static IInlineKeyboardRow AddSubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string shortHash)
    => inlineKeyboardRow.AddLocalizedButton(subscribeTitle, info, SubscribeCommand.NAME, shortHash);
-  public static IInlineKeyboardRow AddUnsubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, SirenRepresentation siren)
+  public static IInlineKeyboardRow AddUnsubscribeButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, SirenaData siren)
     => inlineKeyboardRow.AddLocalizedButton(unsubscribeTitle, info, UnsubscribeCommand.NAME, siren.Hash);
 
   public static IInlineKeyboardRow AddDisplayResponsiblesButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info, string sirenaId, int count)

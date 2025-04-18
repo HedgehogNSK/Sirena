@@ -1,19 +1,19 @@
 using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 public class GetUserSirenasStep(IGetUserInformation getUserInfo
-  , NullableContainer<IEnumerable<SirenRepresentation>> sirenaContainer
+  , NullableContainer<IEnumerable<SirenaData>> sirenaContainer
   , IFactory<IRequestContext, ISendMessageBuilder> noRequestsMessageFactory
   , IFactory<IRequestContext, RequestsCommand.RequestInfo, ISendMessageBuilder> sendMessageBuilderFactory
   , SirenasListMessageBuilder userSirenasMessageBuilder)
    : CommandStep
 {
-  private readonly NullableContainer<IEnumerable<SirenRepresentation>> sirenaContainer = sirenaContainer;
+  private readonly NullableContainer<IEnumerable<SirenaData>> sirenaContainer = sirenaContainer;
   private readonly IFactory<IRequestContext, ISendMessageBuilder> noRequestsMessageFactory = noRequestsMessageFactory;
   private readonly IFactory<IRequestContext, RequestsCommand.RequestInfo, ISendMessageBuilder> sendMessageBuilderFactory = sendMessageBuilderFactory;
   private readonly SirenasListMessageBuilder userSirenasMessageBuilder = userSirenasMessageBuilder;
@@ -29,7 +29,7 @@ public class GetUserSirenasStep(IGetUserInformation getUserInfo
     return Observable.Return(report);
 
   }
-  IObservable<Report> CreateMessageForSingle(IRequestContext context, SirenRepresentation sirena)
+  IObservable<Report> CreateMessageForSingle(IRequestContext context, SirenaData sirena)
   {
     var requestIdString = context.GetArgsString().GetParameterByNumber(1);
     var requestInfo = RequestsCommand.Create(sirena, requestIdString);
@@ -41,7 +41,7 @@ public class GetUserSirenasStep(IGetUserInformation getUserInfo
         return new Report(Result.Success, sendMessageBuilderFactory.Create(context, requestInfo));
       });
   }
-  Report CreateReport(IRequestContext context, IEnumerable<SirenRepresentation> sirenas)
+  Report CreateReport(IRequestContext context, IEnumerable<SirenaData> sirenas)
   {
     if (!sirenas.Any())
     {
@@ -55,10 +55,10 @@ public class GetUserSirenasStep(IGetUserInformation getUserInfo
   public class Factory(IGetUserInformation getUserInfo
   , IFactory<IRequestContext, ISendMessageBuilder> noRequestsMessageFactory
   , IFactory<IRequestContext, RequestsCommand.RequestInfo, ISendMessageBuilder> sendMessageBuilderFactory)
-     : IFactory<SirenasListMessageBuilder, NullableContainer<IEnumerable<SirenRepresentation>>, GetUserSirenasStep>
+     : IFactory<SirenasListMessageBuilder, NullableContainer<IEnumerable<SirenaData>>, GetUserSirenasStep>
   {
     public GetUserSirenasStep Create(SirenasListMessageBuilder userSirenasMessageBuilder
-    , NullableContainer<IEnumerable<SirenRepresentation>> sirenaContainer)
+    , NullableContainer<IEnumerable<SirenaData>> sirenaContainer)
         => new GetUserSirenasStep(getUserInfo, sirenaContainer
           , noRequestsMessageFactory, sendMessageBuilderFactory
           , userSirenasMessageBuilder);

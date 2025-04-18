@@ -1,5 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -8,7 +8,7 @@ using Hedgey.Telegram.Bot;
 namespace Hedgey.Sirena.Bot;
 public class GetSubscriptionsListCommand(IMessageSender messageSender
   , IGetUserRelatedSirenas findSirena, IGetUserInformation getUserInformation
-  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> messageBuilderFactory) 
+  , IFactory<IRequestContext, IEnumerable<SirenaData>, ISendMessageBuilder> messageBuilderFactory) 
   : AbstractBotCommmand(NAME, DESCRIPTION), IBotCommand//, IDisposable
 {
   public const string NAME = "subscriptions";

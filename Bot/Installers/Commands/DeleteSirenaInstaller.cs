@@ -1,5 +1,5 @@
 using Hedgey.Extensions.SimpleInjector;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 
@@ -12,13 +12,13 @@ public class DeleteSirenaInstaller(SimpleInjector.Container container)
   {
     base.Install();
 
-    Container.RegisterSingleton<IFactory<NullableContainer<SirenRepresentation>, DeleteConcretteSirenaStep>, DeleteConcretteSirenaStep.Factory>();
-    Container.RegisterConditional<IFactory<IRequestContext, SirenRepresentation, SuccesfulDeleteMessageBuilder>, SuccesfulDeleteMessageBuilder.Factory, DeleteConcretteSirenaStep.Factory>();
+    Container.RegisterSingleton<IFactory<NullableContainer<SirenaData>, DeleteConcretteSirenaStep>, DeleteConcretteSirenaStep.Factory>();
+    Container.RegisterConditional<IFactory<IRequestContext, SirenaData, SuccesfulDeleteMessageBuilder>, SuccesfulDeleteMessageBuilder.Factory, DeleteConcretteSirenaStep.Factory>();
 
-    Container.RegisterSingleton<IFactory<NullableContainer<SirenRepresentation>, ConfirmationRemoveSirenaStep>, ConfirmationRemoveSirenaStep.Factory>();
-    Container.RegisterConditional<IFactory<IRequestContext, SirenRepresentation, ConfirmRemoveSirenaMessageBuilder>, ConfirmRemoveSirenaMessageBuilder.Factory, ConfirmationRemoveSirenaStep.Factory>();
-    Container.RegisterSingleton<IFactory<NullableContainer<SirenRepresentation>, FindRemoveSirenaStep>, FindRemoveSirenaStep.Factory>();
+    Container.RegisterSingleton<IFactory<NullableContainer<SirenaData>, ConfirmationRemoveSirenaStep>, ConfirmationRemoveSirenaStep.Factory>();
+    Container.RegisterConditional<IFactory<IRequestContext, SirenaData, ConfirmRemoveSirenaMessageBuilder>, ConfirmRemoveSirenaMessageBuilder.Factory, ConfirmationRemoveSirenaStep.Factory>();
+    Container.RegisterSingleton<IFactory<NullableContainer<SirenaData>, FindRemoveSirenaStep>, FindRemoveSirenaStep.Factory>();
     Container.RegisterConditional<IFactory<IRequestContext, IncorrectParameterMessageBuilder>, IncorrectParameterMessageBuilder.Factory, FindRemoveSirenaStep.Factory>();
-    Container.RegisterConditional<IFactory<IRequestContext, IEnumerable<SirenRepresentation>, RemoveSirenaMenuMessageBuilder>, RemoveSirenaMenuMessageBuilder.Factory, FindRemoveSirenaStep.Factory>();
+    Container.RegisterConditional<IFactory<IRequestContext, IEnumerable<SirenaData>, RemoveSirenaMenuMessageBuilder>, RemoveSirenaMenuMessageBuilder.Factory, FindRemoveSirenaStep.Factory>();
   }
 }

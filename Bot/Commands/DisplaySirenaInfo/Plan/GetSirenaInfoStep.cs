@@ -1,5 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
@@ -9,7 +9,7 @@ namespace Hedgey.Sirena.Bot;
 public class GetSirenaInfoStep(NullableContainer<ulong> sirenaIdContainter
   , IFindSirenaOperation findSirena
   , IFactory<IRequestContext, ulong, ISendMessageBuilder> notFoundMessageBuilderFactory
-  , IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder> sirenaInfoMessageBuilderFactory
+  , IFactory<IRequestContext, long, SirenaData, SirenaInfoMessageBuilder> sirenaInfoMessageBuilderFactory
   , IGetUserInformation getUserInformation
    ) : CommandStep
 {
@@ -26,7 +26,7 @@ public class GetSirenaInfoStep(NullableContainer<ulong> sirenaIdContainter
     return observableFind.Where(_siren => _siren == null || _siren.OwnerId == uid)
     .Merge(observableRequestOwnerNickname).Select(CreateReport);
 
-    Report CreateReport(SirenRepresentation representation)
+    Report CreateReport(SirenaData representation)
     {
       long uid = context.GetUser().Id;
 
@@ -41,7 +41,7 @@ public class GetSirenaInfoStep(NullableContainer<ulong> sirenaIdContainter
 
   public class Factory(IFindSirenaOperation findSirenaOperation
   , IFactory<IRequestContext, ulong, ISendMessageBuilder> noSirenaMessageBuilder
-  , IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder> sirenaInfoMessageBuilderFactory
+  , IFactory<IRequestContext, long, SirenaData, SirenaInfoMessageBuilder> sirenaInfoMessageBuilderFactory
   , IGetUserInformation getUserInformation)
     : IFactory<NullableContainer<ulong>, GetSirenaInfoStep>
   {

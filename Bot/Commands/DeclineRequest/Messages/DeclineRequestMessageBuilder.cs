@@ -1,4 +1,4 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Messages;
 using System.Globalization;
@@ -13,29 +13,29 @@ public sealed class DeclineRequestMessageBuilder(
   , SuccesfulDeclineTextGetter.Factory success) : GeneralMessageBuilder
 {
 
-  public void NotAllowed(IRequestContext context, SirenRepresentation sirena)
+  public void NotAllowed(IRequestContext context, SirenaData sirena)
   => SetupTextGetter(notAllowed, context, sirena);
 
-  public void NoRequestor(IRequestContext context, SirenRepresentation sirena, string userName)
+  public void NoRequestor(IRequestContext context, SirenaData sirena, string userName)
     => SetupTextGetter(noRequestor, context, sirena, userName);
 
-  public void NoRequests(IRequestContext context, SirenRepresentation sirena)
+  public void NoRequests(IRequestContext context, SirenaData sirena)
     => SetupTextGetter(noRequests, context, sirena);
 
-  public void Success(IRequestContext context, SirenRepresentation sirena, string userName)
+  public void Success(IRequestContext context, SirenaData sirena, string userName)
     => SetupTextGetter(success, context, sirena, userName);
 
   public void SetupTextGetter(
-    IFactory<CultureInfo, SirenRepresentation, SirenaTemplateTextGetter> textGetterFactory
-  , IRequestContext context, SirenRepresentation sirena)
+    IFactory<CultureInfo, SirenaData, SirenaTemplateTextGetter> textGetterFactory
+  , IRequestContext context, SirenaData sirena)
   {
     var info = context.GetCultureInfo();
     var getter = textGetterFactory.Create(info, sirena);
     _ = Set(context).Set(getter);
   }
   public void SetupTextGetter(
-    IFactory<CultureInfo, SirenRepresentation, object, SirenaWithExtrasTemplateTextGetter> textGetterFactory
-    , IRequestContext context, SirenRepresentation sirena, object extra)
+    IFactory<CultureInfo, SirenaData, object, SirenaWithExtrasTemplateTextGetter> textGetterFactory
+    , IRequestContext context, SirenaData sirena, object extra)
   {
     var info = context.GetCultureInfo();
     var getter = textGetterFactory.Create(info, sirena, extra);

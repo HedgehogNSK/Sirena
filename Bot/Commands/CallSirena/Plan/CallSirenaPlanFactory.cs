@@ -1,4 +1,4 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
 using Hedgey.Telegram.Bot;
@@ -10,15 +10,15 @@ public class CallSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
 {
   private readonly IFactory<NullableContainer<ulong>, CheckCallAbilityStep> idValidationStepFactory;
   private readonly IFactory<NullableContainer<Message>, AddExtraInformationStep> addExtraInfoStepFactory;
-  private readonly IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep> isSirenaExistStepFactory;
-  private readonly IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep> callSirenaStepFactory;
-  private readonly IFactory<NullableContainer<SirenRepresentation>, SirenaStateValidationStep> sirenaStateValidationStepFactory;
+  private readonly IFactory<NullableContainer<ulong>, NullableContainer<SirenaData>, SirenaExistensValidationStep> isSirenaExistStepFactory;
+  private readonly IFactory<NullableContainer<SirenaData>, NullableContainer<Message>, CallSirenaStep> callSirenaStepFactory;
+  private readonly IFactory<NullableContainer<SirenaData>, SirenaStateValidationStep> sirenaStateValidationStepFactory;
 
   public CallSirenaPlanFactory(IFactory<NullableContainer<ulong>, CheckCallAbilityStep> idValidationStepFactory
   , IFactory<NullableContainer<Message>, AddExtraInformationStep> addExtraInfoStepFactory
-  , IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep> isSirenaExistStepFactory
-  , IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep> callSirenaStepFactory
-  , IFactory<NullableContainer<SirenRepresentation>, SirenaStateValidationStep> sirenaStateValidationStepFactory)
+  , IFactory<NullableContainer<ulong>, NullableContainer<SirenaData>, SirenaExistensValidationStep> isSirenaExistStepFactory
+  , IFactory<NullableContainer<SirenaData>, NullableContainer<Message>, CallSirenaStep> callSirenaStepFactory
+  , IFactory<NullableContainer<SirenaData>, SirenaStateValidationStep> sirenaStateValidationStepFactory)
   {
     this.idValidationStepFactory = idValidationStepFactory;
     this.addExtraInfoStepFactory = addExtraInfoStepFactory;
@@ -30,7 +30,7 @@ public class CallSirenaPlanFactory : IFactory<IRequestContext, CommandPlan>
   public CommandPlan Create(IRequestContext context)
   {
     NullableContainer<ulong> idContainer = new();
-    NullableContainer<SirenRepresentation> sirenaContainer = new();
+    NullableContainer<SirenaData> sirenaContainer = new();
     NullableContainer<Message> messageContainer = new();
     //Create composition step from different validations
     //Because we have to make all validations for each itteration of input data

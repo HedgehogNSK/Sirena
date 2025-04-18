@@ -1,13 +1,14 @@
 using Hedgey.Extensions;
 using Hedgey.Extensions.Telegram;
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Blendflake;
 using MongoDB.Driver;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Text;
 using Hedgey.Telegram.Bot;
+using Hedgey.Sirena.MongoDB;
 
 namespace Hedgey.Sirena.Bot;
 
@@ -15,8 +16,8 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
 {
   public const string NAME = "responsible";
   public const string DESCRIPTION = "Display list of user allowed to call Sirena";
-  private readonly IMongoCollection<UserRepresentation> users;
-  private readonly IMongoCollection<SirenRepresentation> sirens;
+  private readonly IMongoCollection<UserData> users;
+  private readonly IMongoCollection<SirenaData> sirens;
   private readonly TelegramBot bot;
   private readonly FacadeMongoDBRequests requests;
   private readonly ILocalizationProvider localizationProvider;
@@ -27,8 +28,8 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
   , IMessageSender messageSender)
   : base(NAME, DESCRIPTION)
   {
-    users = db.GetCollection<UserRepresentation>("users");
-    sirens = db.GetCollection<SirenRepresentation>("sirens");
+    users = db.GetCollection<UserData>("users");
+    sirens = db.GetCollection<SirenaData>("sirens");
     this.bot = bot;
     this.requests = requests;
     this.localizationProvider = localizationProvider;
@@ -42,7 +43,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
     long chatId = context.GetChat().Id;
     var info = context.GetCultureInfo();
     string param = context.GetArgsString().GetParameterByNumber(0);
-    SirenRepresentation sirena;
+    SirenaData sirena;
 
     if (int.TryParse(param, out int number))
     {
@@ -80,7 +81,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
     messageSender.Send(chatId, messageText);
   }
 
-  private async Task<string[]> GetResponsibleNames(SirenRepresentation sirena)
+  private async Task<string[]> GetResponsibleNames(SirenaData sirena)
   {
     string[] names = new string[sirena.Responsible.Length];
     for (int id = 0; id != sirena.Responsible.Length; ++id)
@@ -93,7 +94,7 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
     return names;
   }
 
-  private async Task<string> CreateMessageText(SirenRepresentation? sirena, System.Globalization.CultureInfo info)
+  private async Task<string> CreateMessageText(SirenaData? sirena, System.Globalization.CultureInfo info)
   {
     if (sirena == null)
       return localizationProvider.Get("command.get_responsibles.no_sirena", info);

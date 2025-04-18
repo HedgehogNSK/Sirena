@@ -1,5 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
@@ -8,7 +8,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class DisplayCommandMenuStep(IGetUserRelatedSirenas userSirenas
 ,IGetUserInformation getUserInformation 
-, IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> messageBuilderFactory)
+, IFactory<IRequestContext, IEnumerable<SirenaData>, ISendMessageBuilder> messageBuilderFactory)
  : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -28,7 +28,7 @@ public class DisplayCommandMenuStep(IGetUserRelatedSirenas userSirenas
        .Select(CreateSubscriptionList)
        .Catch((Exception ex) => Observable.Return(new Report(Result.Exception, null)));
 
-      Report CreateSubscriptionList(IEnumerable<SirenRepresentation> sirens)
+      Report CreateSubscriptionList(IEnumerable<SirenaData> sirens)
       {
         var notResponsibleSirens = sirens.Where(_siren => !_siren.CanBeCalledBy(uid)
            && !_siren.Requests.Any(_value => _value.UID == uid));
@@ -42,7 +42,7 @@ public class DisplayCommandMenuStep(IGetUserRelatedSirenas userSirenas
   }
   public class Factory(
     IGetUserRelatedSirenas getSubscriptions, IGetUserInformation getUserInformation
-  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, IEnumerable<SirenaData>, ISendMessageBuilder> messageBuilderFactory)
     : IFactory<DisplayCommandMenuStep>
   {
     public DisplayCommandMenuStep Create()

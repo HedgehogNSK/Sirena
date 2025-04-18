@@ -1,6 +1,6 @@
 using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Blendflake;
 using RxTelegram.Bot.Interface.BaseTypes;
@@ -13,13 +13,13 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
 {
   private readonly IFindSirenaOperation findSirenaOperation;
   private readonly IGetUserRelatedSirenas getUserSirenasOperation;
-  private readonly IFactory<IRequestContext, IEnumerable<SirenRepresentation>, RemoveSirenaMenuMessageBuilder> removeMenuMessageBuilderFactory;
+  private readonly IFactory<IRequestContext, IEnumerable<SirenaData>, RemoveSirenaMenuMessageBuilder> removeMenuMessageBuilderFactory;
   private readonly IFactory<IRequestContext, IncorrectParameterMessageBuilder> inorrectParamMessageBuilderFactory;
 
-  public FindRemoveSirenaStep(NullableContainer<SirenRepresentation> sirenaContainer
+  public FindRemoveSirenaStep(NullableContainer<SirenaData> sirenaContainer
   , IFindSirenaOperation findSirenaOperation
   , IGetUserRelatedSirenas getUserSirenasOperation
-  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, RemoveSirenaMenuMessageBuilder> removeMenuMessageBuilderFactory
+  , IFactory<IRequestContext, IEnumerable<SirenaData>, RemoveSirenaMenuMessageBuilder> removeMenuMessageBuilderFactory
   , IFactory<IRequestContext, IncorrectParameterMessageBuilder> inorrectParamMessageBuilderFactory)
   : base(sirenaContainer)
   {
@@ -34,7 +34,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     User botUser = context.GetUser();
     long uid = botUser.Id;
     string param = context.GetArgsString().GetParameterByNumber(0);
-    IObservable<SirenRepresentation?> observableSirena;
+    IObservable<SirenaData?> observableSirena;
     if (string.IsNullOrEmpty(param))
     {
       return getUserSirenasOperation.GetUserSirenas(uid)
@@ -59,7 +59,7 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
     return observableSirena.Select((_sirena) => ProcessRequestById(_sirena, context));
   }
 
-  private Report ProcessRequestById(SirenRepresentation? sirena, IRequestContext context)
+  private Report ProcessRequestById(SirenaData? sirena, IRequestContext context)
   {
     if (sirena == null || sirena.OwnerId != context.GetUser().Id)
     {
@@ -73,10 +73,10 @@ public class FindRemoveSirenaStep : DeleteSirenaStep
   public class Factory(IGetUserRelatedSirenas getUserSirenasOperation
   , IFindSirenaOperation findSirenaOperation
   , IFactory<IRequestContext, IncorrectParameterMessageBuilder> inorrectParamMessageBuilderFactory
-  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, RemoveSirenaMenuMessageBuilder> removeMenuMessageBuilderFactory)
-    : IFactory<NullableContainer<SirenRepresentation>, FindRemoveSirenaStep>
+  , IFactory<IRequestContext, IEnumerable<SirenaData>, RemoveSirenaMenuMessageBuilder> removeMenuMessageBuilderFactory)
+    : IFactory<NullableContainer<SirenaData>, FindRemoveSirenaStep>
   {
-    public FindRemoveSirenaStep Create(NullableContainer<SirenRepresentation> sirenaContainer)
+    public FindRemoveSirenaStep Create(NullableContainer<SirenaData> sirenaContainer)
     {
       return new FindRemoveSirenaStep(sirenaContainer, findSirenaOperation
       , getUserSirenasOperation, removeMenuMessageBuilderFactory

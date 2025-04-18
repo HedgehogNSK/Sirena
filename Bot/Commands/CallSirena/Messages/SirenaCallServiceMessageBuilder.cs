@@ -1,6 +1,6 @@
 using Hedgey.Extensions.Telegram;
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
@@ -13,11 +13,11 @@ namespace Hedgey.Sirena.Bot;
 
 public class SirenaCallServiceMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, User initiator
-  , SirenRepresentation sirena, SirenaActivation callInfo)
+  , SirenaData sirena, SirenaActivation callInfo)
   : MessageBuilder(chatId, info, localizationProvider)
 {
   private readonly User initiator = initiator;
-  private readonly SirenRepresentation sirena = sirena;
+  private readonly SirenaData sirena = sirena;
   private readonly SirenaActivation callInfo = callInfo;
 
   public override SendMessage Build()

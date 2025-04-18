@@ -1,27 +1,28 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Bot.Operations;
+using Hedgey.Sirena.Entities;
 using Hedgey.Sirena.ID;
 using MongoDB.Driver;
 
-namespace Hedgey.Sirena.Bot.Operations.Mongo;
+namespace Hedgey.Sirena.MongoDB.Operations;
 
 public class CreateSirenaOperationAsync : ICreateSirenaOperationAsync
 {
-  private readonly IMongoCollection<SirenRepresentation> sirenCollection;
-  private readonly IMongoCollection<UserRepresentation> usersCollection;
+  private readonly IMongoCollection<SirenaData> sirenCollection;
+  private readonly IMongoCollection<UserData> usersCollection;
   private readonly IIDGenerator idGenerator;
 
-  public CreateSirenaOperationAsync(IMongoCollection<SirenRepresentation> sirenCollection
-  ,IMongoCollection<UserRepresentation> usersCollection
+  public CreateSirenaOperationAsync(IMongoCollection<SirenaData> sirenCollection
+  ,IMongoCollection<UserData> usersCollection
   ,IIDGenerator idGenerator )
   {
     this.sirenCollection = sirenCollection;
     this.usersCollection = usersCollection;
     this.idGenerator = idGenerator;
   }
-  public async Task<SirenRepresentation> CreateAsync(long uid, string sirenName)
+  public async Task<SirenaData> CreateAsync(long uid, string sirenName)
   {
 
-    SirenRepresentation siren = new SirenRepresentation
+    SirenaData siren = new SirenaData
     {
       Title = sirenName,
       SID = idGenerator.Get(),
@@ -30,7 +31,7 @@ public class CreateSirenaOperationAsync : ICreateSirenaOperationAsync
     };
     await sirenCollection.InsertOneAsync(siren);
 
-    var update = Builders<UserRepresentation>.Update
+    var update = Builders<UserData>.Update
     .AddToSet(_user => _user.Owner, siren.SID);
     UpdateOptions updateOptions = new UpdateOptions()
     {

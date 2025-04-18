@@ -1,6 +1,6 @@
 using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Bot.Operations.Mongo;
+using Hedgey.Sirena.MongoDB.Operations;
 using Hedgey.Structure.Factory;
 using SimpleInjector;
 

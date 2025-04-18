@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Hedgey.Sirena.Database;
+namespace Hedgey.Sirena.Entities;
 public record SirenaActivation(
     [property: BsonElement("sid"), BsonRepresentation(BsonType.Int64)] ulong SirenaId,
     [property: BsonElement("caller"), BsonRepresentation(BsonType.Int64)] long Caller,

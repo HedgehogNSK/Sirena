@@ -1,5 +1,5 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
@@ -9,10 +9,10 @@ namespace Hedgey.Sirena.Bot;
 
 public class ListSirenaMessageBuilder : MessageBuilder
 {
-  private (SirenRepresentation sirena, string ownerName)[] collection;
+  private (SirenaData sirena, string ownerName)[] collection;
 
   public ListSirenaMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider localizationProvider, (SirenRepresentation sirena, string ownerName)[] collection)
+  , ILocalizationProvider localizationProvider, (SirenaData sirena, string ownerName)[] collection)
   : base(chatId, info, localizationProvider)
   {
     this.collection = collection;

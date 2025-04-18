@@ -1,5 +1,5 @@
 using Hedgey.Extensions.SimpleInjector;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using SimpleInjector;
@@ -19,7 +19,7 @@ public class RequestsCommandInstaller(Container container)
     Container.RegisterStepFactoryWithBuilderFactories(typeof(GetUserSirenasStep.Factory)
     , [typeof(NoRequestsMessageBuilderFactory), typeof(SirenaRequestsSendMessageBuilder.Factory)]);
 
-    RegisterIntoCommand<IFactory<NullableContainer<IEnumerable<SirenRepresentation>>, LoadUserSirenasWithRequestsStep>
+    RegisterIntoCommand<IFactory<NullableContainer<IEnumerable<SirenaData>>, LoadUserSirenasWithRequestsStep>
     , LoadUserSirenasWithRequestsStep.Factory>(Lifestyle.Singleton);
 
     RegisterIntoCommand<IFactory<NullableContainer<ulong>, RequestsValidateSirenaIdStep>
@@ -32,7 +32,7 @@ public class RequestsCommandInstaller(Container container)
     , [typeof(SirenaRequestsSendMessageBuilder.Factory), typeof(SirenaRequestsEditMessageBuilder.Factory)
     , typeof(SirenaHasNoRequestsMessageBuilderFactory)]);
 
-    RegisterIntoCommand<IFactory<NullableContainer<SirenRepresentation>
+    RegisterIntoCommand<IFactory<NullableContainer<SirenaData>
       , NullableContainer<RequestsCommand.RequestInfo>, CreateRequestInfoStep>
       , CreateRequestInfoStep.Factory>(Lifestyle.Singleton);
   }

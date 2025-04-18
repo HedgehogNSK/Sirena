@@ -1,5 +1,5 @@
 using Hedgey.Extensions.SimpleInjector;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using SimpleInjector;
@@ -21,7 +21,7 @@ public class DisplaySirenaInfoInstaller(Container container)
     Container.RegisterSingleton<IFactory<NullableContainer<ulong>, GetSirenaInfoStep>, GetSirenaInfoStep.Factory>();
     Container.RegisterConditional<IFactory<IRequestContext, ulong, ISendMessageBuilder>
     , SirenaInfoNotFoundMessageBuilder.Factory, GetSirenaInfoStep.Factory>();
-    Container.RegisterConditional<IFactory<IRequestContext, long, SirenRepresentation, SirenaInfoMessageBuilder>
+    Container.RegisterConditional<IFactory<IRequestContext, long, SirenaData, SirenaInfoMessageBuilder>
     , SirenaInfoMessageBuilder.Factory, GetSirenaInfoStep.Factory>();
   }
 }

@@ -1,4 +1,4 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using SimpleInjector;
@@ -12,7 +12,7 @@ public class GetSubscriptionsListInstaller(Container container)
   {
     base.Install();
 
-    Container.RegisterConditional<IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder>
+    Container.RegisterConditional<IFactory<IRequestContext, IEnumerable<SirenaData>, ISendMessageBuilder>
     ,SubscriptionsMessageBuilderFactory>(Lifestyle.Singleton,
       x => x.Consumer.ImplementationType == typeof(GetSubscriptionsListCommand)
     );

@@ -1,4 +1,4 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Structure.Plan;
 using Hedgey.Telegram.Bot;
@@ -6,9 +6,9 @@ using Hedgey.Telegram.Bot;
 namespace Hedgey.Sirena.Bot;
 
 public class RequestRightsPlanFactory(IFactory<NullableContainer<ulong>, ValidateSirenaIdStep> validateIdStepFactory
-  , IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep> sirenExistensValidationStepFactory
-  , IFactory<NullableContainer<SirenRepresentation>, AddRequestMessageStep> addRequestMessageStepFactory
-  , IFactory<NullableContainer<SirenRepresentation>, SendRequestStep> sendRequestStepFactory
+  , IFactory<NullableContainer<ulong>, NullableContainer<SirenaData>, SirenaExistensValidationStep> sirenExistensValidationStepFactory
+  , IFactory<NullableContainer<SirenaData>, AddRequestMessageStep> addRequestMessageStepFactory
+  , IFactory<NullableContainer<SirenaData>, SendRequestStep> sendRequestStepFactory
   ,  IFactory<DisplayCommandMenuStep> displayCommandMenuStepFactory) 
   : IFactory<IRequestContext, CommandPlan>
 {
@@ -16,7 +16,7 @@ public class RequestRightsPlanFactory(IFactory<NullableContainer<ulong>, Validat
   public CommandPlan Create(IRequestContext context)
   {
     NullableContainer<ulong> idContainer = new();
-    NullableContainer<SirenRepresentation> sirenaContainer = new();
+    NullableContainer<SirenaData> sirenaContainer = new();
     CompositeCommandStep validationBulkStep = new(
       validateIdStepFactory.Create(idContainer),
       sirenExistensValidationStepFactory.Create(idContainer, sirenaContainer)

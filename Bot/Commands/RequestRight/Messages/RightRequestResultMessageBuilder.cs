@@ -1,6 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using System.Globalization;
@@ -10,7 +10,7 @@ namespace Hedgey.Sirena.Bot;
 
 sealed public class RightRequestResultMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider, IRightsRequestOperation.Result result
-  , SirenRepresentation sirena) 
+  , SirenaData sirena) 
     : MessageBuilder(chatId, info, localizationProvider)
 {
   public override SendMessage Build()
@@ -28,10 +28,10 @@ sealed public class RightRequestResultMessageBuilder(long chatId, CultureInfo in
   }
 
   public class Factory(ILocalizationProvider localizationProvider)
-  : IFactory<IRequestContext, IRightsRequestOperation.Result, SirenRepresentation, ISendMessageBuilder>
+  : IFactory<IRequestContext, IRightsRequestOperation.Result, SirenaData, ISendMessageBuilder>
   {
     public ISendMessageBuilder Create(IRequestContext context
-    , IRightsRequestOperation.Result requestResult, SirenRepresentation sirena)
+    , IRightsRequestOperation.Result requestResult, SirenaData sirena)
     {
       var chatId = context.GetChat().Id;
       var info = context.GetCultureInfo();

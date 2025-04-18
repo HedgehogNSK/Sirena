@@ -1,4 +1,4 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using SimpleInjector;
 
@@ -14,7 +14,7 @@ public class DeclineRequestInstaller(Container container)
     RegisterIntoCommand<IFactory<NullableContainer<ulong>, RequestsValidateSirenaIdStep>
     , RequestsValidateSirenaIdStep.Factory>(Lifestyle.Singleton);
     
-    Container.Register<IFactory<NullableContainer<SirenRepresentation>, DeclineRequestStep>
+    Container.Register<IFactory<NullableContainer<SirenaData>, DeclineRequestStep>
       , DeclineRequestStep.Factory>(Lifestyle.Singleton);
     Container.Register<DeclineRequestMessageBuilder.Factory>(Lifestyle.Singleton);
     Container.Register<NotAllowedTextGetter.Factory>(Lifestyle.Singleton);

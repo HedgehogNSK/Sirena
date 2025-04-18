@@ -1,12 +1,12 @@
 using Hedgey.Extensions.SimpleInjector;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Bot.Operations.Mongo;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.MongoDB.Operations;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using MongoDB.Driver;
 using SimpleInjector;
 
-namespace Hedgey.Sirena.Bot.DI;
+namespace Hedgey.Sirena.MongoDB.DI;
 
 public class SharedCommandServicesInstaller(Container container) : Installer(container)
 {
@@ -29,10 +29,10 @@ public class SharedCommandServicesInstaller(Container container) : Installer(con
     Container.Register<IFactory<IMongoClient>, MongoClientFactory>(Lifestyle.Transient);
     Container.RegisterSingleton<IMongoClient>(() => Container.GetInstance<IFactory<IMongoClient>>().Create());
     Container.RegisterSingleton<IMongoDatabase>(() => Container.GetInstance<IMongoClient>().GetDatabase("siren"));
-    Container.RegisterSingleton<IMongoCollection<SirenRepresentation>>(()
-      => Container.GetInstance<IMongoDatabase>().GetCollection<SirenRepresentation>("sirens"));
-    Container.RegisterSingleton<IMongoCollection<UserRepresentation>>(()
-      => Container.GetInstance<IMongoDatabase>().GetCollection<UserRepresentation>("users"));
+    Container.RegisterSingleton<IMongoCollection<SirenaData>>(()
+      => Container.GetInstance<IMongoDatabase>().GetCollection<SirenaData>("sirens"));
+    Container.RegisterSingleton<IMongoCollection<UserData>>(()
+      => Container.GetInstance<IMongoDatabase>().GetCollection<UserData>("users"));
     Container.RegisterSingleton<IMongoCollection<SirenaActivation>>(()
       => Container.GetInstance<IMongoDatabase>().GetCollection<SirenaActivation>("calls"));
   }

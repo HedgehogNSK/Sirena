@@ -1,5 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
 
@@ -32,7 +32,7 @@ public class RequestDBToCommandStep : CommandStep
     .Select(CreateReport);
   }
 
-  private Report CreateReport(SirenRepresentation sirena)
+  private Report CreateReport(SirenaData sirena)
   {
     messageBuilder.SetSirena(sirena);
     return new(sirena != null ? Result.Success : Result.Canceled, messageBuilder);

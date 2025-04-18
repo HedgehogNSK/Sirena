@@ -1,8 +1,9 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Blendflake;
 using Hedgey.Telegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
+using Hedgey.Sirena.MongoDB;
 
 namespace Hedgey.Sirena.Bot;
 
@@ -68,7 +69,7 @@ public class DelegateRightsCommand : AbstractBotCommmand
 
     //Set responsible
     //TODO: Move from facade to operation interface
-    SirenRepresentation updatedSiren = await requests.SetUserResponsible(uid, sirenaId, duid);
+    SirenaData updatedSiren = await requests.SetUserResponsible(uid, sirenaId, duid);
 
     if (updatedSiren == null)
     {

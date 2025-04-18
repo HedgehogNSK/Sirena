@@ -1,24 +1,26 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Bot;
+using Hedgey.Sirena.Bot.Operations;
+using Hedgey.Sirena.Entities;
 using MongoDB.Driver;
 
-namespace Hedgey.Sirena.Bot.Operations.Mongo;
+namespace Hedgey.Sirena.MongoDB.Operations;
 
 public class GetUserOperationAsync : IGetUserOperationAsync
 {
-  private IMongoCollection<UserRepresentation> users;
+  private IMongoCollection<UserData> users;
   private readonly FacadeMongoDBRequests requests;
   private readonly IMessageSender messageSender;
 
-  public GetUserOperationAsync(IMongoCollection<UserRepresentation> usersCollection
+  public GetUserOperationAsync(IMongoCollection<UserData> usersCollection
   , FacadeMongoDBRequests requests, IMessageSender messageSender)
   {
     this.users = usersCollection;
     this.requests = requests;
     this.messageSender = messageSender;
   }
-  public async Task<UserRepresentation?> GetAsync(long uid)
+  public async Task<UserData?> GetAsync(long uid)
   {
-    var filter = Builders<UserRepresentation>.Filter.Eq("_id", uid);
+    var filter = Builders<UserData>.Filter.Eq("_id", uid);
     try
     {
       var user = await users.Find(filter).FirstOrDefaultAsync();

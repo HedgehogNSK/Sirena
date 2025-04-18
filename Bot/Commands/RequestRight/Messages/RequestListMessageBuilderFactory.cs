@@ -1,14 +1,14 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 
 public class RequestListMessageBuilderFactory(ILocalizationProvider localizationProvider)
-   : IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder>
+   : IFactory<IRequestContext, IEnumerable<SirenaData>, ISendMessageBuilder>
 {
-  public ISendMessageBuilder Create(IRequestContext context, IEnumerable<SirenRepresentation> source)
+  public ISendMessageBuilder Create(IRequestContext context, IEnumerable<SirenaData> source)
   {
     var chatId = context.GetTargetChatId();
     var userId = context.GetUser().Id;

@@ -1,11 +1,11 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 
-public class AddRequestMessageStep(NullableContainer<SirenRepresentation> sirenaContainer
-  , IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder> messageBuilderFactory)
+public class AddRequestMessageStep(NullableContainer<SirenaData> sirenaContainer
+  , IFactory<IRequestContext, SirenaData, ISendMessageBuilder> messageBuilderFactory)
   : NotificationStep
 {
   protected override ISendMessageBuilder CreateNotification(IRequestContext context)
@@ -13,10 +13,10 @@ public class AddRequestMessageStep(NullableContainer<SirenRepresentation> sirena
     var sirena = sirenaContainer.Get();
     return messageBuilderFactory.Create(context, sirena);
   }
-  public class Factory(IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder> messageBuilderFactory)
-  : IFactory<NullableContainer<SirenRepresentation>, AddRequestMessageStep>
+  public class Factory(IFactory<IRequestContext, SirenaData, ISendMessageBuilder> messageBuilderFactory)
+  : IFactory<NullableContainer<SirenaData>, AddRequestMessageStep>
   {
-    public AddRequestMessageStep Create(NullableContainer<SirenRepresentation> sirenaContainer)
+    public AddRequestMessageStep Create(NullableContainer<SirenaData> sirenaContainer)
       => new AddRequestMessageStep(sirenaContainer, messageBuilderFactory);
   }
 }

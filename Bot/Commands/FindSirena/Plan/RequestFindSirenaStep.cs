@@ -1,6 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using MongoDB.Driver.Linq;
 using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
@@ -35,7 +35,7 @@ public class RequestFindSirenaStep(IFindSirenaOperation findSirenaOperation
 
     return succesful.Merge(emptyList);
 
-    Report CreateReport((SirenRepresentation, string)[] source)
+    Report CreateReport((SirenaData, string)[] source)
     {
       var info = context.GetCultureInfo();
       var chatId = context.GetTargetChatId();
@@ -43,7 +43,7 @@ public class RequestFindSirenaStep(IFindSirenaOperation findSirenaOperation
       return new Report(Result.Success, builder);
     }
   }
-  private IObservable<(SirenRepresentation sirena, string ownerName)> GetOwnerNickname(SirenRepresentation sirena)
+  private IObservable<(SirenaData sirena, string ownerName)> GetOwnerNickname(SirenaData sirena)
     => getUserInformation.GetNickname(sirena.OwnerId).Select(x => (sirena, x));
 
   private Report NoSirenaReport(IRequestContext context)

@@ -1,7 +1,7 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 
 namespace Hedgey.Sirena.Bot.Operations;
 public interface ICreateSirenaOperationAsync
 {
-  Task<SirenRepresentation> CreateAsync(long uid, string sirenName);
+  Task<SirenaData> CreateAsync(long uid, string sirenName);
 }

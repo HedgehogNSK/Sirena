@@ -1,4 +1,4 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 
@@ -9,12 +9,12 @@ public class DeclineRequestCommand : PlanExecutorBotCommand
   public const string NAME = "decline_request";
   const string DESCRIPTION = "Declines a user's request for Siren activation rights.";
   private readonly IFactory<NullableContainer<ulong>, RequestsValidateSirenaIdStep> validateIdStepFactory;
-  private readonly IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep> sirenExistensValidationStepFactory;
-  private readonly IFactory<NullableContainer<SirenRepresentation>, DeclineRequestStep> declineRequestStepFactory;
+  private readonly IFactory<NullableContainer<ulong>, NullableContainer<SirenaData>, SirenaExistensValidationStep> sirenExistensValidationStepFactory;
+  private readonly IFactory<NullableContainer<SirenaData>, DeclineRequestStep> declineRequestStepFactory;
 
   public DeclineRequestCommand(IFactory<NullableContainer<ulong>, RequestsValidateSirenaIdStep> validateIdStepFactory
-  , IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep> sirenExistensValidationStepFactory
-  , IFactory<NullableContainer<SirenRepresentation>, DeclineRequestStep> declineRequestStepFactory
+  , IFactory<NullableContainer<ulong>, NullableContainer<SirenaData>, SirenaExistensValidationStep> sirenExistensValidationStepFactory
+  , IFactory<NullableContainer<SirenaData>, DeclineRequestStep> declineRequestStepFactory
   , PlanScheduler planScheduler)
    : base(NAME, DESCRIPTION, planScheduler)
   {
@@ -25,7 +25,7 @@ public class DeclineRequestCommand : PlanExecutorBotCommand
   protected override CommandPlan Create(IRequestContext context)
   {
     NullableContainer<ulong> idContainer = new();
-    NullableContainer<SirenRepresentation> sirenaContainer = new();
+    NullableContainer<SirenaData> sirenaContainer = new();
     CompositeCommandStep validationBulkStep = new(
       validateIdStepFactory.Create(idContainer),
       sirenExistensValidationStepFactory.Create(idContainer, sirenaContainer)

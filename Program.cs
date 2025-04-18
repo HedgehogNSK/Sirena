@@ -17,6 +17,7 @@ using SimpleInjector;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
+using Hedgey.Sirena.MongoDB.DI;
 
 namespace Hedgey.Sirena;
 static internal class Program

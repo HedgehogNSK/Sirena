@@ -1,21 +1,22 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Bot.Operations;
+using Hedgey.Sirena.Entities;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System.Reactive.Linq;
 
-namespace Hedgey.Sirena.Bot.Operations.Mongo;
+namespace Hedgey.Sirena.MongoDB.Operations;
 
-public class UserOperations(IMongoCollection<UserRepresentation> users
-  , IMongoCollection<SirenRepresentation> sirens)
+public class UserOperations(IMongoCollection<UserData> users
+  , IMongoCollection<SirenaData> sirens)
  : IUserEditOperations, IUserInfoOperations, IGetUserOverviewAsync
 {
-  private readonly IMongoCollection<UserRepresentation> users = users;
-  private readonly IMongoCollection<SirenRepresentation> sirens = sirens;
+  private readonly IMongoCollection<UserData> users = users;
+  private readonly IMongoCollection<SirenaData> sirens = sirens;
 
   public IObservable<UpdateState> CreateUser(long userID, long chatID)
   {
-    var filter = Builders<UserRepresentation>.Filter.Eq(x => x.UID, userID);
-    var update = Builders<UserRepresentation>.Update
+    var filter = Builders<UserData>.Filter.Eq(x => x.UID, userID);
+    var update = Builders<UserData>.Update
         .SetOnInsert(x => x.UID, userID)
         .SetOnInsert(x => x.ChatID, chatID);
     var options = new UpdateOptions { IsUpsert = true };

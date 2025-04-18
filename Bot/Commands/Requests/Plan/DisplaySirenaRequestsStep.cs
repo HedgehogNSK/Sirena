@@ -1,16 +1,16 @@
 using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 public class DisplaySirenaRequestsStep(IGetUserInformation getUserInfromation
-, NullableContainer<SirenRepresentation> sirenaContainer
+, NullableContainer<SirenaData> sirenaContainer
 , IFactory<IRequestContext, RequestsCommand.RequestInfo, ISendMessageBuilder> sendMessageBuilderFactory
 , IFactory<IRequestContext, RequestsCommand.RequestInfo, IEditMessageBuilder> editMessageBuilderFactory
-, IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder> noRequestsMessageBuilderFactory)
+, IFactory<IRequestContext, SirenaData, ISendMessageBuilder> noRequestsMessageBuilderFactory)
  : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -44,10 +44,10 @@ public class DisplaySirenaRequestsStep(IGetUserInformation getUserInfromation
   public class Factory(IGetUserInformation getUserInfromation
 , IFactory<IRequestContext, RequestsCommand.RequestInfo, ISendMessageBuilder> sendMessageBuilderFactory
 , IFactory<IRequestContext, RequestsCommand.RequestInfo, IEditMessageBuilder> editMessageBuilderFactory
-    , IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder> noRequestsMessageBuilderFactory)
- : IFactory<NullableContainer<SirenRepresentation>, DisplaySirenaRequestsStep>
+    , IFactory<IRequestContext, SirenaData, ISendMessageBuilder> noRequestsMessageBuilderFactory)
+ : IFactory<NullableContainer<SirenaData>, DisplaySirenaRequestsStep>
   {
-    public DisplaySirenaRequestsStep Create(NullableContainer<SirenRepresentation> sirenaContainer)
+    public DisplaySirenaRequestsStep Create(NullableContainer<SirenaData> sirenaContainer)
      => new DisplaySirenaRequestsStep(getUserInfromation, sirenaContainer
       , sendMessageBuilderFactory, editMessageBuilderFactory
       , noRequestsMessageBuilderFactory);

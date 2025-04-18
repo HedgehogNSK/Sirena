@@ -1,7 +1,7 @@
 using Hedgey.Blendflake;
 using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
@@ -9,7 +9,7 @@ using Hedgey.Telegram.Bot;
 namespace Hedgey.Sirena.Bot;
 
 public class CheckCallAbilityStep(
-  IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> availableSirenasMessageBuilderFactory
+  IFactory<IRequestContext, IEnumerable<SirenaData>, ISendMessageBuilder> availableSirenasMessageBuilderFactory
 , IGetUserRelatedSirenas getUserRelatedSirenas
 , NullableContainer<ulong> idContainer
 , int idArgNumber = 0) : CommandStep
@@ -28,13 +28,13 @@ public class CheckCallAbilityStep(
     Report report = new Report(Result.Success);
     return Observable.Return(report);
 
-    Report CreateReport(IEnumerable<SirenRepresentation> sirenas)
+    Report CreateReport(IEnumerable<SirenaData> sirenas)
     {
       ISendMessageBuilder builder = availableSirenasMessageBuilderFactory.Create(context, sirenas);
       return new Report(Result.Canceled, builder);
     }
   }
-  public class Factory(IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> availableSirenasMessageBuilderFactory
+  public class Factory(IFactory<IRequestContext, IEnumerable<SirenaData>, ISendMessageBuilder> availableSirenasMessageBuilderFactory
   , IGetUserRelatedSirenas getUserRelatedSirenas)
     : IFactory<NullableContainer<ulong>, CheckCallAbilityStep>
   {

@@ -1,14 +1,14 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 
 public class SirenaHasNoRequestsMessageBuilderFactory(ILocalizationProvider localizationProvider)
-    : IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder>
+    : IFactory<IRequestContext, SirenaData, ISendMessageBuilder>
 {
-  public ISendMessageBuilder Create(IRequestContext context, SirenRepresentation sirena)
+  public ISendMessageBuilder Create(IRequestContext context, SirenaData sirena)
   {
     const string localizationKey = "command.requests.error.sirena_has_no_requests";
     var chatID = context.GetTargetChatId();

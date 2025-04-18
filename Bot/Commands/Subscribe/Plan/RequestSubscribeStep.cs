@@ -1,5 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using MongoDB.Driver;
 using System.Reactive.Linq;
@@ -9,7 +9,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class RequestSubscribeStep(NullableContainer<ulong> sirenaIdContainter
   , ISubscribeToSirenaOperation subscribeOperation
-  , IFactory<IRequestContext, SirenRepresentation, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
+  , IFactory<IRequestContext, SirenaData, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
   , IFactory<IRequestContext, ulong, ISendMessageBuilder> sirenaNotFoundMessageBuilderFactory)
   : CommandStep
 {
@@ -23,7 +23,7 @@ public class RequestSubscribeStep(NullableContainer<ulong> sirenaIdContainter
     var success = request.Where(x => x != null).Select(CreateSuccesfulReport);
     return success.Merge(fail);
 
-    Report CreateSuccesfulReport(SirenRepresentation representation)
+    Report CreateSuccesfulReport(SirenaData representation)
     {
       var chatId = context.GetTargetChatId();
       var info = context.GetCultureInfo();
@@ -39,7 +39,7 @@ public class RequestSubscribeStep(NullableContainer<ulong> sirenaIdContainter
     }
   }
   public class Factory(ISubscribeToSirenaOperation subscribeOperation
-  , IFactory<IRequestContext, SirenRepresentation, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
+  , IFactory<IRequestContext, SirenaData, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
   , IFactory<IRequestContext, ulong, ISendMessageBuilder> sirenaNotFoundMessageBuilderFactory)
   : IFactory<NullableContainer<ulong>, RequestSubscribeStep>
   {

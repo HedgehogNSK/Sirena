@@ -1,9 +1,9 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Hedgey.Sirena.Database;
+namespace Hedgey.Sirena.Entities;
 [Serializable]
-public class UserRepresentation
+public class UserData
 {
   [BsonId, BsonRepresentation(BsonType.Int64)]
   public long UID { get; set; }

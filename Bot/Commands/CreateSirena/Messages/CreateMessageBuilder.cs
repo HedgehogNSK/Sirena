@@ -1,5 +1,5 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
@@ -15,7 +15,7 @@ public class CreateMessageBuilder : MessageBuilder, ISendMessageBuilder
   private bool isTitleValid;
   private readonly int minSymbols;
   private readonly int maxSymbols;
-  private SirenRepresentation? sirena;
+  private SirenaData? sirena;
   private readonly string botName;
 
   public CreateMessageBuilder(long chatId, CultureInfo info
@@ -31,7 +31,7 @@ public class CreateMessageBuilder : MessageBuilder, ISendMessageBuilder
   {
     userIsSet = isSet;
   }
-  internal void SetSirena(SirenRepresentation? sirena)
+  internal void SetSirena(SirenaData? sirena)
   {
     this.sirena = sirena;
   }

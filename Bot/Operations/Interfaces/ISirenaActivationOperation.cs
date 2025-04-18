@@ -1,4 +1,4 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using MongoDB.Bson;
 
 namespace Hedgey.Sirena.Bot.Operations;

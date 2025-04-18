@@ -1,8 +1,8 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 
 namespace Hedgey.Sirena.Bot.Operations;
 public interface IFindSirenaOperation
 {
-  IObservable<SirenRepresentation> Find(ulong sirenaId);
-  IObservable<List<SirenRepresentation>> Find(string keyPhrase);
+  IObservable<SirenaData> Find(ulong sirenaId);
+  IObservable<List<SirenaData>> Find(string keyPhrase);
 }

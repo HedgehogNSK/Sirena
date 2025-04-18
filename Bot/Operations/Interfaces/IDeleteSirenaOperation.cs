@@ -1,9 +1,9 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 
 namespace Hedgey.Sirena.Bot.Operations
 {
   public interface IDeleteSirenaOperation
   {
-    IObservable<SirenRepresentation> Delete(long userId, ulong sirenaId);
+    IObservable<SirenaData> Delete(long userId, ulong sirenaId);
   }
 }

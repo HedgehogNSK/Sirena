@@ -1,6 +1,6 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 
 namespace Hedgey.Sirena.Bot.Operations;
 public interface IGetUserOperationAsync{
-  Task<UserRepresentation?> GetAsync(long id);
+  Task<UserData?> GetAsync(long id);
 }

@@ -1,5 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using System.Reactive.Linq;
@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 namespace Hedgey.Sirena.Bot;
 
 public class LoadUserSirenasWithRequestsStep(IGetUserRelatedSirenas sirenasLoader
-  , NullableContainer<IEnumerable<SirenRepresentation>> sirenasContainer)
+  , NullableContainer<IEnumerable<SirenaData>> sirenasContainer)
    : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -20,9 +20,9 @@ public class LoadUserSirenasWithRequestsStep(IGetUserRelatedSirenas sirenasLoade
     });
   }
   public class Factory(IGetUserRelatedSirenas sirenasLoader)
-   : IFactory<NullableContainer<IEnumerable<SirenRepresentation>>, LoadUserSirenasWithRequestsStep>
+   : IFactory<NullableContainer<IEnumerable<SirenaData>>, LoadUserSirenasWithRequestsStep>
   {
-    public LoadUserSirenasWithRequestsStep Create(NullableContainer<IEnumerable<SirenRepresentation>> container)
+    public LoadUserSirenasWithRequestsStep Create(NullableContainer<IEnumerable<SirenaData>> container)
     => new LoadUserSirenasWithRequestsStep(sirenasLoader, container);
   }
 }

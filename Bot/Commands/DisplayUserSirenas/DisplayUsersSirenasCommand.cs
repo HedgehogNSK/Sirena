@@ -1,6 +1,6 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
 
@@ -30,10 +30,10 @@ public sealed class DisplayUsersSirenasCommand(IGetUserRelatedSirenas getUserSir
     .Subscribe(x => DisplaySirenas(x, context));
   }
 
-  private void DisplaySirenas(IEnumerable<SirenRepresentation> userSirenas, IRequestContext context)
+  private void DisplaySirenas(IEnumerable<SirenaData> userSirenas, IRequestContext context)
   {
     var enumerator = userSirenas.GetEnumerator();
-    SirenRepresentation? sirena = null;
+    SirenaData? sirena = null;
     if (enumerator.MoveNext())
       sirena = enumerator.Current;
 

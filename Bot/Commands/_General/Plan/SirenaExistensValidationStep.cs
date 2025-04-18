@@ -1,7 +1,7 @@
 using Hedgey.Blendflake;
 using Hedgey.Localization;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Utilities;
 using System.Reactive.Linq;
@@ -10,7 +10,7 @@ using Hedgey.Telegram.Bot;
 namespace Hedgey.Sirena.Bot;
 
 public class SirenaExistensValidationStep(NullableContainer<ulong> idContainer
-, NullableContainer<SirenRepresentation> sirenaContainer
+, NullableContainer<SirenaData> sirenaContainer
 , IFindSirenaOperation findSirenaOperation
 , IFactory<IRequestContext, string, ISendMessageBuilder> noSirenaMessageBuilderFactory)
  : CommandStep
@@ -20,7 +20,7 @@ public class SirenaExistensValidationStep(NullableContainer<ulong> idContainer
     var sirenaId = idContainer.Get();
     return findSirenaOperation.Find(sirenaId).Select(CreateReport);
 
-    Report CreateReport(SirenRepresentation representation)
+    Report CreateReport(SirenaData representation)
     {
       string sid = NotBase64URL.From(sirenaId);
       sid = HashUtilities.Shortify(sid);
@@ -33,10 +33,10 @@ public class SirenaExistensValidationStep(NullableContainer<ulong> idContainer
 
   public class Factory(IFactory<IRequestContext, string, ISendMessageBuilder> messageBuilderFactory
   , IFindSirenaOperation findSirenaOperation)
-    : IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, SirenaExistensValidationStep>
+    : IFactory<NullableContainer<ulong>, NullableContainer<SirenaData>, SirenaExistensValidationStep>
   {
     public SirenaExistensValidationStep Create(NullableContainer<ulong> idContainer
-      , NullableContainer<SirenRepresentation> sirenaContainer)
+      , NullableContainer<SirenaData> sirenaContainer)
       => new SirenaExistensValidationStep(idContainer, sirenaContainer
       , findSirenaOperation, messageBuilderFactory);
   }

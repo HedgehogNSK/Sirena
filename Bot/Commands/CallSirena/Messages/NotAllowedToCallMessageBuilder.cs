@@ -1,5 +1,5 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
@@ -11,11 +11,11 @@ namespace Hedgey.Sirena.Bot;
 
 public class NotAllowedToCallMessageBuilder : MessageBuilder
 {
-  private readonly SirenRepresentation sirena;
+  private readonly SirenaData sirena;
   private readonly long uid;
 
   public NotAllowedToCallMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider localizationProvider, SirenRepresentation sirena, long uid)
+  , ILocalizationProvider localizationProvider, SirenaData sirena, long uid)
   : base(chatId, info, localizationProvider)
   {
     this.sirena = sirena;
@@ -62,10 +62,10 @@ public class NotAllowedToCallMessageBuilder : MessageBuilder
   }
 
   public class Factory(ILocalizationProvider localizationProvider)
-    : IFactory<IRequestContext, SirenRepresentation, NotAllowedToCallMessageBuilder>
+    : IFactory<IRequestContext, SirenaData, NotAllowedToCallMessageBuilder>
   {
 
-    public NotAllowedToCallMessageBuilder Create(IRequestContext context, SirenRepresentation sirena)
+    public NotAllowedToCallMessageBuilder Create(IRequestContext context, SirenaData sirena)
     {
       var chatId = context.GetChat().Id;
       var info = context.GetCultureInfo();

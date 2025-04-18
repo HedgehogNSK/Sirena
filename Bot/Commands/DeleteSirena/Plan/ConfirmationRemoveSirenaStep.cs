@@ -1,15 +1,15 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 
-public class ConfirmationRemoveSirenaStep(NullableContainer<SirenRepresentation> sirenaContainer
-  , IFactory<IRequestContext, SirenRepresentation, ConfirmRemoveSirenaMessageBuilder> messageBuilderFactory)
+public class ConfirmationRemoveSirenaStep(NullableContainer<SirenaData> sirenaContainer
+  , IFactory<IRequestContext, SirenaData, ConfirmRemoveSirenaMessageBuilder> messageBuilderFactory)
   : DeleteSirenaStep(sirenaContainer)
 {
-  private readonly IFactory<IRequestContext, SirenRepresentation, ConfirmRemoveSirenaMessageBuilder> messageBuilderFactory = messageBuilderFactory;
+  private readonly IFactory<IRequestContext, SirenaData, ConfirmRemoveSirenaMessageBuilder> messageBuilderFactory = messageBuilderFactory;
   bool warningIsShown = false;
   public override IObservable<Report> Make(IRequestContext context)
   {
@@ -32,10 +32,10 @@ public class ConfirmationRemoveSirenaStep(NullableContainer<SirenRepresentation>
     return Observable.Return(report);
   }
 
-  public class Factory(IFactory<IRequestContext, SirenRepresentation, ConfirmRemoveSirenaMessageBuilder> messageBuilderFactory)
-    : IFactory<NullableContainer<SirenRepresentation>, ConfirmationRemoveSirenaStep>
+  public class Factory(IFactory<IRequestContext, SirenaData, ConfirmRemoveSirenaMessageBuilder> messageBuilderFactory)
+    : IFactory<NullableContainer<SirenaData>, ConfirmationRemoveSirenaStep>
   {
-    public ConfirmationRemoveSirenaStep Create(NullableContainer<SirenRepresentation> sirenaContainer)
+    public ConfirmationRemoveSirenaStep Create(NullableContainer<SirenaData> sirenaContainer)
       => new ConfirmationRemoveSirenaStep(sirenaContainer, messageBuilderFactory);
   }
 }

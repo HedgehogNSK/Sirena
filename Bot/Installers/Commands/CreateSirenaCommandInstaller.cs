@@ -1,6 +1,6 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Bot.Operations.Mongo;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.MongoDB.Operations;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 
@@ -19,7 +19,7 @@ namespace Hedgey.Sirena.Bot.DI
       Container.RegisterSingleton<IFactory<IRequestContext, CreateMessageBuilder>, CreateMessageBuilder.Factory>();
 
       Container.Register<NullableContainer<string>>();
-      Container.Register<NullableContainer<UserRepresentation>>();
+      Container.Register<NullableContainer<UserData>>();
     }
   }
 }

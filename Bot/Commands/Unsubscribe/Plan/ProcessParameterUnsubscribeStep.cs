@@ -1,6 +1,6 @@
 using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Blendflake;
 using MongoDB.Driver;
@@ -13,7 +13,7 @@ namespace Hedgey.Sirena.Bot;
 public class ProcessParameterUnsubscribeStep(NullableContainer<ulong> idContainer
   , IGetUserRelatedSirenas getSubscriptions
   , IGetUserInformation getUserInformation
-  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, IEnumerable<SirenaData>, ISendMessageBuilder> messageBuilderFactory)
    : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -36,7 +36,7 @@ public class ProcessParameterUnsubscribeStep(NullableContainer<ulong> idContaine
     Report report = new Report(Result.Success, null);
     return Observable.Return(report);
 
-    Report CreateSubscriptionList(IEnumerable<SirenRepresentation> subscriptions)
+    Report CreateSubscriptionList(IEnumerable<SirenaData> subscriptions)
     {
       var info = context.GetCultureInfo();
       long chatId = context.GetTargetChatId();
@@ -47,7 +47,7 @@ public class ProcessParameterUnsubscribeStep(NullableContainer<ulong> idContaine
 
   public class Factory(
   IGetUserRelatedSirenas getSubscriptions, IGetUserInformation getUserInformation
-  , IFactory<IRequestContext, IEnumerable<SirenRepresentation>, ISendMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, IEnumerable<SirenaData>, ISendMessageBuilder> messageBuilderFactory)
     : IFactory<NullableContainer<ulong>, ProcessParameterUnsubscribeStep>
   {
     public ProcessParameterUnsubscribeStep Create(NullableContainer<ulong> idContainer)

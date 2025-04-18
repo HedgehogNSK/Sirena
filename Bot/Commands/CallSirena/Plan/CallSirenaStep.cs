@@ -1,5 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
@@ -9,12 +9,12 @@ using System.Reactive.Linq;
 namespace Hedgey.Sirena.Bot;
 public class CallSirenaStep : CommandStep
 {
-  private readonly NullableContainer<SirenRepresentation> sirenaContainer;
+  private readonly NullableContainer<SirenaData> sirenaContainer;
   private readonly NullableContainer<Message> messageContainer;
   private readonly IMessageSender messageSender;
   private readonly IMessageCopier messageCopier;
   private readonly ISirenaActivationOperation activationOperation;
-  private readonly IFactory<IRequestContext, int, SirenRepresentation, ISendMessageBuilder> callReportMessageBuilderFactory;
+  private readonly IFactory<IRequestContext, int, SirenaData, ISendMessageBuilder> callReportMessageBuilderFactory;
   private readonly IFactory<IRequestContext, ServiceMessageData, ISendMessageBuilder> callServiceMessageBuilderFactory;
 
   /// <summary>
@@ -28,12 +28,12 @@ public class CallSirenaStep : CommandStep
   /// <param name="activationOperation"></param>
   /// <param name="callReportMessageBuilderFactory">Factory that creates message information to caller about notified users</param>
   /// <param name="callServiceMessageBuilderFactory">Factory that creates service message for subscribers</param>
-  public CallSirenaStep(NullableContainer<SirenRepresentation> sirenaContainer
+  public CallSirenaStep(NullableContainer<SirenaData> sirenaContainer
   , NullableContainer<Message> messageContainer
   , IMessageSender messageSender
   , IMessageCopier messageCopier
   , ISirenaActivationOperation activationOperation
-  , IFactory<IRequestContext, int, SirenRepresentation, ISendMessageBuilder> callReportMessageBuilderFactory
+  , IFactory<IRequestContext, int, SirenaData, ISendMessageBuilder> callReportMessageBuilderFactory
   , IFactory<IRequestContext, ServiceMessageData, ISendMessageBuilder> callServiceMessageBuilderFactory)
   {
     this.sirenaContainer = sirenaContainer;
@@ -115,7 +115,7 @@ public class CallSirenaStep : CommandStep
   /// <param name="sirena">called Sirena</param>
   /// <returns></returns>
   private IObservable<(CopyMessages CopyMessage, List<long> CurrentReceivers)> NotifyFirstSubscriber(IRequestContext context
-    , SirenRepresentation sirena
+    , SirenaData sirena
     , Queue<long> receivers
     , SirenaActivation callInfo)
   {
@@ -246,17 +246,17 @@ public class CallSirenaStep : CommandStep
   /// <param name="userId">Caller ID</param>
   /// <param name="chatId">The ID of the chat where Sirena was called from.</param>
   /// <returns></returns>
-  unsafe public static IEnumerable<long> GetReceiversArray(SirenRepresentation sirena, long userId, long chatId)
+  unsafe public static IEnumerable<long> GetReceiversArray(SirenaData sirena, long userId, long chatId)
     => GetReceiversArrayViaList(sirena.Listener, sirena.OwnerId, userId, chatId);
-  private static Queue<long> GetReceiversQueue(SirenRepresentation sirena, long uid, long cid)
+  private static Queue<long> GetReceiversQueue(SirenaData sirena, long uid, long cid)
     => new(GetReceiversArray(sirena, uid, cid));
   public record CopySettings(CopyMessages copyMessages, long[] recieverIds);
   public class Factory(IMessageSender messageSender, IMessageCopier messageCopier
     , ISirenaActivationOperation activationInformation
-    , IFactory<IRequestContext, int, SirenRepresentation, ISendMessageBuilder> callReportMessageBuilderFactory
+    , IFactory<IRequestContext, int, SirenaData, ISendMessageBuilder> callReportMessageBuilderFactory
     , IFactory<IRequestContext, ServiceMessageData, ISendMessageBuilder> callServiceMessageBuilderFactory)
-    : IFactory<NullableContainer<SirenRepresentation>, NullableContainer<Message>, CallSirenaStep>
+    : IFactory<NullableContainer<SirenaData>, NullableContainer<Message>, CallSirenaStep>
   {
-    public CallSirenaStep Create(NullableContainer<SirenRepresentation> sirenaContainer, NullableContainer<Message> messageContainer) => new CallSirenaStep(sirenaContainer, messageContainer, messageSender, messageCopier, activationInformation, callReportMessageBuilderFactory, callServiceMessageBuilderFactory);
+    public CallSirenaStep Create(NullableContainer<SirenaData> sirenaContainer, NullableContainer<Message> messageContainer) => new CallSirenaStep(sirenaContainer, messageContainer, messageSender, messageCopier, activationInformation, callReportMessageBuilderFactory, callServiceMessageBuilderFactory);
   }
 }

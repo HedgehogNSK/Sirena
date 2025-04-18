@@ -1,12 +1,12 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
 
-public class SirenaStateValidationStep(NullableContainer<SirenRepresentation> sirenaContainer
-  , IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder> messageBuilderFactory)
+public class SirenaStateValidationStep(NullableContainer<SirenaData> sirenaContainer
+  , IFactory<IRequestContext, SirenaData, ISendMessageBuilder> messageBuilderFactory)
   : CommandStep
 {
   static public readonly TimeSpan allowedCallPeriod = TimeSpan.FromMinutes(1);
@@ -15,7 +15,7 @@ public class SirenaStateValidationStep(NullableContainer<SirenRepresentation> si
   {
     long uid = context.GetUser().Id;
 
-    SirenRepresentation sirena = sirenaContainer.Get();
+    SirenaData sirena = sirenaContainer.Get();
     Report report;
     if (sirena.CanBeCalledBy(uid) && IsReadyToCall(sirena))
     {
@@ -26,7 +26,7 @@ public class SirenaStateValidationStep(NullableContainer<SirenRepresentation> si
     return Observable.Return(report);
   }
 
-  private static bool IsReadyToCall(SirenRepresentation sirena)
+  private static bool IsReadyToCall(SirenaData sirena)
   {
     if (sirena.LastCall == null)
       return true;
@@ -34,10 +34,10 @@ public class SirenaStateValidationStep(NullableContainer<SirenRepresentation> si
     var timePassed = DateTimeOffset.UtcNow - sirena.LastCall.Date;
     return timePassed > allowedCallPeriod;
   }
-  public class Factory(IFactory<IRequestContext, SirenRepresentation, ISendMessageBuilder> messageBuilderFactory)
-     : IFactory<NullableContainer<SirenRepresentation>, SirenaStateValidationStep>
+  public class Factory(IFactory<IRequestContext, SirenaData, ISendMessageBuilder> messageBuilderFactory)
+     : IFactory<NullableContainer<SirenaData>, SirenaStateValidationStep>
   {
-    public SirenaStateValidationStep Create(NullableContainer<SirenRepresentation> sirenaContainer)
+    public SirenaStateValidationStep Create(NullableContainer<SirenaData> sirenaContainer)
       => new SirenaStateValidationStep(sirenaContainer, messageBuilderFactory);
   }
 }

@@ -1,5 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes;
 using System.Reactive.Linq;
@@ -8,8 +8,8 @@ using Hedgey.Telegram.Bot;
 namespace Hedgey.Sirena.Bot;
 
 public class SendRequestStep(IRightsRequestOperation request
-  , NullableContainer<SirenRepresentation> sirenaContainer
-  , IFactory<IRequestContext, IRightsRequestOperation.Result, SirenRepresentation, ISendMessageBuilder> messageBuilderFactory)
+  , NullableContainer<SirenaData> sirenaContainer
+  , IFactory<IRequestContext, IRightsRequestOperation.Result, SirenaData, ISendMessageBuilder> messageBuilderFactory)
   : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -33,12 +33,12 @@ public class SendRequestStep(IRightsRequestOperation request
     }
   }
 
-  public class Factory(IFactory<IRequestContext, IRightsRequestOperation.Result, SirenRepresentation, ISendMessageBuilder> messageBuilderFactory
+  public class Factory(IFactory<IRequestContext, IRightsRequestOperation.Result, SirenaData, ISendMessageBuilder> messageBuilderFactory
   , IRightsRequestOperation requestRights)
-   : IFactory<NullableContainer<SirenRepresentation>, SendRequestStep>
+   : IFactory<NullableContainer<SirenaData>, SendRequestStep>
   {
 
-    public SendRequestStep Create(NullableContainer<SirenRepresentation> sirenaContainer)
+    public SendRequestStep Create(NullableContainer<SirenaData> sirenaContainer)
       => new SendRequestStep(requestRights, sirenaContainer, messageBuilderFactory);
   }
 }

@@ -1,9 +1,10 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Blendflake;
 using Hedgey.Telegram.Bot;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
+using Hedgey.Sirena.MongoDB;
 
 namespace Hedgey.Sirena.Bot;
 

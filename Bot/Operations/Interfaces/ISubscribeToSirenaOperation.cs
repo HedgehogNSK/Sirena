@@ -1,8 +1,8 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 
 namespace Hedgey.Sirena.Bot.Operations;
 
 public interface ISubscribeToSirenaOperation
 {
-  IObservable<SirenRepresentation> Subscribe(long userId, ulong sirenaId);
+  IObservable<SirenaData> Subscribe(long userId, ulong sirenaId);
 }

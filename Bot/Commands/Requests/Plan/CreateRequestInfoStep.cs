@@ -1,12 +1,12 @@
 using Hedgey.Extensions;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using System.Reactive.Linq;
 
 namespace Hedgey.Sirena.Bot;
 
-public class CreateRequestInfoStep(NullableContainer<SirenRepresentation> sirenaContainer
+public class CreateRequestInfoStep(NullableContainer<SirenaData> sirenaContainer
 , NullableContainer<RequestsCommand.RequestInfo> infoContainer)
  : CommandStep
 {
@@ -21,10 +21,10 @@ public class CreateRequestInfoStep(NullableContainer<SirenRepresentation> sirena
     infoContainer.Set(new(sirena, idIsSet, requestID));
     return Observable.Return(new Report(Result.Success));
   }
-  public sealed class Factory : IFactory<NullableContainer<SirenRepresentation>
+  public sealed class Factory : IFactory<NullableContainer<SirenaData>
     , NullableContainer<RequestsCommand.RequestInfo>, CreateRequestInfoStep>
   {
-    public CreateRequestInfoStep Create(NullableContainer<SirenRepresentation> sirena
+    public CreateRequestInfoStep Create(NullableContainer<SirenaData> sirena
     , NullableContainer<RequestsCommand.RequestInfo> requestInfo)
       => new CreateRequestInfoStep(sirena, requestInfo);
   }

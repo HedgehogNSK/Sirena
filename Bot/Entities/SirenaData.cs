@@ -3,9 +3,9 @@ using Hedgey.Utilities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Hedgey.Sirena.Database;
+namespace Hedgey.Sirena.Entities;
 [BsonIgnoreExtraElements]
-public class SirenRepresentation
+public class SirenaData
 {
   [BsonId]
   public ObjectId Id { get; set; }

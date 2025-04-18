@@ -1,5 +1,5 @@
 using Hedgey.Localization;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
@@ -10,10 +10,10 @@ namespace Hedgey.Sirena.Bot;
 
 public class ConfirmRemoveSirenaMessageBuilder : MessageBuilder
 {
-  private readonly SirenRepresentation sirena;
+  private readonly SirenaData sirena;
 
   public ConfirmRemoveSirenaMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider localizationProvider, SirenRepresentation sirena) : base(chatId, info, localizationProvider)
+  , ILocalizationProvider localizationProvider, SirenaData sirena) : base(chatId, info, localizationProvider)
   {
     this.sirena = sirena;
   }
@@ -32,9 +32,9 @@ public class ConfirmRemoveSirenaMessageBuilder : MessageBuilder
     return CreateDefault(message, markup);
   }
   public class Factory(ILocalizationProvider localizationProvider)
-  : IFactory<IRequestContext, SirenRepresentation, ConfirmRemoveSirenaMessageBuilder>
+  : IFactory<IRequestContext, SirenaData, ConfirmRemoveSirenaMessageBuilder>
   {
-    public ConfirmRemoveSirenaMessageBuilder Create(IRequestContext context, SirenRepresentation sirena)
+    public ConfirmRemoveSirenaMessageBuilder Create(IRequestContext context, SirenaData sirena)
     {
       var chatId = context.GetChat().Id;
       var info = context.GetCultureInfo();

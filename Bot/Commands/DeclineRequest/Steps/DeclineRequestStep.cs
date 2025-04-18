@@ -1,6 +1,6 @@
 using Hedgey.Extensions;
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using Hedgey.Telegram.Bot;
 using System.Reactive.Linq;
@@ -9,12 +9,12 @@ namespace Hedgey.Sirena.Bot;
 
 public sealed class DeclineRequestStep(IRightsManageOperation rightsManager, IGetUserInformation getUser
   , DeclineRequestMessageBuilder declineMessageBuilder
-  , NullableContainer<SirenRepresentation> sirenContainer
+  , NullableContainer<SirenaData> sirenContainer
 ) : CommandStep
 {
   private readonly IRightsManageOperation rightsManager = rightsManager;
   private readonly IGetUserInformation getUser = getUser;
-  private readonly NullableContainer<SirenRepresentation> sirenContainer = sirenContainer;
+  private readonly NullableContainer<SirenaData> sirenContainer = sirenContainer;
 
   public override IObservable<Report> Make(IRequestContext context)
   {
@@ -64,9 +64,9 @@ public sealed class DeclineRequestStep(IRightsManageOperation rightsManager, IGe
 
   public class Factory(IRightsManageOperation rightsManager, IGetUserInformation getUser
     , DeclineRequestMessageBuilder.Factory declineMessageBuilderFactory)
-    : IFactory<NullableContainer<SirenRepresentation>, DeclineRequestStep>
+    : IFactory<NullableContainer<SirenaData>, DeclineRequestStep>
   {
-    public DeclineRequestStep Create(NullableContainer<SirenRepresentation> sirenaContainer)
+    public DeclineRequestStep Create(NullableContainer<SirenaData> sirenaContainer)
     {
       var declineMessageBuilder = declineMessageBuilderFactory.Create();
       return new DeclineRequestStep(rightsManager, getUser, declineMessageBuilder, sirenaContainer);

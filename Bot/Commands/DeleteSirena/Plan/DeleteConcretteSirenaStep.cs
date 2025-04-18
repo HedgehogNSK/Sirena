@@ -1,5 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using System.Data;
 using System.Reactive.Linq;
@@ -9,19 +9,19 @@ namespace Hedgey.Sirena.Bot;
 
 public class DeleteConcretteSirenaStep : DeleteSirenaStep
 {
-  public class Factory(IFactory<IRequestContext, SirenRepresentation, SuccesfulDeleteMessageBuilder> messageBuilderFactory
+  public class Factory(IFactory<IRequestContext, SirenaData, SuccesfulDeleteMessageBuilder> messageBuilderFactory
   , IDeleteSirenaOperation sirenaOperations)
-    : IFactory<NullableContainer<SirenRepresentation>, DeleteConcretteSirenaStep>
+    : IFactory<NullableContainer<SirenaData>, DeleteConcretteSirenaStep>
   {
-    public DeleteConcretteSirenaStep Create(NullableContainer<SirenRepresentation> sirenaContainer)
+    public DeleteConcretteSirenaStep Create(NullableContainer<SirenaData> sirenaContainer)
       => new DeleteConcretteSirenaStep(sirenaContainer, sirenaOperations, messageBuilderFactory);
   }
   private readonly IDeleteSirenaOperation sirenaDeleteOperation;
-  private readonly IFactory<IRequestContext, SirenRepresentation, SuccesfulDeleteMessageBuilder> messageBuilderFactory;
+  private readonly IFactory<IRequestContext, SirenaData, SuccesfulDeleteMessageBuilder> messageBuilderFactory;
 
-  public DeleteConcretteSirenaStep(NullableContainer<SirenRepresentation> sirenaContainer
+  public DeleteConcretteSirenaStep(NullableContainer<SirenaData> sirenaContainer
   , IDeleteSirenaOperation sirenaDeleteOperation
-  , IFactory<IRequestContext, SirenRepresentation, SuccesfulDeleteMessageBuilder> messageBuilderFactory)
+  , IFactory<IRequestContext, SirenaData, SuccesfulDeleteMessageBuilder> messageBuilderFactory)
     : base(sirenaContainer)
   {
     this.sirenaDeleteOperation = sirenaDeleteOperation;
@@ -35,7 +35,7 @@ public class DeleteConcretteSirenaStep : DeleteSirenaStep
     return sirenaDeleteOperation.Delete(uid, sirenaId)
     .Select(CreateReport);
 
-    Report CreateReport(SirenRepresentation deletedSirena)
+    Report CreateReport(SirenaData deletedSirena)
     {
       var info = context.GetCultureInfo();
       var builder = messageBuilderFactory.Create(context, deletedSirena);

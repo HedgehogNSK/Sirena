@@ -1,7 +1,7 @@
 using Hedgey.Structure.Factory;
 using MongoDB.Driver;
 
-namespace Hedgey.Sirena;
+namespace Hedgey.Sirena.MongoDB;
 
 public class MongoClientFactory : IFactory<MongoClient>
 {

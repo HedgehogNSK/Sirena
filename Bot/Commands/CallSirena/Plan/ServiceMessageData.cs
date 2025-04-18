@@ -1,5 +1,5 @@
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 
 namespace Hedgey.Sirena.Bot;
 
-public record struct ServiceMessageData(long receiverId, SirenRepresentation sirena, SirenaActivation callInfo);
+public record struct ServiceMessageData(long receiverId, SirenaData sirena, SirenaActivation callInfo);

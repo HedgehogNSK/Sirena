@@ -1,5 +1,5 @@
 using Hedgey.Sirena.Bot.Operations;
-using Hedgey.Sirena.Database;
+using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
 using System.Reactive.Linq;
 using Hedgey.Telegram.Bot;
@@ -7,7 +7,7 @@ using Hedgey.Telegram.Bot;
 namespace Hedgey.Sirena.Bot;
 
 public class GetUserSirenaStep(NullableContainer<ulong> idContainer
-  , NullableContainer<SirenRepresentation> sirenaContainer
+  , NullableContainer<SirenaData> sirenaContainer
   , IGetUserRelatedSirenas findSirena)
   : CommandStep
 {
@@ -19,7 +19,7 @@ public class GetUserSirenaStep(NullableContainer<ulong> idContainer
 
     return findSirena.GetUserSirenaOrNull(uid, sid).Select(Process);
 
-    Report Process(SirenRepresentation source)
+    Report Process(SirenaData source)
     {
       if (source == null)
       {
@@ -32,10 +32,10 @@ public class GetUserSirenaStep(NullableContainer<ulong> idContainer
   }
 
   public class Factory(IGetUserRelatedSirenas getUserSirena)
-     : IFactory<NullableContainer<ulong>, NullableContainer<SirenRepresentation>, GetUserSirenaStep>
+     : IFactory<NullableContainer<ulong>, NullableContainer<SirenaData>, GetUserSirenaStep>
   {
     public GetUserSirenaStep Create(NullableContainer<ulong> idContainer
-      , NullableContainer<SirenRepresentation> sirenaContainer)
+      , NullableContainer<SirenaData> sirenaContainer)
       => new GetUserSirenaStep(idContainer, sirenaContainer, getUserSirena);
   }
 }
