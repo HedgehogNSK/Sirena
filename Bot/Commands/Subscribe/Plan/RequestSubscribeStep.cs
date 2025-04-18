@@ -10,7 +10,8 @@ namespace Hedgey.Sirena.Bot;
 public class RequestSubscribeStep(NullableContainer<ulong> sirenaIdContainter
   , ISubscribeToSirenaOperation subscribeOperation
   , IFactory<IRequestContext, SirenaData, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
-  , IFactory<IRequestContext, ulong, ISendMessageBuilder> sirenaNotFoundMessageBuilderFactory)
+  , IFactory<IRequestContext, ulong, ISendMessageBuilder> sirenaNotFoundMessageBuilderFactory
+  , IFactory<IRequestContext, IEditMessageReplyMarkupBuilder> switchButtonFactory )
   : CommandStep
 {
   public override IObservable<Report> Make(IRequestContext context)
@@ -25,24 +26,23 @@ public class RequestSubscribeStep(NullableContainer<ulong> sirenaIdContainter
 
     Report CreateSuccesfulReport(SirenaData representation)
     {
-      var chatId = context.GetTargetChatId();
-      var info = context.GetCultureInfo();
-      MessageBuilder meesage = successMessagBuilderFactory.Create(context, representation);
-      return new Report(Result.Success, meesage);
+      var meesage = successMessagBuilderFactory.Create(context, representation);
+      var editButton = context.GetMessage().From.IsBot ? switchButtonFactory.Create(context) : null;
+
+      return new Report(Result.Success, meesage, EditMessageReplyMarkupBuilder: editButton);
     }
     Report CreateReportNotFound()
     {
       var id = sirenaIdContainter.Get();
-      var info = context.GetCultureInfo();
-      var chatId = context.GetTargetChatId();
       return new(Result.Wait, sirenaNotFoundMessageBuilderFactory.Create(context, id));
     }
   }
   public class Factory(ISubscribeToSirenaOperation subscribeOperation
   , IFactory<IRequestContext, SirenaData, SuccesfulSubscriptionMessageBuilder> successMessagBuilderFactory
-  , IFactory<IRequestContext, ulong, ISendMessageBuilder> sirenaNotFoundMessageBuilderFactory)
+  , IFactory<IRequestContext, ulong, ISendMessageBuilder> sirenaNotFoundMessageBuilderFactory
+  , IFactory<IRequestContext, IEditMessageReplyMarkupBuilder> switchButtonFactory)
   : IFactory<NullableContainer<ulong>, RequestSubscribeStep>
   {
-    public RequestSubscribeStep Create(NullableContainer<ulong> idContainer) => new RequestSubscribeStep(idContainer, subscribeOperation, successMessagBuilderFactory, sirenaNotFoundMessageBuilderFactory);
+    public RequestSubscribeStep Create(NullableContainer<ulong> idContainer) => new RequestSubscribeStep(idContainer, subscribeOperation, successMessagBuilderFactory, sirenaNotFoundMessageBuilderFactory,switchButtonFactory);
   }
 }
