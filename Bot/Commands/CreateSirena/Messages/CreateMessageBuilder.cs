@@ -1,32 +1,26 @@
 using Hedgey.Localization;
 using Hedgey.Sirena.Entities;
 using Hedgey.Structure.Factory;
+using Hedgey.Telegram.Bot;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 using RxTelegram.Bot.Utils.Keyboard;
 using System.Globalization;
-using Hedgey.Telegram.Bot;
 
 namespace Hedgey.Sirena.Bot;
-public class CreateMessageBuilder : MessageBuilder, ISendMessageBuilder
+public class CreateMessageBuilder(long chatId, CultureInfo info
+  , ILocalizationProvider localizationProvider, int minSymbols, int maxSymbols
+  , string botName) 
+  : MessageBuilder(chatId, info, localizationProvider), ISendMessageBuilder
 {
+  private readonly int minSymbols = minSymbols;
+  private readonly int maxSymbols = maxSymbols;
+  private readonly string botName = botName;
   private bool userIsSet;
   private bool isAllowed;
   private bool isTitleValid;
-  private readonly int minSymbols;
-  private readonly int maxSymbols;
   private SirenaData? sirena;
-  private readonly string botName;
 
-  public CreateMessageBuilder(long chatId, CultureInfo info
-  , ILocalizationProvider localizationProvider, int minSymbols, int maxSymbols
-  , string botName)
-   : base(chatId, info, localizationProvider)
-  {
-    this.minSymbols = minSymbols;
-    this.maxSymbols = maxSymbols;
-    this.botName = botName;
-  }
   internal void SetUser(bool isSet)
   {
     userIsSet = isSet;
@@ -69,22 +63,23 @@ public class CreateMessageBuilder : MessageBuilder, ISendMessageBuilder
     else
     {
       message = Localize("command.create_sirena.success");
-      var link = Localize("miscellaneous.link");
-      message = string.Format(message, sirena.ShortHash) + string.Format(link, sirena.ShortHash, botName);
+      var link = MarkupShortcuts.CreateStartReference(botName, sirena.ShortHash);
+      message = string.Format(message, sirena.ShortHash) + link.Replace("_", "\\_");
+      var copyLink = Localize("miscellaneous.copy_link");
+      var copyId = Localize("miscellaneous.copy_id");
+      keyboardBuilder.AddCopyText(copyLink, link)
+      .AddCopyText(copyId, sirena.ShortHash)
+      .EndRow().BeginRow();
     }
     var markup = keyboardBuilder.AddMenuButton(Info).EndRow().ToReplyMarkup();
     return CreateDefault(message, markup);
   }
 
-  public class Factory : IFactory<IRequestContext, CreateMessageBuilder>
+  public class Factory(ILocalizationProvider localizationProvider, TelegramBot bot)
+    : IFactory<IRequestContext, CreateMessageBuilder>
   {
-    private readonly ILocalizationProvider localizationProvider;
-    private readonly string botName;
-    public Factory(ILocalizationProvider localizationProvider, TelegramBot bot)
-    {
-      this.localizationProvider = localizationProvider;
-      botName = bot.GetMe().GetAwaiter().GetResult().Username.Replace("_", "\\_");
-    }
+    private readonly ILocalizationProvider localizationProvider = localizationProvider;
+    private readonly string botName = bot.GetMe().GetAwaiter().GetResult().Username;
 
     public CreateMessageBuilder Create(IRequestContext context)
     {

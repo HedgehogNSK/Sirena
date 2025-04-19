@@ -62,7 +62,9 @@ Please remove one of your Sirenas and try again.</value>
     <value>⚠️ Unknown error. Sirena wasn&apos;t created.</value>
   </data>
   <data name="command.create_sirena.success">
-    <value>Sirena has been created successfuly. It&apos;s identificator (ID): `{0}`. Invite link:
+    <value>*Sirena has been created successfuly.*
+It&apos;s identificator (ID): `{0}`
+Invite link:
 </value>
   </data>
   <data name="command.create.description">
@@ -434,9 +436,6 @@ You will be notified if this user will call the Sirena: {2}</value>
   <data name="miscellaneous.user_ghost">
     <value>Ghost</value>
   </data>
-  <data name="miscellaneous.link">
-    <value>https://t.me/{1}?start={0}</value>
-  </data>
   <data name="command.start.create-user.fail">
     <value>⚠️ An error occurred while creating a new user. Please try again later.</value>
   </data>
@@ -508,5 +507,11 @@ If you don&apos;t know the *Sirena* ID, you can {1} it by its name or part of th
   </data>
   <data name="menu.buttons.reaction.128175.unset">
     <value>😑 Back down</value>
+  </data>
+  <data name="miscellaneous.copy_link">
+    <value>📋 Invite link</value>
+  </data>
+  <data name="miscellaneous.copy_id">
+    <value>📋 Sirena ID</value>
   </data>
 </root>
