@@ -38,7 +38,7 @@ public static class MarkupShortcuts
   public const char Previous = '⬅';
   public const char Next = '➡';
 
-  public static IInlineKeyboardRow AddButton(this IInlineKeyboardRow inlineKeyboardRow
+  public static IInlineKeyboardRow AddCallbackButton(this IInlineKeyboardRow inlineKeyboardRow
     , object title, string commandName, string param = "")
   {
     string command = '/' + commandName;
@@ -51,7 +51,7 @@ public static class MarkupShortcuts
   {
     string localTitle = LocalizationProvider?.Get(textKey, info)
       ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
-    return inlineKeyboardRow.AddButton(localTitle, commandName, param);
+    return inlineKeyboardRow.AddCallbackButton(localTitle, commandName, param);
   }
 
   public static IInlineKeyboardRow AddMenuButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info)
@@ -77,7 +77,7 @@ public static class MarkupShortcuts
       ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
     if (count != 0)
       _ = $" [{count}]";
-    return inlineKeyboardRow.AddButton(localTitle, GetSubscriptionsListCommand.NAME);
+    return inlineKeyboardRow.AddCallbackButton(localTitle, GetSubscriptionsListCommand.NAME);
   }
 
   public static IInlineKeyboardRow AddDisplayUserSirenasButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
@@ -87,7 +87,7 @@ public static class MarkupShortcuts
       ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
     if (count != 0)
       localTitle += $" [{count}]";
-    return inlineKeyboardRow.AddButton(localTitle, DisplayUsersSirenasCommand.NAME);
+    return inlineKeyboardRow.AddCallbackButton(localTitle, DisplayUsersSirenasCommand.NAME);
   }
 
   public static IInlineKeyboardRow AddFindButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info)
@@ -111,7 +111,7 @@ public static class MarkupShortcuts
      ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
     localTitle = string.Format(localTitle, count);
 
-    return inlineKeyboardRow.AddButton(localTitle, RequestsCommand.NAME, shortHash);
+    return inlineKeyboardRow.AddCallbackButton(localTitle, RequestsCommand.NAME, shortHash);
   }
 
   public static IInlineKeyboardRow AddRetryButton(this IInlineKeyboardRow inlineKeyboardRow, CultureInfo info
@@ -138,7 +138,7 @@ public static class MarkupShortcuts
      ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
 
     localTitle = string.Format(localTitle, count);
-    return inlineKeyboardRow.AddButton(localTitle, GetResponsiblesListCommand.NAME, sirenaId);
+    return inlineKeyboardRow.AddCallbackButton(localTitle, GetResponsiblesListCommand.NAME, sirenaId);
   }
 
   public static InlineKeyboardMarkup CreateMenuButtonOnlyMarkup(CultureInfo info)
@@ -154,11 +154,6 @@ public static class MarkupShortcuts
     return LocalizationProvider?.Get(key, info)
       ?? throw new ArgumentNotInitializedException(nameof(LocalizationProvider));
   }
-  public static InlineKeyboardMarkup ToReplyMarkup(this IInlineKeyboardBuilder builder)
-    => new()
-    {
-      InlineKeyboard = builder.Build()
-    };
 
   static public SendMessage CreateDefaultMessage(ChatId chatId, string message, IReplyMarkup? replyMarkup = null)
     => new SendMessage()
@@ -169,5 +164,16 @@ public static class MarkupShortcuts
       Text = message,
       ReplyMarkup = replyMarkup,
       ParseMode = ParseMode.Markdown
+    };
+
+  public static string CreateStartReference(string botName, object param)
+  {
+    const string linkTemplate = "https://t.me/{0}?start={1}";
+    return string.Format(linkTemplate, botName, param);
+  }
+  public static InlineKeyboardMarkup ToReplyMarkup(this IInlineKeyboardBuilder builder)
+    => new()
+    {
+      InlineKeyboard = builder.Build()
     };
 }

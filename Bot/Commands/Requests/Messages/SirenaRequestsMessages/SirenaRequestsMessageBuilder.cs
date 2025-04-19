@@ -22,7 +22,7 @@ public abstract class SirenaRequestsMessageBuilder(IRequestContext context
     var lastRequestId = sirena.Requests.Length - 1;
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
     if (lastRequestId != 0)
-      keyboardBuilder = keyboardBuilder.AddButton(MarkupShortcuts.Previous, RequestsCommand.NAME
+      keyboardBuilder = keyboardBuilder.AddCallbackButton(MarkupShortcuts.Previous, RequestsCommand.NAME
           , sirena.ShortHash + ' ' + (requestID > 0 ? (requestID - 1) : lastRequestId));
 
     if (context.GetUser().Id == sirena.OwnerId)
@@ -33,7 +33,7 @@ public abstract class SirenaRequestsMessageBuilder(IRequestContext context
     }
 
     if (lastRequestId != 0)
-      keyboardBuilder.AddButton(MarkupShortcuts.Next, "requests"
+      keyboardBuilder.AddCallbackButton(MarkupShortcuts.Next, "requests"
         , sirena.ShortHash + ' ' + (requestID < lastRequestId ? (requestID + 1) : 0));
     var replyMarkup = keyboardBuilder.EndRow().ToReplyMarkup();
     return replyMarkup;

@@ -78,7 +78,7 @@ public class StringNotIdMessageBuilder : MessageBuilder
         }
         keyboardBuilder.EndRow().BeginRow();
       }
-      keyboardBuilder.AddButton(number, CallSirenaCommand.NAME, sirena.ShortHash);
+      keyboardBuilder.AddCallbackButton(number, CallSirenaCommand.NAME, sirena.ShortHash);
 
       builder.Append(number).AppendFormat(template, sirena.ShortHash, sirena.Title);
       if (sirena.Listener.Length != 0)

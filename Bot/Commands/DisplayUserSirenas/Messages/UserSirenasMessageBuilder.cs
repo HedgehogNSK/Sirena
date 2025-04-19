@@ -38,7 +38,7 @@ public class UserSirenasMessageBuilder : MessageBuilder
         {
           keyboardBuilder.EndRow().BeginRow();
         }
-        keyboardBuilder.AddButton(number, DisplaySirenaInfoCommand.NAME, sirena.ShortHash);
+        keyboardBuilder.AddCallbackButton(number, DisplaySirenaInfoCommand.NAME, sirena.ShortHash);
 
         builder.Append(number).AppendFormat(template, sirena.ShortHash, sirena.Title);
         if (sirena.Listener.Length != 0)

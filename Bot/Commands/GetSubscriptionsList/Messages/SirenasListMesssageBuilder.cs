@@ -37,7 +37,7 @@ public class SirenasListMesssageBuilder(long chatId, CultureInfo info
         {
           keyboardBuilder.EndRow().BeginRow();
         }
-        keyboardBuilder.AddButton(number, DisplaySirenaInfoCommand.NAME, sirena.ShortHash);
+        keyboardBuilder.AddCallbackButton(number, DisplaySirenaInfoCommand.NAME, sirena.ShortHash);
 
         builder.Append(number)
           .AppendFormat(sirenaInfo, sirena.Title, sirena.OwnerNickname, sirena.ShortHash);
