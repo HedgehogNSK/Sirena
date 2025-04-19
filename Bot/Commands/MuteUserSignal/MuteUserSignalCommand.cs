@@ -1,4 +1,5 @@
 using Hedgey.Blendflake;
+using Hedgey.Extensions.Telegram;
 using Hedgey.Localization;
 using Hedgey.Sirena.MongoDB;
 using Hedgey.Telegram.Bot;
@@ -46,9 +47,9 @@ public class MuteUserSignalCommand(FacadeMongoDBRequests requests, TelegramBot b
       return;
     }
     ChatFullInfo? chat = null;
-    if (long.TryParse(userIdString, out long _UIDtoMute))
+    if (long.TryParse(userIdString, out long uidToMute))
     {
-      chat = await Extensions.Telegram.BotTools.GetChatByUID(bot, _UIDtoMute);
+      chat = await BotTools.GetChatByUID(bot, uidToMute);
     }
     if (chat == null)
     {
@@ -57,24 +58,25 @@ public class MuteUserSignalCommand(FacadeMongoDBRequests requests, TelegramBot b
       messageSender.Send(chatId, responseText);
       return;
     }
-    _UIDtoMute = chat.Id;
+    uidToMute = chat.Id;
 
-    var isMutable = await requests.IsPossibleToMute(uid, _UIDtoMute, sirenaId);
+    var isMutable = await requests.IsPossibleToMute(uid, uidToMute, sirenaId);
     if (!isMutable)
     {
       string errorCantMute = localizationProvider.Get("command.mute_user.impossbile_mute", info);
       messageSender.Send(chatId, errorCantMute);
       return;
     }
-    var result = await requests.SetUserMute(uid, _UIDtoMute, sirenaId);
-    if (result == null)
+    var sirena = await requests.SetUserMute(uid, uidToMute, sirenaId);
+    if (sirena == null)
     {
       string errorNoSirena = localizationProvider.Get("command.mute_user.no_sirena", info);
       messageSender.Send(chatId, errorNoSirena);
       return;
     }
     string successMessage = localizationProvider.Get("command.mute_user.success", info);
-    responseText = string.Format(successMessage, _UIDtoMute, HashUtilities.Shortify(sirenaIdString));
+    var nickname = chat.GetDisplayName();
+    responseText = string.Format(successMessage, nickname, uidToMute, sirena.ToString());
     messageSender.Send(chatId, responseText);
 
     if (context.GetMessage().From.IsBot)

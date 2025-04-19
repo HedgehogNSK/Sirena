@@ -11,7 +11,7 @@ namespace Hedgey.Sirena.Bot;
 
 public class SuccesfulSubscriptionMessageBuilder : MessageBuilder
 {
-  private SirenaData representation;
+  private readonly SirenaData representation;
 
   public SuccesfulSubscriptionMessageBuilder(long chatId, CultureInfo info
   , ILocalizationProvider localizationProvider
@@ -28,7 +28,7 @@ public class SuccesfulSubscriptionMessageBuilder : MessageBuilder
       .ToReplyMarkup();
 
     string notificationText = Localize("command.subscribe.success");
-    var message = string.Format(notificationText, representation.Title);
+    var message = string.Format(notificationText, representation.ToString());
     return CreateDefault(message, markup);
   }
 

@@ -210,9 +210,11 @@ Please try another key phrase.</value>
     <value>⚠️ Couldn&apos;t find Sirena to mute user</value>
   </data>
   <data name="command.mute_user.success">
-    <value>User {0} has been muted. Now you will not get notifications from the user for the Sirena: *{1}*
- If you subscribed to any other *Sirena* that user can calls, you still able to get notifications from this user.
- To unmute user use command `/unmute` </value>
+    <value>✅🔇 *User {0} (ID:{1}) has been muted.*
+Calls from *Sirena*: {2} by this user will be ignored.
+If you&apos;re subscribed to any other *Sirena* this user can trigger, you&apos;ll still receive notifications from them.
+
+_To unmute the user, use the command_ `/unmute`</value>
   </data>
   <data name="command.mute.description">
     <value>Mute calls from certain user for certain Sirena. Calls of the Sirena from other users will be active anyway</value>
@@ -328,8 +330,8 @@ Possible reasons:
 Try another *Sirena ID*</value>
   </data>
   <data name="command.subscribe.success">
-    <value>🔔 You successfully subscribed to *Sirena*:
-_{0}_</value>
+    <value>🔔 You have successfully subscribed to:
+{0}</value>
   </data>
   <data name="command.subscriptions.bref_info">
     <value>. *{0}* by {1}
@@ -364,7 +366,8 @@ ID: `{2}`
     <value>⚠️ {0} parameter is incorrect. First parameter has to be *UID* of user that is already responsible for Sirena.</value>
   </data>
   <data name="command.unmute.success">
-    <value>User {0} has been unmuted. You will be notified if this user will call the Sirena: *{1}*</value>
+    <value>✅🔊 *User {0} (ID:{1}) has been unmuted.*
+You will be notified if this user will call the Sirena: {2}</value>
   </data>
   <data name="command.unsubscribe.description">
     <value>Unsubscribes from certain Sirena</value>

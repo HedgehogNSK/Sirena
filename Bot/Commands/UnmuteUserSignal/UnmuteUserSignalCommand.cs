@@ -1,5 +1,8 @@
+using System.Reactive.Linq;
 using Hedgey.Blendflake;
+using Hedgey.Extensions.Telegram;
 using Hedgey.Localization;
+using Hedgey.Sirena.Bot.Operations;
 using Hedgey.Sirena.MongoDB;
 using Hedgey.Telegram.Bot;
 using RxTelegram.Bot;
@@ -10,7 +13,8 @@ namespace Hedgey.Sirena.Bot;
 public class UnmuteUserSignalCommand(FacadeMongoDBRequests requests
   , TelegramBot bot, IMessageSender messageSender
   , ILocalizationProvider localizationProvider
-  , IMessageEditor messageEditor)
+  , IMessageEditor messageEditor
+  , IGetUserInformation userInformation)
   : AbstractBotCommmand(NAME, DESCRIPTION)
 {
   public const string NAME = "unmute";
@@ -47,9 +51,9 @@ public class UnmuteUserSignalCommand(FacadeMongoDBRequests requests
       return;
     }
     ChatFullInfo? chat = null;
-    if (long.TryParse(userIdString, out long _UIDtoMute))
+    if (long.TryParse(userIdString, out long uidToMute))
     {
-      chat = await Extensions.Telegram.BotTools.GetChatByUID(bot, _UIDtoMute);
+      chat = await BotTools.GetChatByUID(bot, uidToMute);
     }
     if (chat == null)
     {
@@ -58,17 +62,19 @@ public class UnmuteUserSignalCommand(FacadeMongoDBRequests requests
       messageSender.Send(chatId, responseText);
       return;
     }
-    _UIDtoMute = chat.Id;
-
-    var result = await requests.UnmuteUser(uid, _UIDtoMute, sirenaId);
-    if (result == null)
+    uidToMute = chat.Id;
+    
+    var sirena = await requests.UnmuteUser(uid, uidToMute, sirenaId);
+    if (sirena == null)
     {
       var errorDidntUnmute = localizationProvider.Get("command.unmute.error.not_found", cultureInfo);
       messageSender.Send(chatId, errorDidntUnmute);
       return;
     }
+    
     var successMessage = localizationProvider.Get("command.unmute.success", cultureInfo);
-    responseText = string.Format(successMessage, _UIDtoMute, sirenaId);
+    var nickname = chat.GetDisplayName();
+    responseText = string.Format(successMessage, nickname, uidToMute, sirena.ToString());
     messageSender.Send(chatId, responseText);
 
     if (context.GetMessage().From.IsBot)
