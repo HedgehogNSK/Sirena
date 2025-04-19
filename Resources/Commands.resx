@@ -410,6 +410,9 @@ ID: `{2}`
   <data name="menu.buttons.mute_user.title">
     <value>🔇 Mute sender</value>
   </data>
+  <data name="menu.buttons.unmute_user.title">
+    <value>🔊 Unmute sender</value>
+  </data>
   <data name="menu.buttons.request_rights.title">
     <value>🙏 Request rights</value>
   </data>

@@ -1,31 +1,24 @@
-using Hedgey.Localization;
-using Hedgey.Sirena.Entities;
 using Hedgey.Blendflake;
+using Hedgey.Localization;
+using Hedgey.Sirena.MongoDB;
 using Hedgey.Telegram.Bot;
 using RxTelegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes;
-using Hedgey.Sirena.MongoDB;
 
 namespace Hedgey.Sirena.Bot;
 
-public class MuteUserSignalCommand : AbstractBotCommmand
+public class MuteUserSignalCommand(FacadeMongoDBRequests requests, TelegramBot bot
+  , ILocalizationProvider localizationProvider, IMessageSender messageSender
+  , IMessageEditor messageEditor)
+  : AbstractBotCommmand(NAME, DESCRIPTION)
 {
   public const string NAME = "mute";
   public const string DESCRIPTION = "Mute calls from certain user for certain *sirena*. Calls of the *sirena* from other users will be active anyway";
-  private readonly ILocalizationProvider localizationProvider;
-  private readonly IMessageSender messageSender;
-  private readonly TelegramBot bot;
-  private readonly FacadeMongoDBRequests requests;
-
-  public MuteUserSignalCommand(FacadeMongoDBRequests requests, TelegramBot bot
-  , ILocalizationProvider localizationProvider, IMessageSender messageSender)
-: base(NAME, DESCRIPTION)
-  {
-    this.bot = bot;
-    this.requests = requests;
-    this.localizationProvider = localizationProvider;
-    this.messageSender = messageSender;
-  }
+  private readonly ILocalizationProvider localizationProvider = localizationProvider;
+  private readonly IMessageSender messageSender = messageSender;
+  private readonly IMessageEditor messageEditor = messageEditor;
+  private readonly TelegramBot bot = bot;
+  private readonly FacadeMongoDBRequests requests = requests;
 
   public async override void Execute(IRequestContext context)
   {
@@ -83,5 +76,12 @@ public class MuteUserSignalCommand : AbstractBotCommmand
     string successMessage = localizationProvider.Get("command.mute_user.success", info);
     responseText = string.Format(successMessage, _UIDtoMute, HashUtilities.Shortify(sirenaIdString));
     messageSender.Send(chatId, responseText);
+
+    if (context.GetMessage().From.IsBot)
+    {
+      var option = new SwitchButtonCommandReplyMarkupBuilder.Option(UnmuteUserSignalCommand.NAME, MarkupShortcuts.unmuteTitle);
+      var editReplyMarkup = new SwitchButtonCommandReplyMarkupBuilder(localizationProvider, option, context);
+      messageEditor.Edit(editReplyMarkup).Subscribe();
+    }
   }
 }

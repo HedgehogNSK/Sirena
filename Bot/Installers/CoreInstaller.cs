@@ -40,6 +40,7 @@ public class CoreInstaller(Container container) : Installer(container)
     Container.Register<IMessageSender, BotMessageSenderTimerProxy>(Lifestyle.Singleton);
     Container.Register<IMessageForwarder, BotMessageSenderTimerProxy>(Lifestyle.Singleton);
     Container.Register<IMessageCopier, BotMessageSenderTimerProxy>(Lifestyle.Singleton);
+    Container.Register<IMessageEditor, BotMessageSenderTimerProxy>(Lifestyle.Singleton);
 
     Container.RegisterSingleton<IIDGenerator>(() => new BlendflakeAdapter(EPOCH_TIMESTAMP, MACHINE_ID));
   }

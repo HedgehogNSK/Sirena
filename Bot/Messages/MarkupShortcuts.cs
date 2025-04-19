@@ -32,6 +32,7 @@ public static class MarkupShortcuts
   public const string requestRightTitle = prefix + "request_rights.title";
   public const string retryTitle = prefix + "anotherTry.title";
   public const string subscriptionsTitle = prefix + "subscriptions.title";
+  public const string unmuteTitle = prefix + "unmute_user.title";
 
   public static ILocalizationProvider? LocalizationProvider { get; set; }
   public const char Previous = '⬅';

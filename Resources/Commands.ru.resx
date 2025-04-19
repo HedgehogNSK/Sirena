@@ -406,6 +406,9 @@ _{0}_</value>
   <data name="menu.buttons.mute_user.title">
     <value>🔇 Заглушить пользователя</value>
   </data>
+  <data name="menu.buttons.unmute_user.title">
+    <value>🔊 Разглушить пользователя</value>
+  </data>
   <data name="menu.buttons.request_rights.title">
     <value>🙏 Запросить права</value>
   </data>
