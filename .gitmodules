@@ -1,3 +1,3 @@
 [submodule "External/Blendflake"]
 	path = External/Blendflake
-	url = https://github.com/HedgehogNSK/Blendflake-ID.git
+	url = git@github.com:HedgehogNSK/Blendflake-ID.git
