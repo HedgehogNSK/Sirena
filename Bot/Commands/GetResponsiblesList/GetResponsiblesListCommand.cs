@@ -16,20 +16,16 @@ public class GetResponsiblesListCommand : AbstractBotCommmand
 {
   public const string NAME = "responsible";
   public const string DESCRIPTION = "Display list of user allowed to call Sirena";
-  private readonly IMongoCollection<UserData> users;
-  private readonly IMongoCollection<SirenaData> sirens;
   private readonly TelegramBot bot;
   private readonly FacadeMongoDBRequests requests;
   private readonly ILocalizationProvider localizationProvider;
   private readonly IMessageSender messageSender;
 
-  public GetResponsiblesListCommand(IMongoDatabase db, FacadeMongoDBRequests requests
+  public GetResponsiblesListCommand(FacadeMongoDBRequests requests
   , TelegramBot bot, ILocalizationProvider localizationProvider
   , IMessageSender messageSender)
   : base(NAME, DESCRIPTION)
   {
-    users = db.GetCollection<UserData>("users");
-    sirens = db.GetCollection<SirenaData>("sirens");
     this.bot = bot;
     this.requests = requests;
     this.localizationProvider = localizationProvider;
