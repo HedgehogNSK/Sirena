@@ -25,7 +25,7 @@ public class UserSirenasMessageBuilder : MessageBuilder
     var keyboardBuilder = KeyboardBuilder.CreateInlineKeyboard().BeginRow();
     if (sirens.Any())
     {
-      const string template = ". `{0}` *{1}*\n";
+      const string template = ". \\[`{0}`] *{1}*\n";
       string subscribers = Localize("command.display_sirenas.subscribers");
       string listIntroduction = Localize("command.display_sirenas.title");
 

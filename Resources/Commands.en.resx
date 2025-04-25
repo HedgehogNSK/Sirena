@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="command.call.ask_sirena_id">
-    <value>ℹ️ Please provide Sirena&apos;s ID to call. It must be Sirena that you own or you are responsible for</value>
+    <value>⌨️ *Please provide Sirena&apos;s ID to activate.*
+ It must be Sirena that you own or you are responsible for</value>
   </data>
   <data name="command.call.no_available">
-    <value>Your Sirenas are not being listened to yet</value>
+    <value>⚠️ Your Sirenas are not being listened to yet</value>
   </data>
   <data name="command.call.available.description">
     <value>Choose *Sirena* to call</value>
@@ -92,7 +93,7 @@ Invite link:
     <value>To delete a Sirena, please insert *Sirena&apos;s ID or serial number* that is owned by you.</value>
   </data>
   <data name="command.delete.bref_info">
-    <value>. *{0}* `{1}`
+    <value>. \[`{1}`] *{0}*
 </value>
   </data>
   <data name="command.delete.cancel">
@@ -123,7 +124,7 @@ Invite link:
     <value>⚠️ You haven&apos;t created any Sirena yet.</value>
   </data>
   <data name="command.display_sirenas.subscribers">
-    <value>_Subscribers[{0}]_
+    <value>   _Subscribers[{0}]_
 </value>
   </data>
   <data name="command.display_sirenas.title">
@@ -138,15 +139,15 @@ Invite link:
 </value>
   </data>
   <data name="command.find.input_phrase">
-    <value>*Please input search phrase*.
+    <value>⌨️ *Please input search phrase*.
 Search phrase has to be at least {0} symbols length but less than {1} symbols.</value>
   </data>
   <data name="command.find.no_id">
-    <value>There is no Sirena with this ID: `{0}`.
+    <value>⚠️ There is no Sirena with this ID: `{0}`.
 Please check input ID.</value>
   </data>
   <data name="command.find.no_title">
-    <value>There is no Sirena with title that contains: \&quot;{0}\&quot;.
+    <value>⚠️ There is no Sirena with title that contains: \&quot;{0}\&quot;.
 Please try another key phrase.</value>
   </data>
   <data name="command.requests.header">
@@ -180,14 +181,14 @@ Please try another key phrase.</value>
 </value>
   </data>
   <data name="command.help.header">
-    <value>&quot;*List of commands*
-&quot;</value>
+    <value>*List of commands*
+</value>
   </data>
   <data name="command.info.description">
     <value>Display Sirena detailed information and available commands for itself</value>
   </data>
   <data name="command.list.description">
-    <value>Shows a list of Sirenas that are being tracked</value>
+    <value>Sirenas, created by you</value>
   </data>
   <data name="command.menu.description">
     <value>Displays primary bot functions</value>
@@ -229,7 +230,6 @@ _To unmute the user, use the command_ `/unmute`</value>
   </data>
   <data name="command.request_rights.available.header">
     <value>*Your are able to request rights to call:*
-
 </value>
   </data>
   <data name="command.request_rights.extra_info">
@@ -315,7 +315,7 @@ Use the Menu (/menu) to manage the bot or directly call commands. To see a list 
 This bot is especially useful in work chats, parent groups, or community chats, where it&apos;s important to avoid unnecessary discussions while still staying informed about urgent messages.</value>
   </data>
   <data name="command.subscribe.askSirenaId">
-    <value>*Please input Sirena ID*.
+    <value>⌨️ *Please input Sirena ID.*
 You have to input exact ID of Sirena that you are going to subscribe to.
 
 You can use *Find* command to find a Sirena by title.</value>
@@ -464,13 +464,13 @@ Requestor:  {0}</value>
  *Sirena*: {0}</value>
   </data>
   <data name="command.request.askSirenaId">
-    <value>ℹ️ *Please enter the Sirena ID* for which you are requesting activation access.
+    <value>⌨️ *Please enter the Sirena ID* for which you are requesting activation access.
 ❕ Use the ID of an existing *Sirena*
 ❗️ You must be subscribed to the *Sirena*
 ❕ You have not yet requested access to this *Sirena*</value>
   </data>
   <data name="command.info.askSirenaId">
-    <value>ℹ️ *Please enter the Sirena ID.*
+    <value>⌨️ *Please enter the Sirena ID.*
 You must enter the exact *Sirena* ID to display the available actions for it.
 
 If you don&apos;t know the *Sirena* ID, you can {0} it by its name or part of the name.</value>
@@ -509,9 +509,15 @@ If you don&apos;t know the *Sirena* ID, you can {1} it by its name or part of th
     <value>😑 Back down</value>
   </data>
   <data name="miscellaneous.copy_link">
-    <value>📋 Invite link</value>
+    <value>🔗 Invite link</value>
   </data>
   <data name="miscellaneous.copy_id">
-    <value>📋 Sirena ID</value>
+    <value>🆔 Sirena ID</value>
+  </data>
+  <data name="command.decline_request.description">
+    <value>Declines a user&apos;s request for Sirena activation rights.</value>
+  </data>
+  <data name="command.react.description">
+    <value>React to a certain call of the Sirena.</value>
   </data>
 </root>

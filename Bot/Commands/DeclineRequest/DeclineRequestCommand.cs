@@ -7,7 +7,7 @@ namespace Hedgey.Sirena.Bot;
 public class DeclineRequestCommand : PlanExecutorBotCommand
 {
   public const string NAME = "decline_request";
-  const string DESCRIPTION = "Declines a user's request for Siren activation rights.";
+  const string DESCRIPTION = "Declines a user's request for Sirena activation rights.";
   private readonly IFactory<NullableContainer<ulong>, RequestsValidateSirenaIdStep> validateIdStepFactory;
   private readonly IFactory<NullableContainer<ulong>, NullableContainer<SirenaData>, SirenaExistensValidationStep> sirenExistensValidationStepFactory;
   private readonly IFactory<NullableContainer<SirenaData>, DeclineRequestStep> declineRequestStepFactory;
