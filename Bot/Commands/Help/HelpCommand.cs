@@ -9,16 +9,17 @@ namespace Hedgey.Sirena.Bot;
 public class HelpCommand : AbstractBotCommmand, IBotCommand
 {
   public const string NAME = "help";
-  public const string DESCRIPTION = "";
+  public const string DESCRIPTION = null;
   private readonly ILocalizationProvider localizationProvider;
   private readonly IMessageSender messageSender;
-  IEnumerable<AbstractBotCommmand> commands;
+  private readonly IEnumerable<AbstractBotCommmand> commands;
   public HelpCommand(IEnumerable<AbstractBotCommmand> commands
   , ILocalizationProvider localizationProvider
   , IMessageSender messageSender)
   : base(NAME, DESCRIPTION)
   {
-    this.commands = commands.Where(x => x != this && x is not StartCommand);
+    IsPublic = false;
+    this.commands = commands.Where(_command => _command.IsPublic);
     this.localizationProvider = localizationProvider;
     this.messageSender = messageSender;
   }
@@ -28,10 +29,10 @@ public class HelpCommand : AbstractBotCommmand, IBotCommand
     var info = context.GetCultureInfo();
     string commandsList = localizationProvider.Get("command.help.header", info);
     StringBuilder builder = new StringBuilder(commandsList).AppendLine();
-    foreach (var command in commands)
+    foreach (var commandName in commands.Select(_command => _command.Command))
     {
-      builder.Append('/').Append(command.Command).Append(" - ");
-      string description = localizationProvider.Get($"command.{command.Command}.description", info);
+      builder.Append('/').Append(commandName.Replace("_","\\_")).Append(" - ");
+      string description = localizationProvider.Get($"command.{commandName}.description", info);
       builder.Append(description).AppendLine();
     }
     long uid = context.GetUser().Id;

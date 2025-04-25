@@ -7,13 +7,14 @@ namespace Hedgey.Sirena.Bot;
 public class ReactToSirenaCommand : PlanExecutorBotCommand
 {
   public const string NAME = "react";
-  const string DESCRIPTION = "React to a certain call of the sirena.";
+  const string DESCRIPTION = "React to a certain call of the Sirena.";
   private readonly IFactory<NullableContainer<ObjectId>, SetReactionStep> setReactionStepFactory;
 
   public ReactToSirenaCommand(PlanScheduler planScheduler
   , IFactory<NullableContainer<ObjectId>, SetReactionStep> setReactionStepFactory)
    : base(NAME, DESCRIPTION, planScheduler)
   {
+    IsPublic = false;
     this.setReactionStepFactory = setReactionStepFactory;
   }
 

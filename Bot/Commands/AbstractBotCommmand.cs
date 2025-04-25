@@ -5,9 +5,12 @@ namespace Hedgey.Sirena.Bot
 {
   public abstract class AbstractBotCommmand : BotCommand, IBotCommand
   {
-    public AbstractBotCommmand(string name, string description){
+    public bool IsPublic { get; protected set; }
+    protected AbstractBotCommmand(string name, string description)
+    {
       Command = name;
       Description = description;
+      IsPublic =  true;
     }
     public abstract void Execute(IRequestContext context);
   }

@@ -10,5 +10,7 @@ public class StartCommand : PlanExecutorBotCommand
   public StartCommand(IFactory<IRequestContext, CommandPlan> planFactory
   , PlanScheduler planScheduler)
   : base(NAME, DESCRIPTION, planFactory, planScheduler)
-  { }
+  {
+    IsPublic = false;
+  }
 }
