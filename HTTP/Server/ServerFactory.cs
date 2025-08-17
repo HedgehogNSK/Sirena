@@ -25,6 +25,11 @@ public class ServerFactory(ICertificateProvider provider
   Extensions.NetCoreServer.HttpsServer IFactory<Extensions.NetCoreServer.HttpsServer>.Create()
   {
     X509Certificate2 certificate = provider.Get();
+    Console.WriteLine("SSL Certificate: " + certificate.FriendlyName);
+    Console.WriteLine(certificate.Thumbprint);    
+    Console.WriteLine($"Certificate subject: {certificate.Subject}");
+    Console.WriteLine($"Valid from: {certificate.NotBefore}");
+    Console.WriteLine($"Valid until: {certificate.NotAfter}");
     var context = new SslContext(SslProtocols.Tls12 | SslProtocols.Tls13, certificate);
     Extensions.NetCoreServer.HttpsServer server = new Extensions.NetCoreServer.HttpsServer(context, Address, Port, sslSessionFactory);
     return server;
