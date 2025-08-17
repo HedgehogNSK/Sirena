@@ -1,8 +1,8 @@
-using Hedgey.Sirena;
 using Hedgey.Telegram.Bot;
 using RxTelegram.Bot.Interface.BaseTypes.Requests.Messages;
 
 namespace Hedgey.Telegram.Messages;
+
 public class GeneralMessageBuilder : SendMessageBuilder<GeneralMessageBuilder>
 {
   private ITextGetter? messageCreator = null;
