@@ -60,9 +60,19 @@ public class ServerInstaller(Container container) : Installer(container)
 
   private void RegisterCertificateProvider()
   {
-    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
     {
       Container.Register<ICertificateProvider>(() => new X509StoreActiveHttpsCertificateProvider(StoreName.My, StoreLocation.CurrentUser));
+      return;
+    }
+    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+    {
+      Container.Register<ICertificateProvider>(() =>
+      {
+        string fullchainPath = OSTools.GetEnvironmentVar("SIRENA_CERT_FULLCHAIN_PATH");
+        string keyPath = OSTools.GetEnvironmentVar("SIRENA_CERT_KEY_PATH");
+        return new X509CertificateLoaderByFilePath(fullchainPath, keyPath);
+      });
       return;
     }
 
