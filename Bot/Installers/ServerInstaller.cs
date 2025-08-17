@@ -36,6 +36,7 @@ public class ServerInstaller(Container container) : Installer(container)
     Container.RegisterSingleton<Uri>(() =>
     {
       var guid = Guid.NewGuid();
+      
       string url = OSTools.GetEnvironmentVar("SIRENA_WH_URL") + guid;
       return new Uri(url);
     });
@@ -61,7 +62,7 @@ public class ServerInstaller(Container container) : Installer(container)
   {
     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
     {
-      Container.Register<ICertificateProvider>(() => new X509StoreCertificateProvider(StoreName.My, StoreLocation.CurrentUser));
+      Container.Register<ICertificateProvider>(() => new X509StoreActiveHttpsCertificateProvider(StoreName.My, StoreLocation.CurrentUser));
       return;
     }
 
